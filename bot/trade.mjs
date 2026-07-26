@@ -25,118 +25,14 @@ import {
   LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
 import bs58 from 'bs58';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Uniwersum
-//
-// Minty sprawdzone w API Jupitera pod katem flagi "verified". To nie jest
-// formalnosc: dla kazdego z tych symboli istnieja na Solanie podszywajace sie
-// tokeny o identycznej nazwie. Nie dopisuj tu nic bez sprawdzenia mintu —
-// pomylka oznacza swap w bezwartosciowy token.
-//
-// costMul podnosi szacowany koszt rundy dla aktywow o szerszym spreadzie, przez
-// co filtr oplacalnosci jest dla nich surowszy niz dla SOL.
-// ─────────────────────────────────────────────────────────────────────────────
-
-const UNIVERSE = {
-  SOL: { mint: 'So11111111111111111111111111111111111111112', dec: 9, kraken: 'SOLUSD', costMul: 1.0 },
-  JUP: { mint: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN', dec: 6, kraken: 'JUPUSD', costMul: 1.3 },
-  JTO: { mint: 'jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL', dec: 9, kraken: 'JTOUSD', costMul: 1.4 },
-  PYTH: { mint: 'HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3', dec: 6, kraken: 'PYTHUSD', costMul: 1.4 },
-  RAY: { mint: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', dec: 6, kraken: 'RAYUSD', costMul: 1.3 },
-  ORCA: { mint: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', dec: 6, kraken: 'ORCAUSD', costMul: 1.5 },
-  RENDER: { mint: 'rndrizKT3MK1iimdxRdWabcF7Zg7AR5T4nud4EkHBof', dec: 8, kraken: 'RENDERUSD', costMul: 1.4 },
-  BONK: { mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', dec: 5, kraken: 'BONKUSD', costMul: 1.6 },
-  // Ponizsze sa wylaczone domyslnie — wlacz przez zmienna ASSETS, jesli chcesz.
-  W: { mint: '85VBFQZC9TZkfaptBWjvUw7YbZjy52A6mjtPGjstQAmQ', dec: 6, kraken: 'WUSD', costMul: 1.5 },
-  TNSR: { mint: 'TNSRxcUxoT9xBG3de7PiJyTDYu7kskLqcpddxnEJAS6', dec: 9, kraken: 'TNSRUSD', costMul: 1.6 },
-  DRIFT: { mint: 'DriFtupJYLTosbwoN8koMbEYSx54aFAVLddWsbksjwg7', dec: 6, kraken: 'DRIFTUSD', costMul: 1.6 },
-  KMNO: { mint: 'KMNo3nJsBXfcpJTVhZcXLW7RmTwTt4GVFE7suUBo9sS', dec: 6, kraken: 'KMNOUSD', costMul: 1.6 },
-  PENGU: { mint: '2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv', dec: 6, kraken: 'PENGUUSD', costMul: 1.7 },
-};
+// Uniwersum, konfiguracja, wskazniki i sygnaly wejscia/wyjscia zyja w
+// strategy.mjs — wspolnym module bota i backtestera (bot/backtest.mjs).
+// Zmiany w logice strategii rob TAM, nie tutaj.
+import { UNIVERSE, CFG, env, envNum, envBool, usd, pct, analyze, entrySignal, exitSignal } from './strategy.mjs';
 
 const USDC = { mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', dec: 6 };
 const TOKEN_PROGRAM = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
 const NO_WALLET = '11111111111111111111111111111111';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Konfiguracja
-// ─────────────────────────────────────────────────────────────────────────────
-
-const env = (k, d = '') => {
-  const v = process.env[k];
-  return v == null || String(v).trim() === '' ? d : String(v).trim();
-};
-const envNum = (k, d) => {
-  const v = Number.parseFloat(env(k));
-  return Number.isFinite(v) ? v : d;
-};
-const envBool = (k, d) => {
-  const v = env(k).toLowerCase();
-  if (!v) return d;
-  return ['1', 'true', 'yes', 'y', 'on', 'tak'].includes(v);
-};
-
-const CFG = {
-  DRY_RUN: envBool('DRY_RUN', true),
-  FORCE_SELL: envBool('FORCE_SELL', false),
-  RESET_HALT: envBool('RESET_HALT', false),
-  RESET_SIM: envBool('RESET_SIM', false),
-
-  RPC_URL: env('RPC_URL', 'https://api.mainnet-beta.solana.com'),
-  JUP_BASE: env('JUP_API_KEY') ? 'https://api.jup.ag/swap/v1' : 'https://lite-api.jup.ag/swap/v1',
-  JUP_API_KEY: env('JUP_API_KEY'),
-
-  ASSETS: env('ASSETS', 'SOL,JUP,JTO,PYTH,RAY,ORCA,RENDER,BONK')
-    .toUpperCase()
-    .split(',')
-    .map((x) => x.trim())
-    .filter(Boolean),
-  MAX_POSITIONS: envNum('MAX_POSITIONS', 2),
-
-  CANDLE_MINUTES: envNum('CANDLE_MINUTES', 15),
-
-  // Harmonogramy GitHuba bywaja zawodne. Gdy LOOP_MINUTES > 0, jeden przebieg
-  // pracuje przez tyle minut, powtarzajac cykl co CYCLE_MINUTES. Dzieki temu
-  // nawet jedno uruchomienie na godzine daje ciagly nadzor nad pozycjami.
-  LOOP_MINUTES: envNum('LOOP_MINUTES', 0),
-  CYCLE_MINUTES: envNum('CYCLE_MINUTES', 5),
-
-  EMA_FAST: envNum('EMA_FAST', 21),
-  EMA_SLOW: envNum('EMA_SLOW', 55),
-  EMA_TREND: envNum('EMA_TREND', 200),
-  RSI_LEN: envNum('RSI_LEN', 14),
-  ATR_LEN: envNum('ATR_LEN', 14),
-
-  RSI_MIN: envNum('RSI_MIN', 38),
-  RSI_MAX: envNum('RSI_MAX', 68),
-  MAX_EXT_ATR: envNum('MAX_EXT_ATR', 1.6),
-  MIN_VOL_PCT: envNum('MIN_VOL_PCT', 0.0012),
-  MAX_VOL_PCT: envNum('MAX_VOL_PCT', 0.045),
-
-  STOP_ATR: envNum('STOP_ATR', 1.6),
-  TRAIL_ATR: envNum('TRAIL_ATR', 2.0),
-  TRAIL_ARM_ATR: envNum('TRAIL_ARM_ATR', 1.0),
-  TAKE_PROFIT_ATR: envNum('TAKE_PROFIT_ATR', 3.2),
-  MAX_HOLD_HOURS: envNum('MAX_HOLD_HOURS', 36),
-
-  ALLOC_PCT: envNum('ALLOC_PCT', 0.45),
-  MAX_TRADE_USD: envNum('MAX_TRADE_USD', 250),
-  MIN_TRADE_USD: envNum('MIN_TRADE_USD', 20),
-  // Oplaty sieciowe sa stale w SOL — im mniejsza pozycja, tym wiekszy ich udzial.
-  MAX_FIXED_COST_PCT: envNum('MAX_FIXED_COST_PCT', 0.015),
-  FEE_RESERVE_SOL: envNum('FEE_RESERVE_SOL', 0.02),
-  SLIPPAGE_BPS: envNum('SLIPPAGE_BPS', 50),
-  PRIORITY_FEE_MAX_LAMPORTS: envNum('PRIORITY_FEE_MAX_LAMPORTS', 2_000_000),
-  EST_COST_PCT: envNum('EST_COST_PCT', 0.004),
-  MAX_PRICE_IMPACT: envNum('MAX_PRICE_IMPACT', 0.02),
-
-  MAX_TRADES_PER_DAY: envNum('MAX_TRADES_PER_DAY', 8),
-  COOLDOWN_MIN: envNum('COOLDOWN_MIN', 45),
-  DAILY_LOSS_LIMIT_PCT: envNum('DAILY_LOSS_LIMIT_PCT', 0.06),
-  MAX_DRAWDOWN_PCT: envNum('MAX_DRAWDOWN_PCT', 0.25),
-  MIN_SCORE: envNum('MIN_SCORE', 7),
-};
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -160,8 +56,6 @@ const log = (...a) => {
 };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const usd = (n) => `$${Number(n || 0).toFixed(2)}`;
-const pct = (n) => `${(Number(n || 0) * 100).toFixed(2)}%`;
 const nowISO = () => new Date().toISOString();
 const utcDay = (ts = Date.now()) => new Date(ts).toISOString().slice(0, 10);
 /** Ilosc tokena czytelnie — BONK ma inny rzad wielkosci niz SOL. */
@@ -284,88 +178,6 @@ async function getCandles(sym, minutes) {
     }
   }
   throw new Error(`brak swiec dla ${sym}`);
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Wskazniki
-// ─────────────────────────────────────────────────────────────────────────────
-
-function ema(values, len) {
-  if (values.length < len) return [];
-  const k = 2 / (len + 1);
-  const out = new Array(values.length).fill(null);
-  let acc = values.slice(0, len).reduce((a, b) => a + b, 0) / len;
-  out[len - 1] = acc;
-  for (let i = len; i < values.length; i++) {
-    acc = values[i] * k + acc * (1 - k);
-    out[i] = acc;
-  }
-  return out;
-}
-
-function rsi(closes, len) {
-  const out = new Array(closes.length).fill(null);
-  if (closes.length < len + 1) return out;
-  let gain = 0;
-  let loss = 0;
-  for (let i = 1; i <= len; i++) {
-    const d = closes[i] - closes[i - 1];
-    if (d >= 0) gain += d;
-    else loss -= d;
-  }
-  gain /= len;
-  loss /= len;
-  out[len] = loss === 0 ? 100 : 100 - 100 / (1 + gain / loss);
-  for (let i = len + 1; i < closes.length; i++) {
-    const d = closes[i] - closes[i - 1];
-    gain = (gain * (len - 1) + Math.max(d, 0)) / len;
-    loss = (loss * (len - 1) + Math.max(-d, 0)) / len;
-    out[i] = loss === 0 ? 100 : 100 - 100 / (1 + gain / loss);
-  }
-  return out;
-}
-
-function atr(candles, len) {
-  const out = new Array(candles.length).fill(null);
-  if (candles.length < len + 1) return out;
-  const trs = [0];
-  for (let i = 1; i < candles.length; i++) {
-    const c = candles[i];
-    const p = candles[i - 1].c;
-    trs.push(Math.max(c.h - c.l, Math.abs(c.h - p), Math.abs(c.l - p)));
-  }
-  let a = trs.slice(1, len + 1).reduce((x, y) => x + y, 0) / len;
-  out[len] = a;
-  for (let i = len + 1; i < candles.length; i++) {
-    a = (a * (len - 1) + trs[i]) / len;
-    out[i] = a;
-  }
-  return out;
-}
-
-function analyze(candles) {
-  const closes = candles.map((c) => c.c);
-  const eFast = ema(closes, CFG.EMA_FAST);
-  const eSlow = ema(closes, CFG.EMA_SLOW);
-  const eTrend = ema(closes, Math.min(CFG.EMA_TREND, Math.floor(closes.length * 0.8)));
-  const r = rsi(closes, CFG.RSI_LEN);
-  const a = atr(candles, CFG.ATR_LEN);
-  const i = closes.length - 1;
-  const trendNow = eTrend[i];
-  const trendPrev = eTrend[i - 10] ?? eTrend[i];
-
-  return {
-    price: closes[i],
-    emaFast: eFast[i],
-    emaSlow: eSlow[i],
-    emaTrend: trendNow,
-    rsi: r[i],
-    rsiPrev: r[i - 1],
-    atr: a[i],
-    trendSlope: trendNow && trendPrev ? (trendNow - trendPrev) / trendPrev : 0,
-    volPct: a[i] && closes[i] ? a[i] / closes[i] : 0,
-    barTs: candles[i].t,
-  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -521,85 +333,6 @@ function migrate(saved) {
     log('> stan przeniesiony z wersji jednoaktywowej');
   }
   return saved || {};
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Strategia
-// ─────────────────────────────────────────────────────────────────────────────
-
-/** Ocena kandydata. Zwraca {score, enter, reason} — im wyzszy score, tym lepiej. */
-function entrySignal(sym, m) {
-  const costPct = CFG.EST_COST_PCT * (UNIVERSE[sym].costMul || 1);
-  const good = [];
-  let score = 0;
-
-  if (!(m.price > m.emaTrend && m.emaFast > m.emaSlow)) {
-    return { score: 0, enter: false, reason: 'brak trendu wzrostowego' };
-  }
-  score += 3;
-  good.push('trend');
-
-  if (m.trendSlope > 0.0005) {
-    score += 1;
-    good.push('trend rosnie');
-  }
-
-  if (m.volPct < CFG.MIN_VOL_PCT) {
-    return { score, enter: false, reason: `zmiennosc ${pct(m.volPct)} za niska` };
-  }
-  if (m.volPct > CFG.MAX_VOL_PCT) {
-    return { score, enter: false, reason: `zmiennosc ${pct(m.volPct)} za wysoka` };
-  }
-  score += 1;
-
-  if (m.rsi < CFG.RSI_MIN) return { score, enter: false, reason: `RSI ${m.rsi.toFixed(1)} — spadajacy noz` };
-  if (m.rsi > CFG.RSI_MAX) return { score, enter: false, reason: `RSI ${m.rsi.toFixed(1)} — przegrzane` };
-  score += 1;
-  good.push(`RSI ${m.rsi.toFixed(1)}`);
-
-  const ext = (m.price - m.emaFast) / m.atr;
-  if (ext > CFG.MAX_EXT_ATR) {
-    return { score, enter: false, reason: `${ext.toFixed(2)} ATR nad srednia — za daleko` };
-  }
-  score += 2;
-  good.push('cofniecie do sredniej');
-
-  if (m.rsi > m.rsiPrev) {
-    score += 1;
-    good.push('RSI zawraca');
-  }
-
-  const expectedMove = (CFG.TAKE_PROFIT_ATR * m.atr) / m.price;
-  if (expectedMove < costPct * 2.5) {
-    return { score, enter: false, reason: `potencjal ${pct(expectedMove)} maly wobec kosztow ${pct(costPct)}` };
-  }
-  score += 1;
-
-  const enter = score >= CFG.MIN_SCORE;
-  return {
-    score,
-    enter,
-    reason: enter ? `gotowy: ${good.join(', ')}` : `score ${score}/${CFG.MIN_SCORE}: ${good.join(', ')}`,
-  };
-}
-
-function exitSignal(pos, m, price) {
-  const a = pos.atrAtEntry || m.atr;
-  const gainAtr = (price - pos.entryPrice) / a;
-  const heldH = (Date.now() - new Date(pos.entryTs).getTime()) / 3600000;
-
-  if (price <= pos.stopPrice) return { exit: true, reason: `STOP LOSS przy ${usd(price)}` };
-  if (price >= pos.takeProfit) return { exit: true, reason: `TAKE PROFIT (+${gainAtr.toFixed(2)} ATR)` };
-  if (pos.trailArmed && price <= pos.maxPrice - CFG.TRAIL_ATR * a) {
-    return { exit: true, reason: `TRAILING STOP — szczyt ${usd(pos.maxPrice)}` };
-  }
-  if (m.emaFast < m.emaSlow && price < m.emaTrend) {
-    return { exit: true, reason: 'trend sie odwrocil' };
-  }
-  if (heldH > CFG.MAX_HOLD_HOURS && price < pos.entryPrice) {
-    return { exit: true, reason: `stop czasowy — ${heldH.toFixed(1)}h pod woda` };
-  }
-  return { exit: false, reason: `${gainAtr >= 0 ? '+' : ''}${gainAtr.toFixed(2)} ATR, ${heldH.toFixed(1)}h` };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -894,7 +627,7 @@ async function main() {
     }
     const held = !!state.positions[sym];
     const cd = state.cooldowns[sym] || 0;
-    const sig = entrySignal(sym, m);
+    const sig = entrySignal(sym, m, CFG, { leader: mkt.SOL });
     scan.push({
       sym,
       price: m.price,
