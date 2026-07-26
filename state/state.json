@@ -1,15 +1,15 @@
 {
-  "version": 1,
+  "version": 2,
   "wallet": "11111111111111111111111111111111",
   "createdAt": "2026-07-26T14:38:45.107Z",
-  "updatedAt": "2026-07-26T14:38:45.561Z",
+  "updatedAt": "2026-07-26T15:45:52.099Z",
   "mode": "DRY",
-  "position": null,
+  "positions": {},
+  "cooldowns": {},
   "startEquity": 500,
   "peakEquity": 500,
   "halted": false,
   "haltReason": null,
-  "cooldownUntil": 0,
   "day": {
     "date": "2026-07-26",
     "startEquity": 500,
@@ -22,30 +22,126 @@
     "losses": 0,
     "realizedPnl": 0,
     "volumeUsd": 0,
-    "feesUsd": 0,
     "bestUsd": 0,
-    "worstUsd": 0
+    "worstUsd": 0,
+    "feesUsd": 0
   },
+  "perAsset": {},
   "lastRun": {
-    "ts": "2026-07-26T14:38:45.561Z",
+    "ts": "2026-07-26T15:45:52.099Z",
     "action": "HOLD",
-    "reason": "potencjal 0.62% zbyt maly wobec kosztow 0.40%",
-    "price": 74.909484,
-    "source": "kraken",
+    "reason": "najlepszy kandydat RENDER: potencjal 0.69% maly wobec kosztow 0.56%",
     "equityUsd": 500,
     "unrealizedUsd": 0,
-    "indicators": {
-      "emaFast": 74.91051911559246,
-      "emaSlow": 74.84060479611523,
-      "emaTrend": 74.78614392703335,
-      "rsi": 49.58263988379259,
-      "atr": 0.14458612976468435,
-      "volPct": 0.0019303889154163464,
-      "trendSlope": 0.00011633374075341055
+    "scanned": 8,
+    "slotsFree": 2,
+    "maxPositions": 2,
+    "scan": [
+      {
+        "sym": "RENDER",
+        "price": 1.48,
+        "score": 7,
+        "rsi": 49.505814846741934,
+        "volPct": 0.0021538545155283897,
+        "trend": "up",
+        "reason": "potencjal 0.69% maly wobec kosztow 0.56%",
+        "enter": false,
+        "held": false
+      },
+      {
+        "sym": "SOL",
+        "price": 75.29,
+        "score": 5,
+        "rsi": 63.51500481262146,
+        "volPct": 0.0020459577811954674,
+        "trend": "up",
+        "reason": "1.88 ATR nad srednia — za daleko",
+        "enter": false,
+        "held": false
+      },
+      {
+        "sym": "ORCA",
+        "price": 1.189,
+        "score": 3,
+        "rsi": 68.82622396267752,
+        "volPct": 0.0006747273736400299,
+        "trend": "up",
+        "reason": "zmiennosc 0.07% za niska",
+        "enter": false,
+        "held": false
+      },
+      {
+        "sym": "JUP",
+        "price": 0.18694,
+        "score": 0,
+        "rsi": 52.56806147208503,
+        "volPct": 0.00199278570486984,
+        "trend": "down",
+        "reason": "brak trendu wzrostowego",
+        "enter": false,
+        "held": false
+      },
+      {
+        "sym": "JTO",
+        "price": 0.58799,
+        "score": 0,
+        "rsi": 60.158728378025636,
+        "volPct": 0.0025673076219300977,
+        "trend": "down",
+        "reason": "brak trendu wzrostowego",
+        "enter": false,
+        "held": false
+      },
+      {
+        "sym": "PYTH",
+        "price": 0.04347,
+        "score": 0,
+        "rsi": 60.76128718377935,
+        "volPct": 0.003518704542229111,
+        "trend": "down",
+        "reason": "brak trendu wzrostowego",
+        "enter": false,
+        "held": false
+      },
+      {
+        "sym": "RAY",
+        "price": 0.629,
+        "score": 0,
+        "rsi": 41.556561048923975,
+        "volPct": 0.0005951507293327846,
+        "trend": "down",
+        "reason": "brak trendu wzrostowego",
+        "enter": false,
+        "held": false
+      },
+      {
+        "sym": "BONK",
+        "price": 0.000003113,
+        "score": 0,
+        "rsi": 46.125780368367984,
+        "volPct": 0.00527590585287475,
+        "trend": "down",
+        "reason": "brak trendu wzrostowego",
+        "enter": false,
+        "held": false
+      }
+    ],
+    "prices": {
+      "SOL": 75.29,
+      "JUP": 0.18694,
+      "JTO": 0.58799,
+      "PYTH": 0.04347,
+      "RAY": 0.629,
+      "ORCA": 1.189,
+      "RENDER": 1.48,
+      "BONK": 0.000003113
     },
     "balances": {
       "sol": 0,
       "usdc": 500
     }
-  }
+  },
+  "simSol": 0,
+  "simUsdc": 500,
+  "simTok": {}
 }
