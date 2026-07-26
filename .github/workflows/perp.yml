@@ -1,0 +1,79 @@
+name: Hajsomat — kontrakty
+
+# Bot kontraktowy. WYLACZNIE symulacja: perpbot.mjs nie wysyla zadnych transakcji
+# do zadnej gieldy, tylko liczy wynik na wirtualnym kapitale. Zeby handlowac
+# naprawde, trzeba by dopisac integracje z API Jupiter Perps.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    inputs:
+      reset:
+        description: 'Zacznij symulacje od nowa'
+        type: boolean
+        default: false
+
+# Wlasna grupa — nie blokuje bota spotowego, ale dwa przebiegi kontraktowe
+# naraz nie moga sobie nadpisywac stanu.
+concurrency:
+  group: hajsomat-perp
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  perp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
+
+      - name: Instalacja zaleznosci
+        working-directory: bot
+        run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+
+      - name: Symulacja kontraktow
+        working-directory: bot
+        env:
+          PERP_RESET: ${{ inputs.reset }}
+          PERP_START_USD: ${{ vars.PERP_START_USD }}
+          PERP_LEVERAGE: ${{ vars.PERP_LEVERAGE }}
+          PERP_MAX_POSITIONS: ${{ vars.PERP_MAX_POSITIONS }}
+          PERP_ALLOC_PCT: ${{ vars.PERP_ALLOC_PCT }}
+          PERP_ALLOW_SHORT: ${{ vars.PERP_ALLOW_SHORT }}
+          PERP_ALLOW_LONG: ${{ vars.PERP_ALLOW_LONG }}
+          PERP_MAX_DRAWDOWN_PCT: ${{ vars.PERP_MAX_DRAWDOWN_PCT }}
+          # Wspolne ze strategia spotowa
+          ASSETS: ${{ vars.ASSETS }}
+          CANDLE_MINUTES: ${{ vars.CANDLE_MINUTES }}
+          COST_EDGE_MULT: ${{ vars.COST_EDGE_MULT }}
+          STOP_ATR: ${{ vars.STOP_ATR }}
+          TAKE_PROFIT_ATR: ${{ vars.TAKE_PROFIT_ATR }}
+          TRAIL_ATR: ${{ vars.TRAIL_ATR }}
+          MIN_SCORE: ${{ vars.MIN_SCORE }}
+        run: node perpbot.mjs
+
+      - name: Zapis stanu do repo
+        if: always()
+        run: |
+          if [ ! -d state ] || [ -z "$(git status --porcelain -- state)" ]; then
+            echo "Stan bez zmian."
+            exit 0
+          fi
+          git config user.name "hajsomat-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add state
+          git commit -m "kontrakty $(date -u '+%Y-%m-%d %H:%M UTC') [skip ci]"
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            echo "push nieudany, próba $i"
+            sleep 5
+          done
+          exit 1
