@@ -677,9 +677,9 @@ function PositionGauge({ stop, tp, entry, price }) {
         />
       </View>
       <View style={s.gaugeLabels}>
-        <Text style={[s.axisText, { color: C.red }]}>stop {money(stop)}</Text>
-        <Text style={s.axisText}>wejscie {money(entry)}</Text>
-        <Text style={[s.axisText, { color: C.green }]}>TP {money(tp)}</Text>
+        <Text style={[s.axisText, { color: C.red }]}>stop {priceFmt(stop)}</Text>
+        <Text style={s.axisText}>wejscie {priceFmt(entry)}</Text>
+        <Text style={[s.axisText, { color: C.green }]}>TP {priceFmt(tp)}</Text>
       </View>
     </View>
   );
@@ -937,7 +937,7 @@ function Kokpit({ data, cfg, goSettings }) {
         <SectionTitle>Portfel on-chain</SectionTitle>
         <View style={s.statRow}>
           <Stat label="SOL" value={nf(chain?.sol, 4)} sub={money((chain?.sol || 0) * (price || 0))} />
-          <Stat label="USDC" value={nf(chain?.usdc, 2)} sub="gotowka" />
+          <Stat label="GOTOWKA" value={money(chain?.usdc, 0)} sub={`${nf(chain?.usdc, 2)} USDC`} />
           <Stat label="KURS SOL" value={money(price)} sub="Jupiter" />
         </View>
 
@@ -1163,11 +1163,6 @@ function Staty({ data }) {
           <Row label="Wyplacone z portfela" value={money(state.withdrawnTotal)} tone="cyan" />
         ) : null}
         <Row label="Obrot lacznie" value={money(stats.volume, 0)} tone="dim" />
-        <Row
-          label="W zlotowkach"
-          value={`${nf(stats.total * fxRate, 2)} zl`}
-          tone={stats.total >= 0 ? 'green' : 'red'}
-        />
       </Card>
 
       {stats.perAsset.length ? (
