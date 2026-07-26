@@ -116,20 +116,29 @@ function nf(n, d = 2) {
   return (neg ? '−' : '') + gi + (f ? ',' + f : '');
 }
 
-const money = (n, d = 2) => (n == null || !isFinite(n) ? '—' : `$${nf(n, d)}`);
+// Bot liczy wszystko w dolarach, bo w nich handluje. Apka pokazuje wylacznie
+// zlotowki — przelicznik siedzi tutaj, w jednym miejscu, zamiast w kazdym
+// wywolaniu. Ustawia go Shell, gdy tylko pozna aktualny kurs.
+let FX = DEFAULTS.usdPln;
+const setFx = (r) => {
+  if (r && isFinite(r) && r > 0) FX = r;
+};
 
-/** Cena tokena — BONK kosztuje 0,000003, SOL 75. Dobieramy miejsca po przecinku. */
+const money = (n, d = 2) => (n == null || !isFinite(n) ? '—' : `${nf(n * FX, d)} zł`);
+
+/** Cena tokena — BONK kosztuje ulamek grosza, SOL trzysta zlotych. */
 function priceFmt(n) {
   if (n == null || !isFinite(n)) return '—';
-  const a = Math.abs(n);
+  const v = n * FX;
+  const a = Math.abs(v);
   const d = a >= 100 ? 2 : a >= 1 ? 3 : a >= 0.01 ? 4 : a >= 0.0001 ? 6 : 9;
-  return `$${nf(n, d)}`;
+  return `${nf(v, d)} zł`;
 }
 
 /** Ilosc tokena — 0,1234 SOL kontra 40 000 000 BONK. */
 const qtyFmt = (n) => (n == null || !isFinite(n) ? '—' : nf(n, Math.abs(n) >= 1000 ? 0 : 4));
 const signed = (n, d = 2) =>
-  n == null || !isFinite(n) ? '—' : `${n >= 0 ? '+' : '−'}$${nf(Math.abs(n), d)}`;
+  n == null || !isFinite(n) ? '—' : `${n >= 0 ? '+' : '−'}${nf(Math.abs(n) * FX, d)} zł`;
 const signedPct = (n, d = 2) =>
   n == null || !isFinite(n) ? '—' : `${n >= 0 ? '+' : '−'}${nf(Math.abs(n) * 100, d)}%`;
 const shortAddr = (a) =>
@@ -680,7 +689,7 @@ function PositionGauge({ stop, tp, entry, price }) {
 // Ekran: Kokpit
 // ─────────────────────────────────────────────────────────────────────────────
 
-function Kokpit({ data, cfg, fxRate, goSettings }) {
+function Kokpit({ data, cfg, goSettings }) {
   const { state, stats, price, chain, err } = data;
   const [range, setRange] = useState('7d');
 
@@ -729,8 +738,8 @@ function Kokpit({ data, cfg, fxRate, goSettings }) {
           {money(stats.liveEquity)}
         </Text>
         <Text style={s.bigSub}>
-          {stats.liveEquity != null ? `${nf(stats.liveEquity * fxRate, 0)} zl` : '—'}
-          {stats.roi != null ? `   ·   ROI ${signedPct(stats.roi)}` : ''}
+          {stats.roi != null ? `ROI ${signedPct(stats.roi)}` : 'brak danych o zwrocie'}
+          {stats.start != null ? `   ·   start ${money(stats.start, 0)}` : ''}
         </Text>
 
         <View style={s.divider} />
@@ -1104,7 +1113,7 @@ function Trejdy({ data }) {
 // Ekran: Staty
 // ─────────────────────────────────────────────────────────────────────────────
 
-function Staty({ data, fxRate }) {
+function Staty({ data }) {
   const { stats, state } = data;
   const pf = stats.profitFactor;
 
@@ -1277,7 +1286,6 @@ function Field({ label, value, onChange, placeholder, hint, keyboardType }) {
 function Ustawienia({ cfg, setCfg, onSaved, data }) {
   const [draft, setDraft] = useState(cfg);
   const [saved, setSaved] = useState(false);
-  const [fxBusy, setFxBusy] = useState(false);
   useEffect(() => setDraft(cfg), [cfg]);
 
   const set = (k) => (v) => {
@@ -1301,17 +1309,6 @@ function Ustawienia({ cfg, setCfg, onSaved, data }) {
     onSaved?.();
   };
 
-  const pullFx = async () => {
-    tap();
-    setFxBusy(true);
-    const v = await fetchFx();
-    setFxBusy(false);
-    if (v) {
-      setDraft((d) => ({ ...d, usdPln: Number(v.toFixed(4)) }));
-      setSaved(false);
-    }
-  };
-
   return (
     <>
       <Card>
@@ -1331,42 +1328,6 @@ function Ustawienia({ cfg, setCfg, onSaved, data }) {
           placeholder="zostaw puste — wezmie z state.json"
           hint="Sam klucz publiczny. Klucza prywatnego nigdy nie wpisuj do apki."
         />
-        <Field
-          label="RPC SOLANY"
-          value={draft.rpc}
-          onChange={set('rpc')}
-          placeholder={DEFAULTS.rpc}
-          hint="Publiczny wezel czesto ogranicza zapytania. Wlasny (Helius, QuickNode) dziala duzo pewniej."
-        />
-      </Card>
-
-      <Card>
-        <SectionTitle
-          right={data.fx ? <Pill text="AUTO" tone="green" small /> : <Pill text="OFFLINE" tone="amber" small />}
-        >
-          Kurs USD / PLN
-        </SectionTitle>
-        <View style={s.headRow}>
-          <Text style={s.fxBig}>{data.fx ? nf(data.fx.rate, 4) : nf(cfg.usdPln, 4)}</Text>
-          <Text style={s.statSub}>
-            {data.fx ? `pobrany ${ago(data.fx.ts)}` : 'brak polaczenia — kurs zapasowy'}
-          </Text>
-        </View>
-        <Text style={[s.fieldHint, { marginTop: 8, marginBottom: 16 }]}>
-          Kurs EBC pobiera sie sam przy starcie apki i odswieza co szesc godzin. Ponizsza wartosc
-          jest uzywana tylko wtedy, gdy nie ma internetu.
-        </Text>
-        <Field
-          label="KURS ZAPASOWY"
-          value={draft.usdPln}
-          onChange={set('usdPln')}
-          keyboardType="decimal-pad"
-        />
-        <Pressable style={[s.btn, s.btnGhost, { marginBottom: 0 }]} onPress={pullFx} disabled={fxBusy}>
-          <Text style={[s.btnText, { color: C.cyan }]}>
-            {fxBusy ? 'Pobieram…' : 'Wpisz tu aktualny kurs'}
-          </Text>
-        </Pressable>
       </Card>
 
       <Pressable style={[s.btn, saved && { backgroundColor: 'rgba(43,255,136,0.18)' }]} onPress={save}>
@@ -1388,7 +1349,12 @@ function Ustawienia({ cfg, setCfg, onSaved, data }) {
         <Row label="Wpisy historii" value={String(data.trades?.length || 0)} tone="dim" />
         <Row label="Punkty krzywej" value={String(data.equity?.length || 0)} tone="dim" />
         <Row label="Saldo z lancucha" value={data.chain ? 'ok' : 'brak'} tone={data.chain ? 'green' : 'red'} />
-        <Row label="Cena z Jupitera" value={data.price ? money(data.price) : 'brak'} tone={data.price ? 'green' : 'red'} />
+        <Row label="Kurs SOL z Jupitera" value={data.price ? money(data.price) : 'brak'} tone={data.price ? 'green' : 'red'} />
+        <Row
+          label="Kurs USD/PLN"
+          value={data.fx ? `${nf(data.fx.rate, 4)}   (${ago(data.fx.ts)})` : `${nf(cfg.usdPln, 2)}   (zapasowy)`}
+          tone={data.fx ? 'green' : 'dim'}
+        />
         {data.err ? <Text style={[s.warnText, { marginTop: 10 }]}>{data.err}</Text> : null}
       </Card>
 
@@ -1543,7 +1509,9 @@ function Shell() {
   }
 
   // Kurs pobrany automatycznie; wpis z ustawien sluzy tylko gdy nie ma sieci.
+  // Ustawiamy go przed renderem, bo korzystaja z niego wszystkie formatery kwot.
   const fxRate = data.fx?.rate ?? cfg.usdPln;
+  setFx(fxRate);
 
   return (
     <View style={s.root}>
@@ -1579,8 +1547,8 @@ function Shell() {
           </Text>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
+          <Text style={s.headLabel}>KURS SOL</Text>
           <Text style={s.headPrice}>{money(data.price)}</Text>
-          <Text style={s.logoSub}>{shortAddr(data.state?.wallet || cfg.wallet)}</Text>
         </View>
       </View>
 
@@ -1600,11 +1568,9 @@ function Shell() {
           />
         }
       >
-        {tab === 'kokpit' && (
-          <Kokpit data={data} cfg={cfg} fxRate={fxRate} goSettings={() => setTab('ustawienia')} />
-        )}
+        {tab === 'kokpit' && <Kokpit data={data} cfg={cfg} goSettings={() => setTab('ustawienia')} />}
         {tab === 'trejdy' && <Trejdy data={data} />}
-        {tab === 'staty' && <Staty data={data} fxRate={fxRate} />}
+        {tab === 'staty' && <Staty data={data} />}
         {tab === 'ustawienia' && (
           <Ustawienia cfg={cfg} setCfg={setCfg} data={data} onSaved={() => load(false)} />
         )}
@@ -1658,6 +1624,7 @@ const s = StyleSheet.create({
   },
   logo: { color: C.text, fontSize: 22, fontWeight: '900', letterSpacing: 2 },
   logoSub: { color: C.faint, fontSize: 11, marginTop: 2, letterSpacing: 0.5 },
+  headLabel: { color: C.faint, fontSize: 9, fontWeight: '800', letterSpacing: 1.2, marginBottom: 2 },
   headPrice: { color: C.text, fontSize: 18, fontWeight: '700', fontFamily: MONO },
 
   card: {
@@ -1851,7 +1818,6 @@ const s = StyleSheet.create({
     fontFamily: MONO,
   },
   fieldHint: { color: C.faint, fontSize: 11, marginTop: 6, lineHeight: 16 },
-  fxBig: { color: C.text, fontSize: 30, fontWeight: '800', fontFamily: MONO },
 
   btn: {
     backgroundColor: 'rgba(43,255,136,0.12)',
