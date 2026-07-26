@@ -1,0 +1,101 @@
+name: Hajsomat — bot
+
+on:
+  schedule:
+    # Co 5 minut. GitHub czasem opoznia crony przy duzym obciazeniu — bot jest
+    # na to odporny, bo caly stan trzyma w state/*.json, a nie w pamieci.
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Symulacja bez prawdziwych transakcji'
+        type: boolean
+        default: true
+      force_sell:
+        description: 'Zamknij pozycje natychmiast (panic button)'
+        type: boolean
+        default: false
+      reset_halt:
+        description: 'Zdejmij bezpiecznik i wznow handel'
+        type: boolean
+        default: false
+
+# Dwa przebiegi naraz moglyby wystawic dwa zlecenia na ten sam kapital.
+concurrency:
+  group: hajsomat-bot
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
+
+      - name: Instalacja zaleznosci
+        working-directory: bot
+        run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+
+      - name: Handel
+        working-directory: bot
+        env:
+          # Sekrety (Settings -> Secrets and variables -> Actions -> Secrets)
+          SOLANA_PRIVATE_KEY: ${{ secrets.SOLANA_PRIVATE_KEY }}
+          RPC_URL: ${{ secrets.RPC_URL }}
+          JUP_API_KEY: ${{ secrets.JUP_API_KEY }}
+
+          # Tylko do podgladu cudzego portfela w symulacji. Do handlu bot i tak
+          # bierze adres z klucza prywatnego.
+          WALLET_ADDRESS: ${{ vars.WALLET_ADDRESS }}
+
+          # Przelacznik live/symulacja. Reczne odpalenie ma pierwszenstwo,
+          # w cronie decyduje zmienna repo DRY_RUN (domyslnie symulacja).
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.dry_run) || vars.DRY_RUN || 'true' }}
+          FORCE_SELL: ${{ inputs.force_sell }}
+          RESET_HALT: ${{ inputs.reset_halt }}
+
+          # Strojenie (Settings -> Secrets and variables -> Actions -> Variables).
+          # Puste = wartosc domyslna z trade.mjs.
+          ALLOC_PCT: ${{ vars.ALLOC_PCT }}
+          MAX_TRADE_USD: ${{ vars.MAX_TRADE_USD }}
+          MIN_TRADE_USD: ${{ vars.MIN_TRADE_USD }}
+          SLIPPAGE_BPS: ${{ vars.SLIPPAGE_BPS }}
+          CANDLE_MINUTES: ${{ vars.CANDLE_MINUTES }}
+          STOP_ATR: ${{ vars.STOP_ATR }}
+          TRAIL_ATR: ${{ vars.TRAIL_ATR }}
+          TAKE_PROFIT_ATR: ${{ vars.TAKE_PROFIT_ATR }}
+          MAX_TRADES_PER_DAY: ${{ vars.MAX_TRADES_PER_DAY }}
+          COOLDOWN_MIN: ${{ vars.COOLDOWN_MIN }}
+          DAILY_LOSS_LIMIT_PCT: ${{ vars.DAILY_LOSS_LIMIT_PCT }}
+          MAX_DRAWDOWN_PCT: ${{ vars.MAX_DRAWDOWN_PCT }}
+          FEE_RESERVE_SOL: ${{ vars.FEE_RESERVE_SOL }}
+          DRY_START_USDC: ${{ vars.DRY_START_USDC }}
+        run: node trade.mjs
+
+      - name: Zapis stanu do repo
+        if: always()
+        run: |
+          if [ ! -d state ] || [ -z "$(git status --porcelain -- state)" ]; then
+            echo "Stan bez zmian."
+            exit 0
+          fi
+          git config user.name "hajsomat-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add state
+          git commit -m "stan bota $(date -u '+%Y-%m-%d %H:%M UTC') [skip ci]"
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            echo "push nieudany, próba $i"
+            sleep 5
+          done
+          echo "nie udalo sie zapisac stanu" >&2
+          exit 1

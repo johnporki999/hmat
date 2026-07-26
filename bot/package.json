@@ -1,0 +1,18 @@
+{
+  "name": "hajsomat-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bot tradingowy SOL/USDC odpalany z GitHub Actions",
+  "scripts": {
+    "trade": "node trade.mjs",
+    "genwallet": "node genwallet.mjs"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.98.0",
+    "bs58": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
