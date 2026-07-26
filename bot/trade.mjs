@@ -15,6 +15,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
   Connection,
@@ -202,6 +203,43 @@ function readJSON(file, fallback) {
 function writeJSON(file, data) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n', 'utf8');
+}
+
+/**
+ * W trybie ciaglym jeden przebieg trwa kilkadziesiat minut, a workflow
+ * commituje stan dopiero na samym koncu — apka nie widzialaby wtedy nic przez
+ * caly ten czas. Dlatego po kazdym cyklu wypychamy stan sami.
+ *
+ * Dziala WYLACZNIE w GitHub Actions. Lokalnie nie ruszamy repo uzytkownika.
+ */
+async function pushState(label) {
+  if (process.env.GITHUB_ACTIONS !== 'true') return;
+  const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: 'pipe' });
+  const branch = env('GITHUB_REF_NAME', 'main');
+  try {
+    if (!git('status', '--porcelain', '--', 'state').trim()) return;
+    git('config', 'user.name', 'hajsomat-bot');
+    git('config', 'user.email', 'bot@users.noreply.github.com');
+    git('add', 'state');
+    git('commit', '-m', `stan bota ${label} [skip ci]`);
+  } catch (e) {
+    log(`! nie udalo sie przygotowac commita: ${String(e.message || e).slice(0, 120)}`);
+    return;
+  }
+  for (let i = 1; i <= 3; i++) {
+    try {
+      git('pull', '--rebase', '--autostash', 'origin', branch);
+      git('push', 'origin', `HEAD:${branch}`);
+      log('  stan wypchniety do repo');
+      return;
+    } catch (e) {
+      if (i === 3) {
+        log(`! nie udalo sie wypchnac stanu: ${String(e.message || e).slice(0, 120)}`);
+        return;
+      }
+      await sleep(4000);
+    }
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1131,6 +1169,9 @@ while (true) {
       /* trudno */
     }
   }
+
+  // W trybie ciaglym oddajemy stan po kazdym cyklu, zeby apka zyla na biezaco.
+  if (loopEnd) await pushState(`cykl ${cycle}, ${nowISO().slice(11, 16)} UTC`);
 
   // Pojedynczy przebieg albo za malo czasu na kolejny pelny cykl.
   if (!loopEnd || Date.now() + CFG.CYCLE_MINUTES * 60000 > loopEnd) break;
