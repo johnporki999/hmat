@@ -19,6 +19,10 @@ on:
         description: 'Zdejmij bezpiecznik i wznow handel'
         type: boolean
         default: false
+      reset_sim:
+        description: 'Zacznij symulacje od nowa (kapital z DRY_START_USDC)'
+        type: boolean
+        default: false
 
 # Dwa przebiegi naraz moglyby wystawic dwa zlecenia na ten sam kapital.
 concurrency:
@@ -33,11 +37,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '24'
           cache: npm
           cache-dependency-path: bot/package-lock.json
 
@@ -62,6 +66,7 @@ jobs:
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.dry_run) || vars.DRY_RUN || 'true' }}
           FORCE_SELL: ${{ inputs.force_sell }}
           RESET_HALT: ${{ inputs.reset_halt }}
+          RESET_SIM: ${{ inputs.reset_sim }}
 
           # Strojenie (Settings -> Secrets and variables -> Actions -> Variables).
           # Puste = wartosc domyslna z trade.mjs.
@@ -71,6 +76,8 @@ jobs:
           ALLOC_PCT: ${{ vars.ALLOC_PCT }}
           MAX_TRADE_USD: ${{ vars.MAX_TRADE_USD }}
           MIN_TRADE_USD: ${{ vars.MIN_TRADE_USD }}
+          MAX_FIXED_COST_PCT: ${{ vars.MAX_FIXED_COST_PCT }}
+          PRIORITY_FEE_MAX_LAMPORTS: ${{ vars.PRIORITY_FEE_MAX_LAMPORTS }}
           SLIPPAGE_BPS: ${{ vars.SLIPPAGE_BPS }}
           CANDLE_MINUTES: ${{ vars.CANDLE_MINUTES }}
           STOP_ATR: ${{ vars.STOP_ATR }}

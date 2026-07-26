@@ -80,6 +80,7 @@ const CFG = {
   DRY_RUN: envBool('DRY_RUN', true),
   FORCE_SELL: envBool('FORCE_SELL', false),
   RESET_HALT: envBool('RESET_HALT', false),
+  RESET_SIM: envBool('RESET_SIM', false),
 
   RPC_URL: env('RPC_URL', 'https://api.mainnet-beta.solana.com'),
   JUP_BASE: env('JUP_API_KEY') ? 'https://api.jup.ag/swap/v1' : 'https://lite-api.jup.ag/swap/v1',
@@ -114,7 +115,9 @@ const CFG = {
 
   ALLOC_PCT: envNum('ALLOC_PCT', 0.45),
   MAX_TRADE_USD: envNum('MAX_TRADE_USD', 250),
-  MIN_TRADE_USD: envNum('MIN_TRADE_USD', 6),
+  MIN_TRADE_USD: envNum('MIN_TRADE_USD', 20),
+  // Oplaty sieciowe sa stale w SOL — im mniejsza pozycja, tym wiekszy ich udzial.
+  MAX_FIXED_COST_PCT: envNum('MAX_FIXED_COST_PCT', 0.015),
   FEE_RESERVE_SOL: envNum('FEE_RESERVE_SOL', 0.02),
   SLIPPAGE_BPS: envNum('SLIPPAGE_BPS', 50),
   PRIORITY_FEE_MAX_LAMPORTS: envNum('PRIORITY_FEE_MAX_LAMPORTS', 2_000_000),
@@ -606,9 +609,7 @@ async function main() {
   // Przejscie symulacja -> prawdziwe pieniadze (albo zmiana portfela) musi
   // wyzerowac ksiegowosc. Inaczej bot liczylby obsuniecie wzgledem szczytu
   // z symulacji i natychmiast wlaczyl bezpiecznik, zanim cokolwiek zrobi.
-  const walletChanged = prevWallet && prevWallet !== walletStr;
-  if ((prevMode && prevMode !== state.mode) || walletChanged) {
-    const why = walletChanged ? `zmiana portfela` : `${prevMode} -> ${state.mode}`;
+  const resetAccounting = (why) => {
     const stamp = nowISO().replace(/[:.]/g, '-');
     writeJSON(path.join(STATE_DIR, `archiwum-${prevMode || 'X'}-${stamp}.json`), {
       powod: why,
@@ -626,12 +627,21 @@ async function main() {
     state.peakEquity = null;
     state.halted = false;
     state.haltReason = null;
+    state.withdrawnTotal = 0;
     state.day = { date: utcDay(), startEquity: null, realized: 0, trades: 0 };
     delete state.simSol;
     delete state.simUsdc;
     delete state.simTok;
     trades = [];
     equity = [];
+  };
+
+  const walletChanged = prevWallet && prevWallet !== walletStr;
+  if (CFG.RESET_SIM) {
+    if (!CFG.DRY_RUN) throw new Error('reset symulacji dziala tylko w trybie DRY_RUN — w trybie live nie ma czego zerowac');
+    resetAccounting('reczny reset symulacji');
+  } else if ((prevMode && prevMode !== state.mode) || walletChanged) {
+    resetAccounting(walletChanged ? 'zmiana portfela' : `${prevMode} -> ${state.mode}`);
   }
 
   if (CFG.RESET_HALT && state.halted) {
@@ -886,8 +896,23 @@ async function main() {
       const m = mkt[sym];
       const budget = Math.min(bal.usdc, equityUsd * CFG.ALLOC_PCT, CFG.MAX_TRADE_USD);
       if (budget < CFG.MIN_TRADE_USD) {
-        log(`> ${sym}: budzet ${usd(budget)} ponizej minimum, koniec wejsc`);
+        log(`> ${sym}: budzet ${usd(budget)} ponizej minimum ${usd(CFG.MIN_TRADE_USD)}, koniec wejsc`);
         break;
+      }
+
+      // Filtr oplacalnosci wyzej liczy koszty procentowo, ale oplaty sieciowe
+      // sa kwotowo stale. Przy malym kapitale to one decyduja o wyniku.
+      const solPx = prices.SOL || 0;
+      if (solPx) {
+        const fixedUsd = 2 * (CFG.PRIORITY_FEE_MAX_LAMPORTS / LAMPORTS_PER_SOL + 0.000005) * solPx;
+        const fixedPct = fixedUsd / budget;
+        if (fixedPct > CFG.MAX_FIXED_COST_PCT) {
+          log(
+            `> ${sym}: same oplaty sieciowe (${usd(fixedUsd)} za runde) to ${pct(fixedPct)} pozycji ` +
+              `${usd(budget)} — za malo kapitalu, zeby trejd mial sens. Nie wchodze.`
+          );
+          break;
+        }
       }
 
       const price = (!pureSim && (await livePrice(sym))) || m.price;
