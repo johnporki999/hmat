@@ -2,9 +2,14 @@ name: Hajsomat — bot
 
 on:
   schedule:
-    # Co 5 minut. GitHub czasem opoznia crony przy duzym obciazeniu — bot jest
-    # na to odporny, bo caly stan trzyma w state/*.json, a nie w pamieci.
-    - cron: '*/5 * * * *'
+    # GitHub traktuje harmonogramy jako "najlepsza staranosc": potrafi je opoznic,
+    # pominac, a w swiezym repo w ogole nie ruszyc przez kilka godzin. Bot jest na
+    # to odporny, bo caly stan trzyma w state/*.json, a nie w pamieci.
+    #
+    # Gdy cron okaze sie zbyt rzadki, wlacz tryb ciagly: zmienna LOOP_MINUTES = 50
+    # i cron ponizej na '7 * * * *'. Wtedy jedno uruchomienie na godzine pracuje
+    # przez 50 minut, powtarzajac cykl co CYCLE_MINUTES.
+    - cron: '*/10 * * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -35,7 +40,9 @@ permissions:
 jobs:
   trade:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Z zapasem na tryb ciagly (LOOP_MINUTES). Bez niego przebieg konczy sie
+    # w kilkanascie sekund i limit nie ma znaczenia.
+    timeout-minutes: 70
     steps:
       - uses: actions/checkout@v7
 
@@ -70,6 +77,8 @@ jobs:
 
           # Strojenie (Settings -> Secrets and variables -> Actions -> Variables).
           # Puste = wartosc domyslna z trade.mjs.
+          LOOP_MINUTES: ${{ vars.LOOP_MINUTES }}
+          CYCLE_MINUTES: ${{ vars.CYCLE_MINUTES }}
           ASSETS: ${{ vars.ASSETS }}
           MAX_POSITIONS: ${{ vars.MAX_POSITIONS }}
           MIN_SCORE: ${{ vars.MIN_SCORE }}

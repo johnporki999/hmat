@@ -95,6 +95,12 @@ const CFG = {
 
   CANDLE_MINUTES: envNum('CANDLE_MINUTES', 15),
 
+  // Harmonogramy GitHuba bywaja zawodne. Gdy LOOP_MINUTES > 0, jeden przebieg
+  // pracuje przez tyle minut, powtarzajac cykl co CYCLE_MINUTES. Dzieki temu
+  // nawet jedno uruchomienie na godzine daje ciagly nadzor nad pozycjami.
+  LOOP_MINUTES: envNum('LOOP_MINUTES', 0),
+  CYCLE_MINUTES: envNum('CYCLE_MINUTES', 5),
+
   EMA_FAST: envNum('EMA_FAST', 21),
   EMA_SLOW: envNum('EMA_SLOW', 55),
   EMA_TREND: envNum('EMA_TREND', 200),
@@ -1087,7 +1093,8 @@ function writeSummary(result, error) {
       ''
     );
   }
-  lines.push('<details><summary>Log</summary>', '', '```', ...LOG, '```', '</details>');
+  const tail = LOG.length > 200 ? ['… (starsze linie pominieto)', ...LOG.slice(-200)] : LOG;
+  lines.push('<details><summary>Log</summary>', '', '```', ...tail, '```', '</details>');
   try {
     fs.appendFileSync(f, lines.join('\n') + '\n');
   } catch {
@@ -1095,21 +1102,42 @@ function writeSummary(result, error) {
   }
 }
 
-try {
-  const result = await main();
-  writeSummary(result, null);
-} catch (e) {
-  log(`!! BLAD: ${e.message}`);
-  if (e.stack) console.error(e.stack);
-  writeSummary(null, e);
-  try {
-    const st = readJSON(F_STATE, null);
-    if (st) {
-      st.lastError = { ts: nowISO(), message: e.message };
-      writeJSON(F_STATE, st);
-    }
-  } catch {
-    /* trudno */
-  }
-  process.exit(1);
+const loopEnd = CFG.LOOP_MINUTES > 0 ? Date.now() + CFG.LOOP_MINUTES * 60000 : 0;
+let lastResult = null;
+let lastError = null;
+let cycle = 0;
+
+if (loopEnd) {
+  log(`> tryb ciagly: pracuje ${CFG.LOOP_MINUTES} min, cykl co ${CFG.CYCLE_MINUTES} min`);
 }
+
+while (true) {
+  cycle += 1;
+  if (loopEnd) log(`\n───────── cykl ${cycle} ─────────`);
+  try {
+    lastResult = await main();
+    lastError = null;
+  } catch (e) {
+    lastError = e;
+    log(`!! BLAD${loopEnd ? ` w cyklu ${cycle}` : ''}: ${e.message}`);
+    if (e.stack) console.error(e.stack);
+    try {
+      const st = readJSON(F_STATE, null);
+      if (st) {
+        st.lastError = { ts: nowISO(), message: e.message };
+        writeJSON(F_STATE, st);
+      }
+    } catch {
+      /* trudno */
+    }
+  }
+
+  // Pojedynczy przebieg albo za malo czasu na kolejny pelny cykl.
+  if (!loopEnd || Date.now() + CFG.CYCLE_MINUTES * 60000 > loopEnd) break;
+  log(`— pauza ${CFG.CYCLE_MINUTES} min —`);
+  await sleep(CFG.CYCLE_MINUTES * 60000);
+}
+
+writeSummary(lastResult, lastError);
+// Blad tylko w ostatnim cyklu psuje przebieg; wczesniejsze potkniecia sa wybaczone.
+if (lastError) process.exit(1);
