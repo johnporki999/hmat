@@ -1,15 +1,16 @@
 /**
- * HAJSOMAT — bot tradingowy SOL/USDC odpalany cyklicznie z GitHub Actions.
+ * HAJSOMAT — bot tradingowy na Solanie, odpalany cyklicznie z GitHub Actions.
  *
- * Jeden przebieg = jedna decyzja:
- *   1. pobierz swiece SOL/USD i policz wskazniki,
- *   2. pobierz realne saldo portfela z lancucha,
- *   3. sprawdz stopy/take-profit otwartej pozycji albo warunki wejscia,
- *   4. jesli trzeba — wykonaj swap przez Jupiter,
- *   5. zapisz stan i historie do plikow JSON (czyta je apka).
+ * Skanuje kilkanascie aktywow notowanych za USDC, wybiera najlepiej rokujace
+ * i trzyma naraz maksymalnie kilka pozycji. Jeden przebieg = jeden cykl:
+ *   1. swiece i wskazniki dla kazdego aktywa z listy,
+ *   2. realne salda portfela z lancucha,
+ *   3. stopy i take-profity otwartych pozycji,
+ *   4. ranking kandydatow i ewentualne wejscie,
+ *   5. zapis stanu i historii do plikow JSON (czyta je apka).
  *
- * Bot nigdy nie trzyma stanu w pamieci miedzy przebiegami — wszystko leci
- * do state/*.json, ktore workflow commituje z powrotem do repo.
+ * Bot nie trzyma nic w pamieci miedzy przebiegami — wszystko leci do state/*.json,
+ * ktore workflow commituje z powrotem do repo.
  */
 
 import fs from 'node:fs';
@@ -23,6 +24,39 @@ import {
   LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
 import bs58 from 'bs58';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Uniwersum
+//
+// Minty sprawdzone w API Jupitera pod katem flagi "verified". To nie jest
+// formalnosc: dla kazdego z tych symboli istnieja na Solanie podszywajace sie
+// tokeny o identycznej nazwie. Nie dopisuj tu nic bez sprawdzenia mintu —
+// pomylka oznacza swap w bezwartosciowy token.
+//
+// costMul podnosi szacowany koszt rundy dla aktywow o szerszym spreadzie, przez
+// co filtr oplacalnosci jest dla nich surowszy niz dla SOL.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const UNIVERSE = {
+  SOL: { mint: 'So11111111111111111111111111111111111111112', dec: 9, kraken: 'SOLUSD', costMul: 1.0 },
+  JUP: { mint: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN', dec: 6, kraken: 'JUPUSD', costMul: 1.3 },
+  JTO: { mint: 'jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL', dec: 9, kraken: 'JTOUSD', costMul: 1.4 },
+  PYTH: { mint: 'HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3', dec: 6, kraken: 'PYTHUSD', costMul: 1.4 },
+  RAY: { mint: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', dec: 6, kraken: 'RAYUSD', costMul: 1.3 },
+  ORCA: { mint: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', dec: 6, kraken: 'ORCAUSD', costMul: 1.5 },
+  RENDER: { mint: 'rndrizKT3MK1iimdxRdWabcF7Zg7AR5T4nud4EkHBof', dec: 8, kraken: 'RENDERUSD', costMul: 1.4 },
+  BONK: { mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', dec: 5, kraken: 'BONKUSD', costMul: 1.6 },
+  // Ponizsze sa wylaczone domyslnie — wlacz przez zmienna ASSETS, jesli chcesz.
+  W: { mint: '85VBFQZC9TZkfaptBWjvUw7YbZjy52A6mjtPGjstQAmQ', dec: 6, kraken: 'WUSD', costMul: 1.5 },
+  TNSR: { mint: 'TNSRxcUxoT9xBG3de7PiJyTDYu7kskLqcpddxnEJAS6', dec: 9, kraken: 'TNSRUSD', costMul: 1.6 },
+  DRIFT: { mint: 'DriFtupJYLTosbwoN8koMbEYSx54aFAVLddWsbksjwg7', dec: 6, kraken: 'DRIFTUSD', costMul: 1.6 },
+  KMNO: { mint: 'KMNo3nJsBXfcpJTVhZcXLW7RmTwTt4GVFE7suUBo9sS', dec: 6, kraken: 'KMNOUSD', costMul: 1.6 },
+  PENGU: { mint: '2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv', dec: 6, kraken: 'PENGUUSD', costMul: 1.7 },
+};
+
+const USDC = { mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', dec: 6 };
+const TOKEN_PROGRAM = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+const NO_WALLET = '11111111111111111111111111111111';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Konfiguracja
@@ -43,60 +77,56 @@ const envBool = (k, d) => {
 };
 
 const CFG = {
-  // Tryb
   DRY_RUN: envBool('DRY_RUN', true),
   FORCE_SELL: envBool('FORCE_SELL', false),
   RESET_HALT: envBool('RESET_HALT', false),
 
-  // Siec
   RPC_URL: env('RPC_URL', 'https://api.mainnet-beta.solana.com'),
   JUP_BASE: env('JUP_API_KEY') ? 'https://api.jup.ag/swap/v1' : 'https://lite-api.jup.ag/swap/v1',
   JUP_API_KEY: env('JUP_API_KEY'),
 
-  // Rynek
+  ASSETS: env('ASSETS', 'SOL,JUP,JTO,PYTH,RAY,ORCA,RENDER,BONK')
+    .toUpperCase()
+    .split(',')
+    .map((x) => x.trim())
+    .filter(Boolean),
+  MAX_POSITIONS: envNum('MAX_POSITIONS', 2),
+
   CANDLE_MINUTES: envNum('CANDLE_MINUTES', 15),
 
-  // Wskazniki
   EMA_FAST: envNum('EMA_FAST', 21),
   EMA_SLOW: envNum('EMA_SLOW', 55),
   EMA_TREND: envNum('EMA_TREND', 200),
   RSI_LEN: envNum('RSI_LEN', 14),
   ATR_LEN: envNum('ATR_LEN', 14),
 
-  // Wejscie
-  RSI_MIN: envNum('RSI_MIN', 38),        // ponizej = spadajacy noz, nie lapiemy
-  RSI_MAX: envNum('RSI_MAX', 68),        // powyzej = przegrzane, nie gonimy
-  MAX_EXT_ATR: envNum('MAX_EXT_ATR', 1.6), // max oddalenie ceny od EMA fast w ATR
-  MIN_VOL_PCT: envNum('MIN_VOL_PCT', 0.0012), // ATR/cena — ponizej rynek martwy
-  MAX_VOL_PCT: envNum('MAX_VOL_PCT', 0.035),  // powyzej rynek oszalal
+  RSI_MIN: envNum('RSI_MIN', 38),
+  RSI_MAX: envNum('RSI_MAX', 68),
+  MAX_EXT_ATR: envNum('MAX_EXT_ATR', 1.6),
+  MIN_VOL_PCT: envNum('MIN_VOL_PCT', 0.0012),
+  MAX_VOL_PCT: envNum('MAX_VOL_PCT', 0.045),
 
-  // Wyjscie
   STOP_ATR: envNum('STOP_ATR', 1.6),
   TRAIL_ATR: envNum('TRAIL_ATR', 2.0),
-  TRAIL_ARM_ATR: envNum('TRAIL_ARM_ATR', 1.0), // od jakiego zysku uzbroic trailing
+  TRAIL_ARM_ATR: envNum('TRAIL_ARM_ATR', 1.0),
   TAKE_PROFIT_ATR: envNum('TAKE_PROFIT_ATR', 3.2),
   MAX_HOLD_HOURS: envNum('MAX_HOLD_HOURS', 36),
 
-  // Wielkosc pozycji i limity
-  ALLOC_PCT: envNum('ALLOC_PCT', 0.6),       // ile % kapitalu wchodzi w jedna pozycje
+  ALLOC_PCT: envNum('ALLOC_PCT', 0.45),
   MAX_TRADE_USD: envNum('MAX_TRADE_USD', 250),
   MIN_TRADE_USD: envNum('MIN_TRADE_USD', 6),
-  FEE_RESERVE_SOL: envNum('FEE_RESERVE_SOL', 0.02), // zawsze zostaje na oplaty
+  FEE_RESERVE_SOL: envNum('FEE_RESERVE_SOL', 0.02),
   SLIPPAGE_BPS: envNum('SLIPPAGE_BPS', 50),
   PRIORITY_FEE_MAX_LAMPORTS: envNum('PRIORITY_FEE_MAX_LAMPORTS', 2_000_000),
-  EST_COST_PCT: envNum('EST_COST_PCT', 0.004), // szacunek kosztu rundy (fee+spread+slippage)
+  EST_COST_PCT: envNum('EST_COST_PCT', 0.004),
+  MAX_PRICE_IMPACT: envNum('MAX_PRICE_IMPACT', 0.02),
 
-  // Bezpieczniki
-  MAX_TRADES_PER_DAY: envNum('MAX_TRADES_PER_DAY', 6),
-  COOLDOWN_MIN: envNum('COOLDOWN_MIN', 45),        // po stracie
+  MAX_TRADES_PER_DAY: envNum('MAX_TRADES_PER_DAY', 8),
+  COOLDOWN_MIN: envNum('COOLDOWN_MIN', 45),
   DAILY_LOSS_LIMIT_PCT: envNum('DAILY_LOSS_LIMIT_PCT', 0.06),
   MAX_DRAWDOWN_PCT: envNum('MAX_DRAWDOWN_PCT', 0.25),
+  MIN_SCORE: envNum('MIN_SCORE', 7),
 };
-
-const SOL_MINT = 'So11111111111111111111111111111111111111112';
-const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
-// Zastepnik adresu, gdy symulacja leci bez zadnego portfela.
-const NO_WALLET = '11111111111111111111111111111111';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -114,9 +144,7 @@ const MAX_EQUITY_KEPT = 3000;
 
 const LOG = [];
 const log = (...a) => {
-  const line = a
-    .map((x) => (typeof x === 'object' ? JSON.stringify(x) : String(x)))
-    .join(' ');
+  const line = a.map((x) => (typeof x === 'object' ? JSON.stringify(x) : String(x))).join(' ');
   LOG.push(line);
   console.log(line);
 };
@@ -124,9 +152,10 @@ const log = (...a) => {
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const usd = (n) => `$${Number(n || 0).toFixed(2)}`;
 const pct = (n) => `${(Number(n || 0) * 100).toFixed(2)}%`;
-const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 const nowISO = () => new Date().toISOString();
 const utcDay = (ts = Date.now()) => new Date(ts).toISOString().slice(0, 10);
+/** Ilosc tokena czytelnie — BONK ma inny rzad wielkosci niz SOL. */
+const qty = (n) => (Math.abs(n) >= 1000 ? Number(n).toFixed(0) : Number(n).toPrecision(6));
 
 async function fetchJSON(url, opts = {}, tries = 3) {
   let lastErr;
@@ -137,19 +166,15 @@ async function fetchJSON(url, opts = {}, tries = 3) {
       const res = await fetch(url, {
         ...opts,
         signal: ctrl.signal,
-        headers: {
-          'user-agent': 'hajsomat-bot/1.0',
-          accept: 'application/json',
-          ...(opts.headers || {}),
-        },
+        headers: { 'user-agent': 'hajsomat-bot/2.0', accept: 'application/json', ...(opts.headers || {}) },
       });
       clearTimeout(t);
       const text = await res.text();
-      if (!res.ok) throw new Error(`HTTP ${res.status} ${url} :: ${text.slice(0, 300)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status} ${url} :: ${text.slice(0, 200)}`);
       return JSON.parse(text);
     } catch (e) {
       lastErr = e;
-      if (i < tries - 1) await sleep(1200 * (i + 1));
+      if (i < tries - 1) await sleep(1000 * (i + 1));
     }
   }
   throw lastErr;
@@ -171,61 +196,47 @@ function writeJSON(file, data) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Dane rynkowe — swiece SOL/USD, trzy zrodla na wypadek awarii jednego
+// Dane rynkowe
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function candlesKraken(minutes) {
-  const j = await fetchJSON(
-    `https://api.kraken.com/0/public/OHLC?pair=SOLUSD&interval=${minutes}`
-  );
+async function candlesKraken(sym, minutes) {
+  const pair = UNIVERSE[sym].kraken;
+  const j = await fetchJSON(`https://api.kraken.com/0/public/OHLC?pair=${pair}&interval=${minutes}`);
   if (j.error?.length) throw new Error(`kraken: ${j.error.join(',')}`);
   const key = Object.keys(j.result).find((k) => k !== 'last');
-  return j.result[key].map((c) => ({
-    t: c[0] * 1000,
-    o: +c[1],
-    h: +c[2],
-    l: +c[3],
-    c: +c[4],
-    v: +c[6],
-  }));
+  return j.result[key].map((c) => ({ t: c[0] * 1000, o: +c[1], h: +c[2], l: +c[3], c: +c[4], v: +c[6] }));
 }
 
-async function candlesCoinbase(minutes) {
-  const g = minutes * 60;
+async function candlesCoinbase(sym, minutes) {
   const arr = await fetchJSON(
-    `https://api.exchange.coinbase.com/products/SOL-USD/candles?granularity=${g}`
+    `https://api.exchange.coinbase.com/products/${sym}-USD/candles?granularity=${minutes * 60}`
   );
   return arr
     .map((c) => ({ t: c[0] * 1000, l: +c[1], h: +c[2], o: +c[3], c: +c[4], v: +c[5] }))
     .sort((a, b) => a.t - b.t);
 }
 
-async function candlesBinance(minutes) {
+async function candlesBinance(sym, minutes) {
   const arr = await fetchJSON(
-    `https://api.binance.com/api/v3/klines?symbol=SOLUSDC&interval=${minutes}m&limit=500`
+    `https://api.binance.com/api/v3/klines?symbol=${sym}USDT&interval=${minutes}m&limit=500`
   );
   return arr.map((c) => ({ t: c[0], o: +c[1], h: +c[2], l: +c[3], c: +c[4], v: +c[5] }));
 }
 
-async function getCandles(minutes) {
-  const sources = [
+async function getCandles(sym, minutes) {
+  for (const [name, fn] of [
     ['kraken', candlesKraken],
     ['coinbase', candlesCoinbase],
     ['binance', candlesBinance],
-  ];
-  for (const [name, fn] of sources) {
+  ]) {
     try {
-      const c = await fn(minutes);
-      if (c.length >= 60) {
-        log(`> swiece: ${name}, ${c.length} x ${minutes}m, ostatnia ${usd(c.at(-1).c)}`);
-        return { candles: c, source: name };
-      }
-      log(`! zrodlo ${name} dalo tylko ${c.length} swiec — za malo`);
-    } catch (e) {
-      log(`! zrodlo ${name} padlo: ${e.message.slice(0, 160)}`);
+      const c = await fn(sym, minutes);
+      if (c.length >= 60) return { candles: c, source: name };
+    } catch {
+      /* nastepne zrodlo */
     }
   }
-  throw new Error('zadne zrodlo swiec nie odpowiedzialo');
+  throw new Error(`brak swiec dla ${sym}`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -293,22 +304,18 @@ function analyze(candles) {
   const r = rsi(closes, CFG.RSI_LEN);
   const a = atr(candles, CFG.ATR_LEN);
   const i = closes.length - 1;
-
   const trendNow = eTrend[i];
   const trendPrev = eTrend[i - 10] ?? eTrend[i];
-  const slope = trendNow && trendPrev ? (trendNow - trendPrev) / trendPrev : 0;
 
   return {
     price: closes[i],
     emaFast: eFast[i],
     emaSlow: eSlow[i],
     emaTrend: trendNow,
-    emaFastPrev: eFast[i - 1],
-    emaSlowPrev: eSlow[i - 1],
     rsi: r[i],
     rsiPrev: r[i - 1],
     atr: a[i],
-    trendSlope: slope,
+    trendSlope: trendNow && trendPrev ? (trendNow - trendPrev) / trendPrev : 0,
     volPct: a[i] && closes[i] ? a[i] / closes[i] : 0,
     barTs: candles[i].t,
   };
@@ -329,26 +336,28 @@ function loadKeypair() {
   }
 }
 
+/** Jedno zapytanie na wszystkie tokeny zamiast osobnego na kazdy. */
 async function getBalances(conn, owner) {
-  const lamports = await conn.getBalance(owner, 'confirmed');
-  let usdc = 0;
-  try {
-    const res = await conn.getParsedTokenAccountsByOwner(
-      owner,
-      { mint: new PublicKey(USDC_MINT) },
-      'confirmed'
-    );
-    for (const acc of res.value) {
-      usdc += acc.account.data.parsed.info.tokenAmount.uiAmount || 0;
-    }
-  } catch (e) {
-    log(`! nie udalo sie odczytac USDC: ${e.message.slice(0, 140)}`);
+  const [lamports, res] = await Promise.all([
+    conn.getBalance(owner, 'confirmed'),
+    conn.getParsedTokenAccountsByOwner(owner, { programId: TOKEN_PROGRAM }, 'confirmed'),
+  ]);
+  const tok = {};
+  for (const acc of res.value) {
+    const info = acc.account.data.parsed.info;
+    tok[info.mint] = (tok[info.mint] || 0) + (info.tokenAmount.uiAmount || 0);
   }
-  return { sol: lamports / LAMPORTS_PER_SOL, usdc };
+  return { sol: lamports / LAMPORTS_PER_SOL, usdc: tok[USDC.mint] || 0, tok };
+}
+
+/** Ile mamy danego aktywa. SOL liczymy z salda natywnego. */
+function heldQty(bal, sym) {
+  if (sym === 'SOL') return bal.sol;
+  return bal.tok?.[UNIVERSE[sym].mint] || 0;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Jupiter — kwotowanie i swap
+// Jupiter
 // ─────────────────────────────────────────────────────────────────────────────
 
 const jupHeaders = () => (CFG.JUP_API_KEY ? { 'x-api-key': CFG.JUP_API_KEY } : {});
@@ -364,13 +373,14 @@ async function jupQuote(inputMint, outputMint, amountRaw) {
   return fetchJSON(`${CFG.JUP_BASE}/quote?${q}`, { headers: jupHeaders() });
 }
 
-/** Cena realnie wykonalna: ile USDC dostaniemy za 1 SOL. */
-async function livePrice() {
+/** Cena realnie wykonalna: ile USDC za jedna jednostke aktywa. */
+async function livePrice(sym) {
+  const a = UNIVERSE[sym];
   try {
-    const q = await jupQuote(SOL_MINT, USDC_MINT, 1 * LAMPORTS_PER_SOL);
-    return Number(q.outAmount) / 1e6;
+    const q = await jupQuote(a.mint, USDC.mint, 10 ** a.dec);
+    return Number(q.outAmount) / 10 ** USDC.dec;
   } catch (e) {
-    log(`! Jupiter nie dal ceny: ${e.message.slice(0, 140)}`);
+    log(`! Jupiter nie dal ceny ${sym}: ${e.message.slice(0, 100)}`);
     return null;
   }
 }
@@ -392,27 +402,24 @@ async function confirmSig(conn, sig, timeoutMs = 90000) {
 async function swap(conn, keypair, inputMint, outputMint, amountRaw) {
   const quote = await jupQuote(inputMint, outputMint, amountRaw);
   const impact = Number(quote.priceImpactPct || 0);
-  log(`> kwota: in=${quote.inAmount} out=${quote.outAmount} impact=${pct(impact)} route=${quote.routePlan?.length || '?'}`);
-
-  if (impact > 0.02) throw new Error(`price impact ${pct(impact)} za wysoki — odpuszczam`);
-
-  const body = {
-    quoteResponse: quote,
-    userPublicKey: keypair.publicKey.toBase58(),
-    wrapAndUnwrapSol: true,
-    dynamicComputeUnitLimit: true,
-    prioritizationFeeLamports: {
-      priorityLevelWithMaxLamports: {
-        maxLamports: Math.round(CFG.PRIORITY_FEE_MAX_LAMPORTS),
-        priorityLevel: 'high',
-      },
-    },
-  };
+  log(`  kwota in=${quote.inAmount} out=${quote.outAmount} impact=${pct(impact)}`);
+  if (impact > CFG.MAX_PRICE_IMPACT) throw new Error(`price impact ${pct(impact)} za wysoki`);
 
   const res = await fetchJSON(`${CFG.JUP_BASE}/swap`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', ...jupHeaders() },
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      quoteResponse: quote,
+      userPublicKey: keypair.publicKey.toBase58(),
+      wrapAndUnwrapSol: true,
+      dynamicComputeUnitLimit: true,
+      prioritizationFeeLamports: {
+        priorityLevelWithMaxLamports: {
+          maxLamports: Math.round(CFG.PRIORITY_FEE_MAX_LAMPORTS),
+          priorityLevel: 'high',
+        },
+      },
+    }),
   });
 
   const tx = VersionedTransaction.deserialize(Buffer.from(res.swapTransaction, 'base64'));
@@ -420,16 +427,15 @@ async function swap(conn, keypair, inputMint, outputMint, amountRaw) {
 
   const sim = await conn.simulateTransaction(tx, { replaceRecentBlockhash: true, commitment: 'processed' });
   if (sim.value.err) {
-    throw new Error(`symulacja nieudana: ${JSON.stringify(sim.value.err)} :: ${(sim.value.logs || []).slice(-3).join(' | ')}`);
+    throw new Error(
+      `symulacja nieudana: ${JSON.stringify(sim.value.err)} :: ${(sim.value.logs || []).slice(-3).join(' | ')}`
+    );
   }
 
-  const sig = await conn.sendRawTransaction(tx.serialize(), {
-    skipPreflight: true,
-    maxRetries: 3,
-  });
-  log(`> wyslano tx ${sig}`);
+  const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: true, maxRetries: 3 });
+  log(`  wyslano ${sig}`);
   await confirmSig(conn, sig);
-  log(`> potwierdzone: https://solscan.io/tx/${sig}`);
+  log(`  potwierdzone: https://solscan.io/tx/${sig}`);
   return { sig, quote };
 }
 
@@ -439,126 +445,114 @@ async function swap(conn, keypair, inputMint, outputMint, amountRaw) {
 
 function freshState(wallet) {
   return {
-    version: 1,
+    version: 2,
     wallet,
     createdAt: nowISO(),
     updatedAt: nowISO(),
     mode: CFG.DRY_RUN ? 'DRY' : 'LIVE',
-    position: null,
+    positions: {},
+    cooldowns: {},
     startEquity: null,
     peakEquity: null,
     halted: false,
     haltReason: null,
-    cooldownUntil: 0,
     day: { date: utcDay(), startEquity: null, realized: 0, trades: 0 },
-    stats: {
-      trades: 0,
-      wins: 0,
-      losses: 0,
-      realizedPnl: 0,
-      volumeUsd: 0,
-      feesUsd: 0,
-      bestUsd: 0,
-      worstUsd: 0,
-    },
+    stats: { trades: 0, wins: 0, losses: 0, realizedPnl: 0, volumeUsd: 0, bestUsd: 0, worstUsd: 0 },
+    perAsset: {},
     lastRun: null,
   };
+}
+
+/** Stan z wersji jednoaktywowej: pojedyncza pozycja SOL staje sie wpisem w mapie. */
+function migrate(saved) {
+  if (saved && saved.version === 1) {
+    saved.positions = saved.position ? { SOL: { ...saved.position, sym: 'SOL', qty: saved.position.sizeSol } } : {};
+    saved.cooldowns = saved.cooldownUntil ? { SOL: saved.cooldownUntil } : {};
+    delete saved.position;
+    delete saved.cooldownUntil;
+    saved.version = 2;
+    log('> stan przeniesiony z wersji jednoaktywowej');
+  }
+  return saved || {};
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Strategia
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Czy warto wejsc w SOL? Zwraca {enter, reason, score}. */
-function entrySignal(m) {
-  const reasons = [];
+/** Ocena kandydata. Zwraca {score, enter, reason} — im wyzszy score, tym lepiej. */
+function entrySignal(sym, m) {
+  const costPct = CFG.EST_COST_PCT * (UNIVERSE[sym].costMul || 1);
+  const good = [];
   let score = 0;
 
-  const trendUp = m.price > m.emaTrend && m.emaFast > m.emaSlow;
-  if (!trendUp) {
-    return { enter: false, score: 0, reason: 'brak trendu wzrostowego (cena pod EMA trend albo EMA fast < slow)' };
+  if (!(m.price > m.emaTrend && m.emaFast > m.emaSlow)) {
+    return { score: 0, enter: false, reason: 'brak trendu wzrostowego' };
   }
   score += 3;
-  reasons.push('trend wzrostowy');
+  good.push('trend');
 
   if (m.trendSlope > 0.0005) {
     score += 1;
-    reasons.push('EMA trend rosnie');
+    good.push('trend rosnie');
   }
 
   if (m.volPct < CFG.MIN_VOL_PCT) {
-    return { enter: false, score, reason: `zmiennosc za niska (${pct(m.volPct)}) — koszty zjedza ruch` };
+    return { score, enter: false, reason: `zmiennosc ${pct(m.volPct)} za niska` };
   }
   if (m.volPct > CFG.MAX_VOL_PCT) {
-    return { enter: false, score, reason: `zmiennosc za wysoka (${pct(m.volPct)}) — rynek szaleje, stoje z boku` };
+    return { score, enter: false, reason: `zmiennosc ${pct(m.volPct)} za wysoka` };
   }
   score += 1;
 
-  if (m.rsi < CFG.RSI_MIN) {
-    return { enter: false, score, reason: `RSI ${m.rsi.toFixed(1)} — spadajacy noz, czekam na odbicie` };
-  }
-  if (m.rsi > CFG.RSI_MAX) {
-    return { enter: false, score, reason: `RSI ${m.rsi.toFixed(1)} — przegrzane, nie gonie` };
-  }
+  if (m.rsi < CFG.RSI_MIN) return { score, enter: false, reason: `RSI ${m.rsi.toFixed(1)} — spadajacy noz` };
+  if (m.rsi > CFG.RSI_MAX) return { score, enter: false, reason: `RSI ${m.rsi.toFixed(1)} — przegrzane` };
   score += 1;
-  reasons.push(`RSI ${m.rsi.toFixed(1)} w oknie`);
+  good.push(`RSI ${m.rsi.toFixed(1)}`);
 
-  // Nie kupujemy wysoko nad srednia — czekamy na cofniecie do EMA fast.
   const ext = (m.price - m.emaFast) / m.atr;
   if (ext > CFG.MAX_EXT_ATR) {
-    return { enter: false, score, reason: `cena ${ext.toFixed(2)} ATR nad EMA${CFG.EMA_FAST} — za daleko, czekam na cofniecie` };
+    return { score, enter: false, reason: `${ext.toFixed(2)} ATR nad srednia — za daleko` };
   }
   score += 2;
-  reasons.push(`cofniecie do sredniej (${ext.toFixed(2)} ATR)`);
+  good.push('cofniecie do sredniej');
 
-  // RSI zawraca w gore — potwierdzenie, ze cofniecie sie konczy.
   if (m.rsi > m.rsiPrev) {
     score += 1;
-    reasons.push('RSI zawraca w gore');
+    good.push('RSI zawraca');
   }
 
-  // Czy w ogole jest z czego zarobic po kosztach?
   const expectedMove = (CFG.TAKE_PROFIT_ATR * m.atr) / m.price;
-  if (expectedMove < CFG.EST_COST_PCT * 2.5) {
-    return { enter: false, score, reason: `potencjal ${pct(expectedMove)} zbyt maly wobec kosztow ${pct(CFG.EST_COST_PCT)}` };
+  if (expectedMove < costPct * 2.5) {
+    return { score, enter: false, reason: `potencjal ${pct(expectedMove)} maly wobec kosztow ${pct(costPct)}` };
   }
+  score += 1;
 
-  const enter = score >= 7;
+  const enter = score >= CFG.MIN_SCORE;
   return {
-    enter,
     score,
-    reason: enter
-      ? `WEJSCIE: ${reasons.join(', ')} (score ${score})`
-      : `score ${score}/7 za niski: ${reasons.join(', ')}`,
+    enter,
+    reason: enter ? `gotowy: ${good.join(', ')}` : `score ${score}/${CFG.MIN_SCORE}: ${good.join(', ')}`,
   };
 }
 
-/** Czy zamknac pozycje? Zwraca {exit, reason}. */
 function exitSignal(pos, m, price) {
-  const entry = pos.entryPrice;
   const a = pos.atrAtEntry || m.atr;
-  const gainAtr = (price - entry) / a;
+  const gainAtr = (price - pos.entryPrice) / a;
   const heldH = (Date.now() - new Date(pos.entryTs).getTime()) / 3600000;
 
-  if (price <= pos.stopPrice) {
-    return { exit: true, reason: `STOP LOSS przy ${usd(price)} (stop ${usd(pos.stopPrice)})` };
-  }
-  if (price >= pos.takeProfit) {
-    return { exit: true, reason: `TAKE PROFIT przy ${usd(price)} (+${gainAtr.toFixed(2)} ATR)` };
-  }
-  if (pos.trailArmed) {
-    const trail = pos.maxPrice - CFG.TRAIL_ATR * a;
-    if (price <= trail) {
-      return { exit: true, reason: `TRAILING STOP — szczyt ${usd(pos.maxPrice)}, zejscie do ${usd(price)}` };
-    }
+  if (price <= pos.stopPrice) return { exit: true, reason: `STOP LOSS przy ${usd(price)}` };
+  if (price >= pos.takeProfit) return { exit: true, reason: `TAKE PROFIT (+${gainAtr.toFixed(2)} ATR)` };
+  if (pos.trailArmed && price <= pos.maxPrice - CFG.TRAIL_ATR * a) {
+    return { exit: true, reason: `TRAILING STOP — szczyt ${usd(pos.maxPrice)}` };
   }
   if (m.emaFast < m.emaSlow && price < m.emaTrend) {
-    return { exit: true, reason: 'trend sie odwrocil (EMA fast < slow i cena pod EMA trend)' };
+    return { exit: true, reason: 'trend sie odwrocil' };
   }
-  if (heldH > CFG.MAX_HOLD_HOURS && price < entry) {
+  if (heldH > CFG.MAX_HOLD_HOURS && price < pos.entryPrice) {
     return { exit: true, reason: `stop czasowy — ${heldH.toFixed(1)}h pod woda` };
   }
-  return { exit: false, reason: `trzymam: ${gainAtr >= 0 ? '+' : ''}${gainAtr.toFixed(2)} ATR, ${heldH.toFixed(1)}h` };
+  return { exit: false, reason: `${gainAtr >= 0 ? '+' : ''}${gainAtr.toFixed(2)} ATR, ${heldH.toFixed(1)}h` };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -566,37 +560,43 @@ function exitSignal(pos, m, price) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function main() {
-  log(`=== HAJSOMAT ${nowISO()} | tryb ${CFG.DRY_RUN ? 'DRY-RUN (symulacja)' : 'LIVE'} ===`);
+  log(`=== HAJSOMAT ${nowISO()} | ${CFG.DRY_RUN ? 'DRY-RUN (symulacja)' : 'LIVE'} ===`);
+
+  const unknown = CFG.ASSETS.filter((s) => !UNIVERSE[s]);
+  if (unknown.length) log(`! pomijam nieznane aktywa: ${unknown.join(', ')}`);
+  const assets = CFG.ASSETS.filter((s) => UNIVERSE[s]);
+  if (!assets.length) throw new Error('lista ASSETS jest pusta albo zawiera same nieznane symbole');
 
   const keypair = loadKeypair();
   if (!keypair && !CFG.DRY_RUN) {
     throw new Error('brak SOLANA_PRIVATE_KEY — w trybie LIVE bot nie ma czym podpisac transakcji');
   }
-  // Bez klucza i bez adresu da sie jeszcze odpalic sucha symulacje na pustym
-  // adresie — po to, zeby sprawdzic instalacje zanim w ogole powstanie portfel.
   let walletStr = keypair ? keypair.publicKey.toBase58() : env('WALLET_ADDRESS', '');
   if (!walletStr) {
-    if (!CFG.DRY_RUN) {
-      throw new Error('nie znam adresu portfela (SOLANA_PRIVATE_KEY albo WALLET_ADDRESS)');
-    }
+    if (!CFG.DRY_RUN) throw new Error('nie znam adresu portfela (SOLANA_PRIVATE_KEY albo WALLET_ADDRESS)');
     walletStr = NO_WALLET;
     log('> brak portfela — jade na wirtualnym kapitale, sam test instalacji');
   }
   const owner = new PublicKey(walletStr);
   log(`> portfel: ${walletStr}`);
+  log(`> aktywa: ${assets.join(', ')} | max pozycji: ${CFG.MAX_POSITIONS}`);
 
   const conn = new Connection(CFG.RPC_URL, 'confirmed');
   const base = freshState(walletStr);
-  const saved = readJSON(F_STATE, {});
+  const saved = migrate(readJSON(F_STATE, {}));
   const state = {
     ...base,
     ...saved,
     stats: { ...base.stats, ...(saved.stats || {}) },
     day: { ...base.day, ...(saved.day || {}) },
+    positions: saved.positions || {},
+    cooldowns: saved.cooldowns || {},
+    perAsset: saved.perAsset || {},
   };
   delete state.lastError;
   state.wallet = walletStr;
   state.mode = CFG.DRY_RUN ? 'DRY' : 'LIVE';
+
   const trades = readJSON(F_TRADES, []);
   const equity = readJSON(F_EQUITY, []);
 
@@ -604,49 +604,63 @@ async function main() {
     log('> reczny reset bezpiecznika');
     state.halted = false;
     state.haltReason = null;
-    state.cooldownUntil = 0;
+    state.cooldowns = {};
   }
 
-  // Dane rynkowe
-  const { candles, source } = await getCandles(CFG.CANDLE_MINUTES);
-  const m = analyze(candles);
-  if (!m.emaTrend || !m.atr || !m.rsi) throw new Error('za malo swiec na policzenie wskaznikow');
+  // ── Skan rynku ────────────────────────────────────────────────────────────
+  // Trzymane aktywa skanujemy nawet gdy wypadly z listy — trzeba je domknac.
+  const toScan = [...new Set([...assets, ...Object.keys(state.positions)])].filter((s) => UNIVERSE[s]);
+  const mkt = {};
+  for (const sym of toScan) {
+    try {
+      const { candles, source } = await getCandles(sym, CFG.CANDLE_MINUTES);
+      const m = analyze(candles);
+      if (m.emaTrend && m.atr && m.rsi != null) mkt[sym] = { ...m, source };
+      else log(`! ${sym}: za malo swiec na wskazniki`);
+    } catch (e) {
+      log(`! ${sym}: ${e.message.slice(0, 100)}`);
+    }
+    await sleep(350);
+  }
+  if (!Object.keys(mkt).length) throw new Error('nie udalo sie pobrac zadnych danych rynkowych');
+  log(`> zeskanowano ${Object.keys(mkt).length}/${toScan.length} aktywow`);
 
-  const jupPrice = await livePrice();
-  const price = jupPrice || m.price;
-  log(
-    `> cena ${usd(price)} | EMA${CFG.EMA_FAST} ${usd(m.emaFast)} | EMA${CFG.EMA_SLOW} ${usd(m.emaSlow)} | ` +
-      `RSI ${m.rsi.toFixed(1)} | ATR ${usd(m.atr)} (${pct(m.volPct)})`
-  );
-
-  // Saldo
+  // ── Salda ─────────────────────────────────────────────────────────────────
+  const pureSim = CFG.DRY_RUN && !keypair;
   let bal;
-  if (CFG.DRY_RUN && !keypair) {
-    bal = { sol: state.simSol ?? 0, usdc: state.simUsdc ?? envNum('DRY_START_USDC', 500) };
-    log(`> saldo symulowane: ${bal.sol.toFixed(4)} SOL + ${usd(bal.usdc)} USDC`);
+  if (pureSim) {
+    bal = { sol: state.simSol ?? 0, usdc: state.simUsdc ?? envNum('DRY_START_USDC', 500), tok: state.simTok || {} };
   } else if (CFG.DRY_RUN) {
     const real = await getBalances(conn, owner);
     bal = {
       sol: state.simSol ?? real.sol,
       usdc: state.simUsdc ?? (real.usdc || envNum('DRY_START_USDC', 500)),
+      tok: state.simTok || real.tok,
     };
-    log(`> saldo realne: ${real.sol.toFixed(4)} SOL + ${usd(real.usdc)} USDC | symulacja jedzie na ${bal.sol.toFixed(4)} SOL + ${usd(bal.usdc)} USDC`);
+    log(`> saldo realne ${real.sol.toFixed(4)} SOL + ${usd(real.usdc)} USDC; symulacja jedzie osobno`);
   } else {
     bal = await getBalances(conn, owner);
-    log(`> saldo: ${bal.sol.toFixed(4)} SOL + ${usd(bal.usdc)} USDC`);
+  }
+  const feeReserve = pureSim ? 0 : CFG.FEE_RESERVE_SOL;
+
+  // ── Ceny i kapital ────────────────────────────────────────────────────────
+  const prices = {};
+  for (const sym of Object.keys(mkt)) prices[sym] = mkt[sym].price;
+  for (const sym of Object.keys(state.positions)) {
+    if (!pureSim) {
+      const p = await livePrice(sym);
+      if (p) prices[sym] = p;
+    }
   }
 
-  // W czystej symulacji nikt nie placi za gaz, wiec nie blokujemy rezerwy.
-  const pureSim = CFG.DRY_RUN && !keypair;
-  const feeReserve = pureSim ? 0 : CFG.FEE_RESERVE_SOL;
-  const tradableSol = Math.max(0, bal.sol - feeReserve);
-  const equityUsd = bal.usdc + bal.sol * price;
-  log(`> kapital: ${usd(equityUsd)}`);
+  const valueOf = (sym) => heldQty(bal, sym) * (prices[sym] || 0);
+  const equityUsd =
+    bal.usdc + [...new Set([...Object.keys(prices), 'SOL'])].reduce((a, s) => a + (prices[s] ? valueOf(s) : 0), 0);
+  log(`> kapital ${usd(equityUsd)} (${usd(bal.usdc)} gotowki)`);
 
   if (state.startEquity == null) state.startEquity = equityUsd;
   state.peakEquity = Math.max(state.peakEquity ?? equityUsd, equityUsd);
 
-  // Nowa doba UTC — reset dziennych licznikow
   if (state.day?.date !== utcDay()) {
     state.day = { date: utcDay(), startEquity: equityUsd, realized: 0, trades: 0 };
     if (state.haltReason === 'dzienny limit straty') {
@@ -657,7 +671,6 @@ async function main() {
   }
   if (state.day.startEquity == null) state.day.startEquity = equityUsd;
 
-  // Bezpieczniki
   const dd = state.peakEquity > 0 ? (state.peakEquity - equityUsd) / state.peakEquity : 0;
   if (!state.halted && dd > CFG.MAX_DRAWDOWN_PCT) {
     state.halted = true;
@@ -671,35 +684,23 @@ async function main() {
     log(`!! STOP na dzis: strata dnia ${pct(dayLoss)}`);
   }
 
-  // Adopcja pozycji — portfel ma SOL, a bot o zadnej pozycji nie wie
-  if (!state.position && tradableSol * price > Math.max(CFG.MIN_TRADE_USD, equityUsd * 0.3)) {
-    state.position = {
-      entryPrice: price,
-      entryTs: nowISO(),
-      sizeSol: tradableSol,
-      costUsd: tradableSol * price,
-      atrAtEntry: m.atr,
-      stopPrice: price - CFG.STOP_ATR * m.atr,
-      takeProfit: price + CFG.TAKE_PROFIT_ATR * m.atr,
-      maxPrice: price,
-      trailArmed: false,
-      adopted: true,
-      sig: null,
-    };
-    log(`> zastalem ${tradableSol.toFixed(4)} SOL w portfelu — przyjmuje jako pozycje po ${usd(price)}`);
-  }
+  const actions = [];
+  const newTrades = [];
 
-  let action = 'HOLD';
-  let reason = '';
-  let tradeRecord = null;
+  // ── Wyjscia ───────────────────────────────────────────────────────────────
+  for (const sym of Object.keys(state.positions)) {
+    const pos = state.positions[sym];
+    const m = mkt[sym];
+    const price = prices[sym];
+    if (!m || !price) {
+      log(`! ${sym}: brak danych, zostawiam pozycje bez zmian`);
+      continue;
+    }
 
-  // ── Pozycja otwarta: pilnujemy stopow ─────────────────────────────────────
-  if (state.position) {
-    const pos = state.position;
     pos.maxPrice = Math.max(pos.maxPrice || pos.entryPrice, price);
     if (!pos.trailArmed && price - pos.entryPrice >= CFG.TRAIL_ARM_ATR * (pos.atrAtEntry || m.atr)) {
       pos.trailArmed = true;
-      log('> trailing stop uzbrojony');
+      log(`> ${sym}: trailing stop uzbrojony`);
     }
 
     const ex = CFG.FORCE_SELL
@@ -708,197 +709,277 @@ async function main() {
         ? { exit: true, reason: `bezpiecznik: ${state.haltReason}` }
         : exitSignal(pos, m, price);
 
-    reason = ex.reason;
+    const available = sym === 'SOL' ? Math.max(0, heldQty(bal, sym) - feeReserve) : heldQty(bal, sym);
+    const sellQty = Math.min(available, pos.qty || available);
 
-    if (ex.exit && tradableSol > 0.0005) {
-      const sellSol = Math.min(tradableSol, pos.sizeSol || tradableSol);
-      log(`> SPRZEDAJE ${sellSol.toFixed(4)} SOL — ${ex.reason}`);
-      action = 'SELL';
+    if (!ex.exit) {
+      log(`> ${sym}: trzymam (${ex.reason})`);
+      continue;
+    }
+    if (sellQty <= 0) {
+      log(`! ${sym}: mialem sprzedac (${ex.reason}) ale nie ma czego — zamykam wpis`);
+      delete state.positions[sym];
+      continue;
+    }
 
-      let gotUsdc;
-      let sig = null;
+    log(`> ${sym}: SPRZEDAJE ${qty(sellQty)} — ${ex.reason}`);
+    let gotUsdc;
+    let sig = null;
+    try {
       if (CFG.DRY_RUN) {
-        gotUsdc = sellSol * price * (1 - CFG.EST_COST_PCT / 2);
-        state.simSol = bal.sol - sellSol;
-        state.simUsdc = bal.usdc + gotUsdc;
+        gotUsdc = sellQty * price * (1 - (CFG.EST_COST_PCT * UNIVERSE[sym].costMul) / 2);
+        if (sym === 'SOL') bal.sol -= sellQty;
+        else bal.tok[UNIVERSE[sym].mint] = (bal.tok[UNIVERSE[sym].mint] || 0) - sellQty;
+        bal.usdc += gotUsdc;
       } else {
         const before = await getBalances(conn, owner);
-        const r = await swap(conn, keypair, SOL_MINT, USDC_MINT, Math.floor(sellSol * LAMPORTS_PER_SOL));
+        const r = await swap(
+          conn,
+          keypair,
+          UNIVERSE[sym].mint,
+          USDC.mint,
+          Math.floor(sellQty * 10 ** UNIVERSE[sym].dec)
+        );
         sig = r.sig;
         await sleep(4000);
         const after = await getBalances(conn, owner);
         gotUsdc = Math.max(0, after.usdc - before.usdc);
         bal = after;
       }
-
-      const pnlUsd = gotUsdc - pos.costUsd;
-      const pnlPct = pos.costUsd > 0 ? pnlUsd / pos.costUsd : 0;
-      const holdMs = Date.now() - new Date(pos.entryTs).getTime();
-
-      state.stats.trades += 1;
-      state.stats.realizedPnl += pnlUsd;
-      state.stats.volumeUsd += gotUsdc;
-      if (pnlUsd >= 0) state.stats.wins += 1;
-      else state.stats.losses += 1;
-      state.stats.bestUsd = Math.max(state.stats.bestUsd || 0, pnlUsd);
-      state.stats.worstUsd = Math.min(state.stats.worstUsd || 0, pnlUsd);
-      state.day.realized += pnlUsd;
-      state.day.trades += 1;
-
-      if (pnlUsd < 0) {
-        state.cooldownUntil = Date.now() + CFG.COOLDOWN_MIN * 60000;
-        log(`> strata — pauza do ${new Date(state.cooldownUntil).toISOString()}`);
-      }
-
-      tradeRecord = {
-        id: `${Date.now()}`,
-        ts: nowISO(),
-        type: 'SELL',
-        price,
-        sol: sellSol,
-        usd: gotUsdc,
-        pnlUsd,
-        pnlPct,
-        holdMs,
-        entryPrice: pos.entryPrice,
-        reason: ex.reason,
-        sig,
-        dry: CFG.DRY_RUN,
-      };
-      state.position = null;
-      log(`> zamkniete: ${pnlUsd >= 0 ? '+' : ''}${usd(pnlUsd)} (${pct(pnlPct)})`);
-    } else if (ex.exit) {
-      log(`> chcialbym sprzedac (${ex.reason}) ale nie ma czego`);
-      state.position = null;
-    } else {
-      log(`> ${ex.reason}`);
+    } catch (e) {
+      log(`! ${sym}: sprzedaz nieudana — ${e.message.slice(0, 160)}`);
+      continue;
     }
+
+    const pnlUsd = gotUsdc - pos.costUsd;
+    const pnlPct = pos.costUsd > 0 ? pnlUsd / pos.costUsd : 0;
+
+    state.stats.trades += 1;
+    state.stats.realizedPnl += pnlUsd;
+    state.stats.volumeUsd += gotUsdc;
+    if (pnlUsd >= 0) state.stats.wins += 1;
+    else state.stats.losses += 1;
+    state.stats.bestUsd = Math.max(state.stats.bestUsd || 0, pnlUsd);
+    state.stats.worstUsd = Math.min(state.stats.worstUsd || 0, pnlUsd);
+    state.day.realized += pnlUsd;
+    state.day.trades += 1;
+
+    const pa = state.perAsset[sym] || { trades: 0, wins: 0, pnl: 0 };
+    pa.trades += 1;
+    if (pnlUsd >= 0) pa.wins += 1;
+    pa.pnl += pnlUsd;
+    state.perAsset[sym] = pa;
+
+    if (pnlUsd < 0) {
+      state.cooldowns[sym] = Date.now() + CFG.COOLDOWN_MIN * 60000;
+      log(`> ${sym}: strata — pauza na ${CFG.COOLDOWN_MIN} min`);
+    }
+
+    newTrades.push({
+      id: `${Date.now()}-${sym}`,
+      ts: nowISO(),
+      sym,
+      type: 'SELL',
+      price,
+      qty: sellQty,
+      usd: gotUsdc,
+      pnlUsd,
+      pnlPct,
+      holdMs: Date.now() - new Date(pos.entryTs).getTime(),
+      entryPrice: pos.entryPrice,
+      reason: ex.reason,
+      sig,
+      dry: CFG.DRY_RUN,
+    });
+    delete state.positions[sym];
+    actions.push(`SELL ${sym}`);
+    log(`> ${sym}: zamkniete ${pnlUsd >= 0 ? '+' : ''}${usd(pnlUsd)} (${pct(pnlPct)})`);
   }
 
-  // ── Brak pozycji: szukamy wejscia ─────────────────────────────────────────
-  else {
-    const sig = entrySignal(m);
-    reason = sig.reason;
-
-    const blockers = [];
-    if (state.halted) blockers.push(`bezpiecznik: ${state.haltReason}`);
-    if (Date.now() < (state.cooldownUntil || 0)) {
-      const left = Math.ceil((state.cooldownUntil - Date.now()) / 60000);
-      blockers.push(`pauza po stracie jeszcze ${left} min`);
+  // ── Skan kandydatow ───────────────────────────────────────────────────────
+  const scan = [];
+  for (const sym of assets) {
+    const m = mkt[sym];
+    if (!m) {
+      scan.push({ sym, score: 0, reason: 'brak danych', held: false });
+      continue;
     }
-    if (state.day.trades >= CFG.MAX_TRADES_PER_DAY) {
-      blockers.push(`limit ${CFG.MAX_TRADES_PER_DAY} trejdow na dobe wyczerpany`);
-    }
-    if (CFG.FORCE_SELL) blockers.push('tryb wymuszonej sprzedazy');
+    const held = !!state.positions[sym];
+    const cd = state.cooldowns[sym] || 0;
+    const sig = entrySignal(sym, m);
+    scan.push({
+      sym,
+      price: m.price,
+      score: sig.score,
+      rsi: m.rsi,
+      volPct: m.volPct,
+      trend: m.emaFast > m.emaSlow && m.price > m.emaTrend ? 'up' : 'down',
+      reason: held
+        ? 'trzymam pozycje'
+        : Date.now() < cd
+          ? `pauza po stracie jeszcze ${Math.ceil((cd - Date.now()) / 60000)} min`
+          : sig.reason,
+      enter: sig.enter && !held && Date.now() >= cd,
+      held,
+    });
+  }
+  scan.sort((a, b) => b.score - a.score);
+  log('> skaner:');
+  for (const c of scan) {
+    const t = c.trend === 'up' ? 'trend+' : 'trend-';
+    const r = c.rsi != null ? `RSI ${c.rsi.toFixed(1)}` : 'RSI —';
+    log(`   ${c.sym.padEnd(7)} score ${String(c.score).padStart(2)}  ${t}  ${r.padEnd(9)}  ${c.reason}`);
+  }
 
-    const budget = Math.min(bal.usdc, equityUsd * CFG.ALLOC_PCT, CFG.MAX_TRADE_USD);
-    if (budget < CFG.MIN_TRADE_USD) {
-      blockers.push(`budzet ${usd(budget)} ponizej minimum ${usd(CFG.MIN_TRADE_USD)}`);
-    }
-    if (!pureSim && bal.sol < CFG.FEE_RESERVE_SOL / 2) {
-      blockers.push(`za malo SOL na oplaty (${bal.sol.toFixed(4)}) — dorzuc troche SOL`);
-    }
+  // ── Wejscia ───────────────────────────────────────────────────────────────
+  const blockers = [];
+  if (state.halted) blockers.push(`bezpiecznik: ${state.haltReason}`);
+  if (CFG.FORCE_SELL) blockers.push('tryb wymuszonej sprzedazy');
+  if (state.day.trades >= CFG.MAX_TRADES_PER_DAY) {
+    blockers.push(`limit ${CFG.MAX_TRADES_PER_DAY} trejdow na dobe wyczerpany`);
+  }
+  if (!pureSim && bal.sol < CFG.FEE_RESERVE_SOL / 2) {
+    blockers.push(`za malo SOL na oplaty (${bal.sol.toFixed(4)}) — dorzuc troche SOL`);
+  }
 
-    if (sig.enter && blockers.length === 0) {
-      log(`> KUPUJE za ${usd(budget)} — ${sig.reason}`);
-      action = 'BUY';
-      reason = sig.reason;
+  let slots = CFG.MAX_POSITIONS - Object.keys(state.positions).length;
+  if (slots <= 0) blockers.push(`wszystkie ${CFG.MAX_POSITIONS} sloty zajete`);
 
-      let gotSol;
-      let txSig = null;
-      if (CFG.DRY_RUN) {
-        gotSol = (budget / price) * (1 - CFG.EST_COST_PCT / 2);
-        state.simSol = bal.sol + gotSol;
-        state.simUsdc = bal.usdc - budget;
-      } else {
-        const before = await getBalances(conn, owner);
-        const r = await swap(conn, keypair, USDC_MINT, SOL_MINT, Math.floor(budget * 1e6));
-        txSig = r.sig;
-        await sleep(4000);
-        const after = await getBalances(conn, owner);
-        gotSol = Math.max(0, after.sol - before.sol);
-        bal = after;
+  if (!blockers.length) {
+    for (const cand of scan.filter((c) => c.enter)) {
+      if (slots <= 0) break;
+      const sym = cand.sym;
+      const m = mkt[sym];
+      const budget = Math.min(bal.usdc, equityUsd * CFG.ALLOC_PCT, CFG.MAX_TRADE_USD);
+      if (budget < CFG.MIN_TRADE_USD) {
+        log(`> ${sym}: budzet ${usd(budget)} ponizej minimum, koniec wejsc`);
+        break;
       }
 
-      const costUsd = budget;
-      state.position = {
-        entryPrice: gotSol > 0 ? costUsd / gotSol : price,
+      const price = (!pureSim && (await livePrice(sym))) || m.price;
+      log(`> ${sym}: KUPUJE za ${usd(budget)} — ${cand.reason}`);
+
+      let gotQty;
+      let txSig = null;
+      try {
+        if (CFG.DRY_RUN) {
+          gotQty = (budget / price) * (1 - (CFG.EST_COST_PCT * UNIVERSE[sym].costMul) / 2);
+          if (sym === 'SOL') bal.sol += gotQty;
+          else bal.tok[UNIVERSE[sym].mint] = (bal.tok[UNIVERSE[sym].mint] || 0) + gotQty;
+          bal.usdc -= budget;
+        } else {
+          const before = await getBalances(conn, owner);
+          const r = await swap(
+            conn,
+            keypair,
+            USDC.mint,
+            UNIVERSE[sym].mint,
+            Math.floor(budget * 10 ** USDC.dec)
+          );
+          txSig = r.sig;
+          await sleep(4000);
+          const after = await getBalances(conn, owner);
+          gotQty = Math.max(0, heldQty(after, sym) - heldQty(before, sym));
+          bal = after;
+        }
+      } catch (e) {
+        log(`! ${sym}: zakup nieudany — ${e.message.slice(0, 160)}`);
+        continue;
+      }
+
+      if (gotQty <= 0) {
+        log(`! ${sym}: swap nie dodal nic do salda, pomijam`);
+        continue;
+      }
+
+      const entryPrice = budget / gotQty;
+      state.positions[sym] = {
+        sym,
+        entryPrice,
         entryTs: nowISO(),
-        sizeSol: gotSol,
-        costUsd,
+        qty: gotQty,
+        costUsd: budget,
         atrAtEntry: m.atr,
         stopPrice: price - CFG.STOP_ATR * m.atr,
         takeProfit: price + CFG.TAKE_PROFIT_ATR * m.atr,
         maxPrice: price,
         trailArmed: false,
-        adopted: false,
         sig: txSig,
       };
-      state.stats.volumeUsd += costUsd;
+      state.stats.volumeUsd += budget;
       state.day.trades += 1;
+      slots -= 1;
 
-      tradeRecord = {
-        id: `${Date.now()}`,
+      newTrades.push({
+        id: `${Date.now()}-${sym}`,
         ts: nowISO(),
+        sym,
         type: 'BUY',
-        price: state.position.entryPrice,
-        sol: gotSol,
-        usd: costUsd,
+        price: entryPrice,
+        qty: gotQty,
+        usd: budget,
         pnlUsd: null,
         pnlPct: null,
-        reason: sig.reason,
-        stopPrice: state.position.stopPrice,
-        takeProfit: state.position.takeProfit,
+        reason: cand.reason,
+        stopPrice: state.positions[sym].stopPrice,
+        takeProfit: state.positions[sym].takeProfit,
         sig: txSig,
         dry: CFG.DRY_RUN,
-      };
-      log(`> wszedlem: ${gotSol.toFixed(4)} SOL po ${usd(state.position.entryPrice)}, stop ${usd(state.position.stopPrice)}, TP ${usd(state.position.takeProfit)}`);
-    } else {
-      if (blockers.length) reason = `${blockers.join(' | ')}`;
-      log(`> stoje z boku: ${reason}`);
+      });
+      actions.push(`BUY ${sym}`);
+      log(`> ${sym}: wszedlem ${qty(gotQty)} po ${usd(entryPrice)}, stop ${usd(state.positions[sym].stopPrice)}`);
     }
+  } else {
+    log(`> nie kupuje: ${blockers.join(' | ')}`);
   }
 
-  // ── Zapis stanu ───────────────────────────────────────────────────────────
-  const finalEquity = bal.usdc + bal.sol * price;
-  const unrealized = state.position
-    ? state.position.sizeSol * price - state.position.costUsd
-    : 0;
+  // ── Zapis ─────────────────────────────────────────────────────────────────
+  const finalEquity =
+    bal.usdc + [...new Set([...Object.keys(prices), 'SOL'])].reduce((a, s) => a + (prices[s] ? valueOf(s) : 0), 0);
+  const unrealized = Object.entries(state.positions).reduce(
+    (a, [sym, p]) => a + (prices[sym] ? p.qty * prices[sym] - p.costUsd : 0),
+    0
+  );
+
+  if (pureSim) {
+    state.simSol = bal.sol;
+    state.simUsdc = bal.usdc;
+    state.simTok = bal.tok;
+  }
+
+  const action = actions.length ? actions.join(', ') : 'HOLD';
+  const topReason = actions.length
+    ? actions.join(', ')
+    : blockers.length
+      ? blockers.join(' | ')
+      : scan.length
+        ? `najlepszy kandydat ${scan[0].sym}: ${scan[0].reason}`
+        : 'brak kandydatow';
 
   state.updatedAt = nowISO();
   state.lastRun = {
     ts: nowISO(),
     action,
-    reason,
-    price,
-    source,
+    reason: topReason,
     equityUsd: finalEquity,
     unrealizedUsd: unrealized,
-    indicators: {
-      emaFast: m.emaFast,
-      emaSlow: m.emaSlow,
-      emaTrend: m.emaTrend,
-      rsi: m.rsi,
-      atr: m.atr,
-      volPct: m.volPct,
-      trendSlope: m.trendSlope,
-    },
+    scanned: Object.keys(mkt).length,
+    slotsFree: Math.max(0, CFG.MAX_POSITIONS - Object.keys(state.positions).length),
+    maxPositions: CFG.MAX_POSITIONS,
+    scan,
+    prices,
     balances: { sol: bal.sol, usdc: bal.usdc },
   };
   state.peakEquity = Math.max(state.peakEquity ?? finalEquity, finalEquity);
 
-  if (tradeRecord) {
-    trades.push(tradeRecord);
-    while (trades.length > MAX_TRADES_KEPT) trades.shift();
-  }
+  for (const t of newTrades) trades.push(t);
+  while (trades.length > MAX_TRADES_KEPT) trades.shift();
 
   equity.push({
     ts: Date.now(),
     equityUsd: finalEquity,
-    price,
-    sol: bal.sol,
     usdc: bal.usdc,
-    pos: state.position ? 1 : 0,
+    pos: Object.keys(state.positions).length,
     realized: state.stats.realizedPnl,
   });
   while (equity.length > MAX_EQUITY_KEPT) equity.shift();
@@ -910,7 +991,7 @@ async function main() {
   const roi = state.startEquity > 0 ? (finalEquity - state.startEquity) / state.startEquity : 0;
   log(`=== ${action} | kapital ${usd(finalEquity)} | zrealizowane ${usd(state.stats.realizedPnl)} | ROI ${pct(roi)} ===`);
 
-  return { action, reason, finalEquity, roi, price, state };
+  return { action, reason: topReason, finalEquity, roi, state, scan };
 }
 
 function writeSummary(result, error) {
@@ -921,6 +1002,7 @@ function writeSummary(result, error) {
     lines.push(`**Blad:** \`${error.message}\``, '');
   } else if (result) {
     const s = result.state;
+    const open = Object.entries(s.positions);
     lines.push(
       `**Akcja:** ${result.action}`,
       `**Powod:** ${result.reason}`,
@@ -928,13 +1010,21 @@ function writeSummary(result, error) {
       '| | |',
       '|---|---|',
       `| Tryb | ${CFG.DRY_RUN ? 'DRY-RUN' : 'LIVE'} |`,
-      `| Cena SOL | ${usd(result.price)} |`,
       `| Kapital | ${usd(result.finalEquity)} |`,
       `| ROI | ${pct(result.roi)} |`,
       `| Zrealizowane | ${usd(s.stats.realizedPnl)} |`,
       `| Trejdy | ${s.stats.trades} (${s.stats.wins}W / ${s.stats.losses}L) |`,
-      `| Pozycja | ${s.position ? `${s.position.sizeSol.toFixed(4)} SOL @ ${usd(s.position.entryPrice)}` : 'brak (cash)'} |`,
+      `| Pozycje | ${open.length ? open.map(([k, p]) => `${k} @ ${usd(p.entryPrice)}`).join(', ') : 'brak (cash)'} |`,
       `| Bezpiecznik | ${s.halted ? `AKTYWNY — ${s.haltReason}` : 'ok'} |`,
+      '',
+      '## Skaner',
+      '',
+      '| Aktyw | Cena | Score | RSI | Zmiennosc | Ocena |',
+      '|---|---|---|---|---|---|',
+      ...result.scan.map(
+        (c) =>
+          `| ${c.sym} | ${c.price ? usd(c.price) : '—'} | ${c.score} | ${c.rsi ? c.rsi.toFixed(1) : '—'} | ${c.volPct ? pct(c.volPct) : '—'} | ${c.reason} |`
+      ),
       ''
     );
   }
@@ -942,7 +1032,7 @@ function writeSummary(result, error) {
   try {
     fs.appendFileSync(f, lines.join('\n') + '\n');
   } catch {
-    /* summary to tylko kosmetyka */
+    /* summary to kosmetyka */
   }
 }
 
@@ -953,7 +1043,6 @@ try {
   log(`!! BLAD: ${e.message}`);
   if (e.stack) console.error(e.stack);
   writeSummary(null, e);
-  // Zapisujemy slad bledu, zeby apka pokazala ze cos jest nie tak.
   try {
     const st = readJSON(F_STATE, null);
     if (st) {

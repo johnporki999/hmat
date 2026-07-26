@@ -65,6 +65,9 @@ jobs:
 
           # Strojenie (Settings -> Secrets and variables -> Actions -> Variables).
           # Puste = wartosc domyslna z trade.mjs.
+          ASSETS: ${{ vars.ASSETS }}
+          MAX_POSITIONS: ${{ vars.MAX_POSITIONS }}
+          MIN_SCORE: ${{ vars.MIN_SCORE }}
           ALLOC_PCT: ${{ vars.ALLOC_PCT }}
           MAX_TRADE_USD: ${{ vars.MAX_TRADE_USD }}
           MIN_TRADE_USD: ${{ vars.MIN_TRADE_USD }}

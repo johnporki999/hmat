@@ -66,9 +66,28 @@ const MONO = Platform.select({ ios: 'Menlo', android: 'monospace', default: 'mon
 
 const SOL_MINT = 'So11111111111111111111111111111111111111112';
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
 const JUP = 'https://lite-api.jup.ag/swap/v1';
 // Bot uzywa tego adresu, gdy symuluje bez portfela — nie ma czego odpytywac.
 const NO_WALLET = '11111111111111111111111111111111';
+
+// Do nazywania sald z lancucha. Minty muszą się zgadzać z bot/trade.mjs.
+const MINTS = {
+  [USDC_MINT]: 'USDC',
+  [SOL_MINT]: 'SOL',
+  JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN: 'JUP',
+  jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL: 'JTO',
+  HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3: 'PYTH',
+  '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R': 'RAY',
+  orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE: 'ORCA',
+  rndrizKT3MK1iimdxRdWabcF7Zg7AR5T4nud4EkHBof: 'RENDER',
+  DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263: 'BONK',
+  '85VBFQZC9TZkfaptBWjvUw7YbZjy52A6mjtPGjstQAmQ': 'W',
+  TNSRxcUxoT9xBG3de7PiJyTDYu7kskLqcpddxnEJAS6: 'TNSR',
+  DriFtupJYLTosbwoN8koMbEYSx54aFAVLddWsbksjwg7: 'DRIFT',
+  KMNo3nJsBXfcpJTVhZcXLW7RmTwTt4GVFE7suUBo9sS: 'KMNO',
+  '2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv': 'PENGU',
+};
 
 const DEFAULTS = {
   repo: '',
@@ -95,6 +114,17 @@ function nf(n, d = 2) {
 }
 
 const money = (n, d = 2) => (n == null || !isFinite(n) ? '—' : `$${nf(n, d)}`);
+
+/** Cena tokena — BONK kosztuje 0,000003, SOL 75. Dobieramy miejsca po przecinku. */
+function priceFmt(n) {
+  if (n == null || !isFinite(n)) return '—';
+  const a = Math.abs(n);
+  const d = a >= 100 ? 2 : a >= 1 ? 3 : a >= 0.01 ? 4 : a >= 0.0001 ? 6 : 9;
+  return `$${nf(n, d)}`;
+}
+
+/** Ilosc tokena — 0,1234 SOL kontra 40 000 000 BONK. */
+const qtyFmt = (n) => (n == null || !isFinite(n) ? '—' : nf(n, Math.abs(n) >= 1000 ? 0 : 4));
 const signed = (n, d = 2) =>
   n == null || !isFinite(n) ? '—' : `${n >= 0 ? '+' : '−'}$${nf(Math.abs(n), d)}`;
 const signedPct = (n, d = 2) =>
@@ -171,17 +201,21 @@ async function fetchChain(rpcUrl, wallet) {
     rpc(rpcUrl, 'getBalance', [wallet]),
     rpc(rpcUrl, 'getTokenAccountsByOwner', [
       wallet,
-      { mint: USDC_MINT },
+      { programId: TOKEN_PROGRAM },
       { encoding: 'jsonParsed' },
     ]).catch(() => ({ value: [] })),
     rpc(rpcUrl, 'getSignaturesForAddress', [wallet, { limit: 40 }]).catch(() => []),
   ]);
 
   const sol = (balRes?.value ?? 0) / 1e9;
-  let usdc = 0;
+  const tok = {};
   for (const a of tokRes?.value || []) {
-    usdc += a?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
+    const info = a?.account?.data?.parsed?.info;
+    if (!info) continue;
+    const amt = info.tokenAmount?.uiAmount || 0;
+    if (amt > 0) tok[info.mint] = (tok[info.mint] || 0) + amt;
   }
+  const usdc = tok[USDC_MINT] || 0;
   const txs = (sigRes || []).map((s) => ({
     sig: s.signature,
     ts: s.blockTime ? s.blockTime * 1000 : null,
@@ -189,7 +223,7 @@ async function fetchChain(rpcUrl, wallet) {
     slot: s.slot,
     memo: s.memo,
   }));
-  return { sol, usdc, txs };
+  return { sol, usdc, tok, txs };
 }
 
 async function fetchPrice() {
@@ -222,12 +256,23 @@ function computeStats({ state, trades, equity, price, chain }) {
   const grossWin = wins.reduce((a, t) => a + t.pnlUsd, 0);
   const grossLoss = Math.abs(losses.reduce((a, t) => a + t.pnlUsd, 0));
 
-  const pos = state?.position || null;
-  const unrealized = pos && price ? pos.sizeSol * price - pos.costUsd : 0;
+  // Ceny z ostatniego przebiegu bota — jedyne zrodlo wyceny dla altow.
+  const prices = { ...(state?.lastRun?.prices || {}) };
+  if (price) prices.SOL = price;
 
-  // Kapital: najchetniej z lancucha (prawda), w ostatecznosci z ostatniego wpisu bota.
+  // Stan w wersji 1 mial jedna pozycje SOL; nowy trzyma mape symbol -> pozycja.
+  const rawPos = state?.positions || (state?.position ? { SOL: state.position } : {});
+  const positions = Object.entries(rawPos).map(([sym, p]) => {
+    const qty = p.qty ?? p.sizeSol ?? 0;
+    const now = prices[sym] ?? p.entryPrice;
+    return { ...p, sym, qty, now, value: qty * now, pnl: qty * now - p.costUsd };
+  });
+  const unrealized = positions.reduce((a, p) => a + p.pnl, 0);
+
+  // Kapital liczy bot (zna ceny wszystkich aktywow); lancuch to zapasowe zrodlo.
   const liveEquity =
-    chain && price ? chain.usdc + chain.sol * price : equity?.length ? equity.at(-1).equityUsd : null;
+    state?.lastRun?.equityUsd ??
+    (equity?.length ? equity.at(-1).equityUsd : chain && price ? chain.usdc + chain.sol * price : null);
 
   const curve = (equity || [])
     .filter((e) => isFinite(e?.equityUsd) && e.equityUsd > 0)
@@ -323,7 +368,12 @@ function computeStats({ state, trades, equity, price, chain }) {
     avgHold,
     volume: state?.stats?.volumeUsd ?? 0,
     curve,
-    pos,
+    positions,
+    prices,
+    scan: state?.lastRun?.scan || [],
+    perAsset: Object.entries(state?.perAsset || {})
+      .map(([sym, v]) => ({ sym, ...v }))
+      .sort((a, b) => b.pnl - a.pnl),
     dryCount,
   };
 }
@@ -728,48 +778,55 @@ function Kokpit({ data, cfg, goSettings }) {
         <EquityChart points={curve} baseline={range === 'max' ? stats.start : curve[0]?.v} />
       </Card>
 
-      {/* Pozycja */}
+      {/* Pozycje */}
       <Card>
-        <SectionTitle>Pozycja</SectionTitle>
-        {stats.pos ? (
-          <>
-            <View style={s.headRow}>
-              <View>
-                <Text style={s.posBig}>{nf(stats.pos.sizeSol, 4)} SOL</Text>
-                <Text style={s.statSub}>
-                  wejscie {money(stats.pos.entryPrice)} · {ago(stats.pos.entryTs)}
-                </Text>
+        <SectionTitle
+          right={
+            lastRun?.maxPositions ? (
+              <Text style={s.statSub}>
+                {stats.positions.length} z {lastRun.maxPositions} slotow
+              </Text>
+            ) : null
+          }
+        >
+          Otwarte pozycje
+        </SectionTitle>
+        {stats.positions.length ? (
+          stats.positions.map((p, i) => (
+            <View key={p.sym} style={i > 0 ? { marginTop: 24 } : null}>
+              {i > 0 && <View style={[s.divider, { marginTop: 0, marginBottom: 18 }]} />}
+              <View style={s.headRow}>
+                <View style={{ flex: 1 }}>
+                  <View style={s.posHead}>
+                    <Pill text={p.sym} tone="cyan" small />
+                    <Text style={s.posBig}>{qtyFmt(p.qty)}</Text>
+                  </View>
+                  <Text style={s.statSub}>
+                    wejscie {priceFmt(p.entryPrice)} · {ago(p.entryTs)}
+                  </Text>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={[s.posPnl, { color: p.pnl >= 0 ? C.green : C.red }]}>
+                    {signed(p.pnl)}
+                  </Text>
+                  <Text style={s.statSub}>
+                    {p.costUsd ? signedPct(p.pnl / p.costUsd) : ''} niezrealizowane
+                  </Text>
+                </View>
               </View>
-              <View style={{ alignItems: 'flex-end' }}>
-                <Text
-                  style={[
-                    s.posPnl,
-                    { color: stats.unrealized >= 0 ? C.green : C.red },
-                  ]}
-                >
-                  {signed(stats.unrealized)}
-                </Text>
-                <Text style={s.statSub}>
-                  {stats.pos.costUsd ? signedPct(stats.unrealized / stats.pos.costUsd) : ''} niezrealizowane
-                </Text>
+              <PositionGauge stop={p.stopPrice} tp={p.takeProfit} entry={p.entryPrice} price={p.now} />
+              <View style={{ marginTop: 12 }}>
+                <Row label="Kurs teraz" value={priceFmt(p.now)} />
+                <Row label="Wartosc" value={money(p.value)} />
+                <Row label="Kosztowala" value={money(p.costUsd)} />
+                <Row
+                  label="Trailing stop"
+                  value={p.trailArmed ? 'uzbrojony' : 'jeszcze nie'}
+                  tone={p.trailArmed ? 'green' : 'dim'}
+                />
               </View>
             </View>
-            <PositionGauge
-              stop={stats.pos.stopPrice}
-              tp={stats.pos.takeProfit}
-              entry={stats.pos.entryPrice}
-              price={price}
-            />
-            <View style={{ marginTop: 12 }}>
-              <Row label="Wartosc teraz" value={money(stats.pos.sizeSol * (price || 0))} />
-              <Row label="Kosztowala" value={money(stats.pos.costUsd)} />
-              <Row
-                label="Trailing stop"
-                value={stats.pos.trailArmed ? 'uzbrojony' : 'jeszcze nie'}
-                tone={stats.pos.trailArmed ? 'green' : 'dim'}
-              />
-            </View>
-          </>
+          ))
         ) : (
           <View style={s.emptyBox}>
             <Text style={s.emptyText}>
@@ -812,28 +869,55 @@ function Kokpit({ data, cfg, goSettings }) {
         <View style={s.actionRow}>
           <Pill
             text={lastRun?.action || 'BRAK'}
-            tone={lastRun?.action === 'BUY' ? 'cyan' : lastRun?.action === 'SELL' ? 'violet' : 'dim'}
+            tone={
+              lastRun?.action?.includes('BUY')
+                ? 'cyan'
+                : lastRun?.action?.includes('SELL')
+                  ? 'violet'
+                  : 'dim'
+            }
           />
           {stale && <Pill text="dane nieswieze" tone="amber" small />}
         </View>
         <Text style={s.reason}>{lastRun?.reason || 'Bot jeszcze nic nie zaraportowal.'}</Text>
-
-        {lastRun?.indicators ? (
-          <View style={{ marginTop: 12 }}>
-            <Row label="Cena SOL" value={money(price || lastRun.price, 2)} />
-            <Row label="RSI" value={nf(lastRun.indicators.rsi, 1)} />
-            <Row
-              label="Trend"
-              value={
-                lastRun.indicators.emaFast > lastRun.indicators.emaSlow ? 'wzrostowy' : 'spadkowy'
-              }
-              tone={lastRun.indicators.emaFast > lastRun.indicators.emaSlow ? 'green' : 'red'}
-            />
-            <Row label="Zmiennosc (ATR)" value={`${nf(lastRun.indicators.volPct * 100, 2)}%`} />
-            <Row label="Zrodlo swiec" value={lastRun.source || '—'} tone="dim" />
-          </View>
-        ) : null}
       </Card>
+
+      {/* Skaner */}
+      {stats.scan.length ? (
+        <Card>
+          <SectionTitle right={<Text style={s.statSub}>{stats.scan.length} aktywow</Text>}>
+            Skaner rynku
+          </SectionTitle>
+          {stats.scan.map((c, i) => {
+            const tone = c.enter ? C.green : c.held ? C.cyan : c.trend === 'up' ? C.amber : C.faint;
+            return (
+              <View key={c.sym} style={[s.scanRow, i > 0 && { borderTopWidth: 1, borderTopColor: C.line }]}>
+                <View style={s.scanHead}>
+                  <View style={[s.scanDot, { backgroundColor: tone }]} />
+                  <Text style={s.scanSym}>{c.sym}</Text>
+                  <Text style={s.scanPrice}>{priceFmt(c.price)}</Text>
+                  <View style={s.scanBarTrack}>
+                    <View
+                      style={[
+                        s.scanBarFill,
+                        { width: `${clamp((c.score / 10) * 100, 0, 100)}%`, backgroundColor: tone },
+                      ]}
+                    />
+                  </View>
+                  <Text style={s.scanScore}>{c.score}</Text>
+                </View>
+                <Text style={s.scanReason} numberOfLines={2}>
+                  {c.reason}
+                </Text>
+              </View>
+            );
+          })}
+          <Text style={s.scanLegend}>
+            Zielony — gotowy do wejscia · niebieski — pozycja otwarta · pomaranczowy — trend jest,
+            ale warunki jeszcze nie · szary — brak trendu wzrostowego.
+          </Text>
+        </Card>
+      ) : null}
 
       {/* Portfel */}
       <Card>
@@ -843,6 +927,27 @@ function Kokpit({ data, cfg, goSettings }) {
           <Stat label="USDC" value={nf(chain?.usdc, 2)} sub="gotowka" />
           <Stat label="KURS SOL" value={money(price)} sub="Jupiter" />
         </View>
+
+        {chain?.tok
+          ? (() => {
+              const rest = Object.entries(chain.tok)
+                .filter(([m]) => m !== USDC_MINT)
+                .map(([m, v]) => ({ sym: MINTS[m] || `${m.slice(0, 4)}…`, v, m }))
+                .sort((a, b) => b.v - a.v);
+              if (!rest.length) return null;
+              return (
+                <View style={{ marginTop: 12 }}>
+                  {rest.map((t) => (
+                    <Row
+                      key={t.m}
+                      label={t.sym}
+                      value={`${qtyFmt(t.v)}${stats.prices[t.sym] ? `   ${money(t.v * stats.prices[t.sym])}` : ''}`}
+                    />
+                  ))}
+                </View>
+              );
+            })()
+          : null}
         <Pressable
           onPress={async () => {
             tap();
@@ -878,7 +983,8 @@ function TradeRow({ t }) {
       <View style={{ flex: 1, marginLeft: 12 }}>
         <View style={s.headRow}>
           <Text style={s.tradeTitle}>
-            {nf(t.sol, 4)} SOL <Text style={s.tradeAt}>po {money(t.price)}</Text>
+            {qtyFmt(t.qty ?? t.sol)} <Text style={{ color: C.cyan }}>{t.sym || 'SOL'}</Text>{' '}
+            <Text style={s.tradeAt}>po {priceFmt(t.price)}</Text>
           </Text>
           {pnl != null ? (
             <Text style={[s.tradePnl, { color: pnl >= 0 ? C.green : C.red }]}>{signed(pnl)}</Text>
@@ -1024,8 +1130,8 @@ function Staty({ data, cfg }) {
         <Row label="Zysk zrealizowany" value={signed(stats.realized)} tone={stats.realized >= 0 ? 'green' : 'red'} />
         <Row
           label="Zysk otwarty"
-          value={stats.pos ? signed(stats.unrealized) : '—'}
-          tone={stats.pos ? (stats.unrealized >= 0 ? 'green' : 'red') : 'dim'}
+          value={stats.positions.length ? signed(stats.unrealized) : '—'}
+          tone={stats.positions.length ? (stats.unrealized >= 0 ? 'green' : 'red') : 'dim'}
         />
         <Row label="Razem" value={signed(stats.total)} tone={stats.total >= 0 ? 'green' : 'red'} />
         <View style={s.divider} />
@@ -1042,6 +1148,37 @@ function Staty({ data, cfg }) {
         <Row label="Obrot lacznie" value={money(stats.volume, 0)} tone="dim" />
         <Row label="W zlotowkach" value={`${nf(stats.total * cfg.usdPln, 2)} zl`} tone={stats.total >= 0 ? 'green' : 'red'} />
       </Card>
+
+      {stats.perAsset.length ? (
+        <Card>
+          <SectionTitle right={<Text style={s.statSub}>kto zarabia</Text>}>Wedlug aktywa</SectionTitle>
+          {stats.perAsset.map((a, i) => {
+            const wr = a.trades ? a.wins / a.trades : 0;
+            return (
+              <View key={a.sym} style={[s.assetRow, i > 0 && { borderTopWidth: 1, borderTopColor: C.line }]}>
+                <Text style={s.assetSym}>{a.sym}</Text>
+                <View style={{ flex: 1 }}>
+                  <View style={s.assetBarTrack}>
+                    <View
+                      style={[
+                        s.assetBarFill,
+                        {
+                          width: `${clamp(wr * 100, 3, 100)}%`,
+                          backgroundColor: a.pnl >= 0 ? C.green : C.red,
+                        },
+                      ]}
+                    />
+                  </View>
+                  <Text style={s.assetMeta}>
+                    {a.trades} {a.trades === 1 ? 'trejd' : 'trejdow'} · {nf(wr * 100, 0)}% trafien
+                  </Text>
+                </View>
+                <Text style={[s.assetPnl, { color: a.pnl >= 0 ? C.green : C.red }]}>{signed(a.pnl)}</Text>
+              </View>
+            );
+          })}
+        </Card>
+      ) : null}
 
       <Card>
         <SectionTitle>Wynik dzien po dniu</SectionTitle>
@@ -1560,6 +1697,25 @@ const s = StyleSheet.create({
 
   posBig: { color: C.text, fontSize: 22, fontWeight: '800', fontFamily: MONO },
   posPnl: { fontSize: 22, fontWeight: '800', fontFamily: MONO },
+  posHead: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3 },
+
+  scanRow: { paddingVertical: 11 },
+  scanHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  scanDot: { width: 7, height: 7, borderRadius: 4 },
+  scanSym: { color: C.text, fontSize: 13, fontWeight: '800', width: 58 },
+  scanPrice: { color: C.dim, fontSize: 11, fontFamily: MONO, width: 82 },
+  scanBarTrack: { flex: 1, height: 5, borderRadius: 3, backgroundColor: C.bg2, overflow: 'hidden' },
+  scanBarFill: { height: '100%', borderRadius: 3 },
+  scanScore: { color: C.dim, fontSize: 11, fontFamily: MONO, width: 18, textAlign: 'right' },
+  scanReason: { color: C.faint, fontSize: 11, marginTop: 5, marginLeft: 15, lineHeight: 15 },
+  scanLegend: { color: C.faint, fontSize: 10, lineHeight: 15, marginTop: 12 },
+
+  assetRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 11 },
+  assetSym: { color: C.text, fontSize: 13, fontWeight: '800', width: 62 },
+  assetBarTrack: { height: 5, borderRadius: 3, backgroundColor: C.bg2, overflow: 'hidden' },
+  assetBarFill: { height: '100%', borderRadius: 3 },
+  assetMeta: { color: C.faint, fontSize: 10, marginTop: 5 },
+  assetPnl: { fontSize: 13, fontWeight: '800', fontFamily: MONO },
 
   gaugeTrack: {
     height: 8,
