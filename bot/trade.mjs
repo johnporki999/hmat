@@ -595,10 +595,44 @@ async function main() {
   };
   delete state.lastError;
   state.wallet = walletStr;
+
+  const prevMode = saved.mode;
+  const prevWallet = saved.wallet;
   state.mode = CFG.DRY_RUN ? 'DRY' : 'LIVE';
 
-  const trades = readJSON(F_TRADES, []);
-  const equity = readJSON(F_EQUITY, []);
+  let trades = readJSON(F_TRADES, []);
+  let equity = readJSON(F_EQUITY, []);
+
+  // Przejscie symulacja -> prawdziwe pieniadze (albo zmiana portfela) musi
+  // wyzerowac ksiegowosc. Inaczej bot liczylby obsuniecie wzgledem szczytu
+  // z symulacji i natychmiast wlaczyl bezpiecznik, zanim cokolwiek zrobi.
+  const walletChanged = prevWallet && prevWallet !== walletStr;
+  if ((prevMode && prevMode !== state.mode) || walletChanged) {
+    const why = walletChanged ? `zmiana portfela` : `${prevMode} -> ${state.mode}`;
+    const stamp = nowISO().replace(/[:.]/g, '-');
+    writeJSON(path.join(STATE_DIR, `archiwum-${prevMode || 'X'}-${stamp}.json`), {
+      powod: why,
+      state: saved,
+      trades,
+      equity,
+    });
+    log(`> ${why}: ksiegowosc wyzerowana, poprzednia historia w state/archiwum-*.json`);
+
+    state.positions = {};
+    state.cooldowns = {};
+    state.perAsset = {};
+    state.stats = { ...freshState(walletStr).stats };
+    state.startEquity = null;
+    state.peakEquity = null;
+    state.halted = false;
+    state.haltReason = null;
+    state.day = { date: utcDay(), startEquity: null, realized: 0, trades: 0 };
+    delete state.simSol;
+    delete state.simUsdc;
+    delete state.simTok;
+    trades = [];
+    equity = [];
+  }
 
   if (CFG.RESET_HALT && state.halted) {
     log('> reczny reset bezpiecznika');

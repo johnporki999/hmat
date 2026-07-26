@@ -1,0 +1,83 @@
+name: Hajsomat — wyplata
+
+# Wylacznie recznie. Zadnego crona: wysylanie pieniedzy poza portfel nie ma
+# prawa dziac sie samo.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Wpisz WYPLACAM, zeby potwierdzic'
+        required: true
+        default: ''
+      amount:
+        description: 'Kwota w USDC albo slowo all'
+        required: true
+        default: 'all'
+      preview:
+        description: 'Podglad — pokaz co by sie stalo, ale nic nie wysylaj'
+        type: boolean
+        default: true
+      include_sol:
+        description: 'Zabierz tez SOL ponad rezerwe na oplaty'
+        type: boolean
+        default: false
+      allow_open:
+        description: 'Pozwol wyplacic mimo otwartych pozycji'
+        type: boolean
+        default: false
+
+concurrency:
+  group: hajsomat-bot
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  withdraw:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
+
+      - name: Instalacja zaleznosci
+        working-directory: bot
+        run: npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+
+      - name: Wyplata
+        working-directory: bot
+        env:
+          SOLANA_PRIVATE_KEY: ${{ secrets.SOLANA_PRIVATE_KEY }}
+          WITHDRAW_ADDRESS: ${{ secrets.WITHDRAW_ADDRESS }}
+          RPC_URL: ${{ secrets.RPC_URL }}
+          FEE_RESERVE_SOL: ${{ vars.FEE_RESERVE_SOL }}
+          CONFIRM: ${{ inputs.confirm }}
+          AMOUNT: ${{ inputs.amount }}
+          PREVIEW: ${{ inputs.preview }}
+          INCLUDE_SOL: ${{ inputs.include_sol }}
+          ALLOW_OPEN: ${{ inputs.allow_open }}
+        run: node withdraw.mjs
+
+      - name: Zapis stanu do repo
+        if: always()
+        run: |
+          if [ ! -d state ] || [ -z "$(git status --porcelain -- state)" ]; then
+            echo "Stan bez zmian."
+            exit 0
+          fi
+          git config user.name "hajsomat-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add state
+          git commit -m "wyplata $(date -u '+%Y-%m-%d %H:%M UTC') [skip ci]"
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            echo "push nieudany, próba $i"
+            sleep 5
+          done
+          exit 1

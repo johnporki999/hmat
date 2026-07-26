@@ -100,6 +100,9 @@ const DEFAULTS = {
 const STORE_KEY = 'hajsomat:cfg:v1';
 const CACHE_KEY = 'hajsomat:cache:v1';
 
+// Kursy EBC zmieniaja sie raz na dzien roboczy — odpytywanie czesciej nie ma sensu.
+const FX_TTL = 6 * 3600 * 1000;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Formatowanie
 // ─────────────────────────────────────────────────────────────────────────────
@@ -428,7 +431,8 @@ function Stat({ label, value, sub, tone, flex = 1 }) {
 }
 
 function Row({ label, value, tone, mono = true }) {
-  const color = tone === 'green' ? C.green : tone === 'red' ? C.red : tone === 'dim' ? C.dim : C.text;
+  const color =
+    tone === 'green' ? C.green : tone === 'red' ? C.red : tone === 'cyan' ? C.cyan : tone === 'dim' ? C.dim : C.text;
   return (
     <View style={s.kvRow}>
       <Text style={s.kvLabel}>{label}</Text>
@@ -676,7 +680,7 @@ function PositionGauge({ stop, tp, entry, price }) {
 // Ekran: Kokpit
 // ─────────────────────────────────────────────────────────────────────────────
 
-function Kokpit({ data, cfg, goSettings }) {
+function Kokpit({ data, cfg, fxRate, goSettings }) {
   const { state, stats, price, chain, err } = data;
   const [range, setRange] = useState('7d');
 
@@ -725,7 +729,7 @@ function Kokpit({ data, cfg, goSettings }) {
           {money(stats.liveEquity)}
         </Text>
         <Text style={s.bigSub}>
-          {stats.liveEquity != null ? `${nf(stats.liveEquity * cfg.usdPln, 0)} zl` : '—'}
+          {stats.liveEquity != null ? `${nf(stats.liveEquity * fxRate, 0)} zl` : '—'}
           {stats.roi != null ? `   ·   ROI ${signedPct(stats.roi)}` : ''}
         </Text>
 
@@ -969,15 +973,16 @@ function Kokpit({ data, cfg, goSettings }) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function TradeRow({ t }) {
-  const buy = t.type === 'BUY';
+  const kind = t.type === 'BUY' ? 'buy' : t.type === 'WITHDRAW' ? 'out' : 'sell';
+  const mark = { buy: ['KUP', C.cyan], sell: ['SPRZ', C.violet], out: ['WYPŁ', C.amber] }[kind];
   const pnl = t.pnlUsd;
   const open = () => {
     if (t.sig) Linking.openURL(`https://solscan.io/tx/${t.sig}`).catch(() => {});
   };
   return (
     <Pressable onPress={t.sig ? open : undefined} style={({ pressed }) => [s.trade, pressed && { opacity: 0.6 }]}>
-      <View style={[s.tradeMark, { backgroundColor: buy ? 'rgba(69,224,255,0.14)' : 'rgba(155,107,255,0.14)' }]}>
-        <Text style={[s.tradeMarkText, { color: buy ? C.cyan : C.violet }]}>{buy ? 'KUP' : 'SPRZ'}</Text>
+      <View style={[s.tradeMark, { backgroundColor: `${mark[1]}22` }]}>
+        <Text style={[s.tradeMarkText, { color: mark[1] }]}>{mark[0]}</Text>
       </View>
 
       <View style={{ flex: 1, marginLeft: 12 }}>
@@ -1099,7 +1104,7 @@ function Trejdy({ data }) {
 // Ekran: Staty
 // ─────────────────────────────────────────────────────────────────────────────
 
-function Staty({ data, cfg }) {
+function Staty({ data, fxRate }) {
   const { stats, state } = data;
   const pf = stats.profitFactor;
 
@@ -1145,8 +1150,15 @@ function Staty({ data, cfg }) {
         <Row label="Najlepszy trejd" value={stats.best == null ? '—' : signed(stats.best)} tone="green" />
         <Row label="Najgorszy trejd" value={stats.worst == null ? '—' : signed(stats.worst)} tone="red" />
         <View style={s.divider} />
+        {state?.withdrawnTotal ? (
+          <Row label="Wyplacone z portfela" value={money(state.withdrawnTotal)} tone="cyan" />
+        ) : null}
         <Row label="Obrot lacznie" value={money(stats.volume, 0)} tone="dim" />
-        <Row label="W zlotowkach" value={`${nf(stats.total * cfg.usdPln, 2)} zl`} tone={stats.total >= 0 ? 'green' : 'red'} />
+        <Row
+          label="W zlotowkach"
+          value={`${nf(stats.total * fxRate, 2)} zl`}
+          tone={stats.total >= 0 ? 'green' : 'red'}
+        />
       </Card>
 
       {stats.perAsset.length ? (
@@ -1329,17 +1341,30 @@ function Ustawienia({ cfg, setCfg, onSaved, data }) {
       </Card>
 
       <Card>
-        <SectionTitle>Waluta</SectionTitle>
+        <SectionTitle
+          right={data.fx ? <Pill text="AUTO" tone="green" small /> : <Pill text="OFFLINE" tone="amber" small />}
+        >
+          Kurs USD / PLN
+        </SectionTitle>
+        <View style={s.headRow}>
+          <Text style={s.fxBig}>{data.fx ? nf(data.fx.rate, 4) : nf(cfg.usdPln, 4)}</Text>
+          <Text style={s.statSub}>
+            {data.fx ? `pobrany ${ago(data.fx.ts)}` : 'brak polaczenia — kurs zapasowy'}
+          </Text>
+        </View>
+        <Text style={[s.fieldHint, { marginTop: 8, marginBottom: 16 }]}>
+          Kurs EBC pobiera sie sam przy starcie apki i odswieza co szesc godzin. Ponizsza wartosc
+          jest uzywana tylko wtedy, gdy nie ma internetu.
+        </Text>
         <Field
-          label="KURS USD / PLN"
+          label="KURS ZAPASOWY"
           value={draft.usdPln}
           onChange={set('usdPln')}
           keyboardType="decimal-pad"
-          hint="Uzywany tylko do przeliczen pogladowych."
         />
-        <Pressable style={[s.btn, s.btnGhost]} onPress={pullFx} disabled={fxBusy}>
+        <Pressable style={[s.btn, s.btnGhost, { marginBottom: 0 }]} onPress={pullFx} disabled={fxBusy}>
           <Text style={[s.btnText, { color: C.cyan }]}>
-            {fxBusy ? 'Pobieram…' : 'Pobierz aktualny kurs'}
+            {fxBusy ? 'Pobieram…' : 'Wpisz tu aktualny kurs'}
           </Text>
         </Pressable>
       </Card>
@@ -1394,6 +1419,7 @@ function Shell() {
   const [cfg, setCfg] = useState(DEFAULTS);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
+  const fxRef = useRef(null);
   const [data, setData] = useState({
     state: null,
     trades: [],
@@ -1416,6 +1442,7 @@ function Shell() {
         setCfg(c);
         if (rawCache) {
           const cached = JSON.parse(rawCache);
+          if (cached.fx?.rate) fxRef.current = cached.fx;
           setData((d) => ({
             ...d,
             ...cached,
@@ -1465,7 +1492,15 @@ function Shell() {
       if (rp.status === 'fulfilled') price = rp.value;
       else price = state?.lastRun?.price ?? null;
 
-      const next = { state, trades, equity, chain, price, err: errs[0] || null };
+      // Kurs USD/PLN sam sie odswieza, ale nie czesciej niz co szesc godzin.
+      let fx = fxRef.current;
+      if (!fx || Date.now() - fx.ts > FX_TTL) {
+        const v = await fetchFx();
+        if (v) fx = { rate: v, ts: Date.now() };
+      }
+      fxRef.current = fx;
+
+      const next = { state, trades, equity, chain, price, fx, err: errs[0] || null };
       setData({ ...next, stats: computeStats(next) });
       setBusy(false);
       try {
@@ -1506,6 +1541,9 @@ function Shell() {
       </View>
     );
   }
+
+  // Kurs pobrany automatycznie; wpis z ustawien sluzy tylko gdy nie ma sieci.
+  const fxRate = data.fx?.rate ?? cfg.usdPln;
 
   return (
     <View style={s.root}>
@@ -1562,9 +1600,11 @@ function Shell() {
           />
         }
       >
-        {tab === 'kokpit' && <Kokpit data={data} cfg={cfg} goSettings={() => setTab('ustawienia')} />}
+        {tab === 'kokpit' && (
+          <Kokpit data={data} cfg={cfg} fxRate={fxRate} goSettings={() => setTab('ustawienia')} />
+        )}
         {tab === 'trejdy' && <Trejdy data={data} />}
-        {tab === 'staty' && <Staty data={data} cfg={cfg} />}
+        {tab === 'staty' && <Staty data={data} fxRate={fxRate} />}
         {tab === 'ustawienia' && (
           <Ustawienia cfg={cfg} setCfg={setCfg} data={data} onSaved={() => load(false)} />
         )}
@@ -1811,6 +1851,7 @@ const s = StyleSheet.create({
     fontFamily: MONO,
   },
   fieldHint: { color: C.faint, fontSize: 11, marginTop: 6, lineHeight: 16 },
+  fxBig: { color: C.text, fontSize: 30, fontWeight: '800', fontFamily: MONO },
 
   btn: {
     backgroundColor: 'rgba(43,255,136,0.12)',
