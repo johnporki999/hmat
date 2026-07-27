@@ -1035,5 +1035,102 @@
       "ETH": -0.03137
     },
     "dry": true
+  },
+  {
+    "id": "1785193509387-PYTH",
+    "ts": "2026-07-27T23:05:09.387Z",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.04413,
+    "entryPrice": 0.04484,
+    "qty": 29285.492743916,
+    "notional": 1313.1614946371933,
+    "margin": 131.31614946371934,
+    "leverage": 10,
+    "pnlUsd": -21.585191002408113,
+    "pnlPct": -0.1643757534055,
+    "borrowUsd": 0.004594257445572559,
+    "holdMs": 899647,
+    "liquidated": false,
+    "reason": "STOP LOSS przy $0.04",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 52.5, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 52.5,
+      "rsiPrev": 53.1,
+      "ext": 0.2,
+      "nadTrendem": 0.0189,
+      "fastNadSlow": 0.0066,
+      "volPct": 0.0078,
+      "er": 0.005,
+      "slope": 0.00219
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02494,
+      "koszt": 0.0056,
+      "score": 9
+    },
+    "odrzucone": [
+      {
+        "sym": "W",
+        "side": "SHORT",
+        "score": 6,
+        "powod": "2.69 ATR pod srednia — za nisko, czekam na odbicie"
+      },
+      {
+        "sym": "JUP",
+        "side": "SHORT",
+        "score": 5,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "JTO",
+        "side": "SHORT",
+        "score": 5,
+        "powod": "RSI 19.7 — wyprzedane, nie gonie dolu"
+      },
+      {
+        "sym": "RAY",
+        "side": "SHORT",
+        "score": 5,
+        "powod": "RSI 29.0 — wyprzedane, nie gonie dolu"
+      }
+    ],
+    "mfe": 0,
+    "mae": 2.03,
+    "rynek": {
+      "SOL": -0.01019,
+      "BTC": -0.00598,
+      "ETH": -0.01031
+    },
+    "dry": true
+  },
+  {
+    "id": "1785193509391-PYTH",
+    "ts": "2026-07-27T23:05:09.391Z",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.04413,
+    "qty": 48722.427758008445,
+    "notional": 2150.120736960913,
+    "margin": 215.0120736960913,
+    "leverage": 10,
+    "liqPrice": 0.0401583,
+    "stopPrice": 0.04350089919823778,
+    "takeProfit": 0.04538820160352444,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 41.7, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 41.7,
+      "rsiPrev": 48.3,
+      "ext": -1.43,
+      "nadTrendem": 0.0028,
+      "fastNadSlow": 0.0053,
+      "volPct": 0.0089,
+      "er": 0.056,
+      "slope": 0.002
+    },
+    "dry": true
   }
 ]
