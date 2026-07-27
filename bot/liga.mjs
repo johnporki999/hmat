@@ -34,7 +34,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { UNIVERSE, CFG, envNum, envBool, usd, pct, analyze, entrySignal, warunki } from './strategy.mjs';
+import {
+  UNIVERSE, CFG, envNum, envBool, usd, pct, analyze, entrySignal,
+  warunki, wychylenia, migawkaRynku, zmianaRynku,
+} from './strategy.mjs';
 import { istotnosc, ALFA, MOC, D_MIN, SLOWA } from './istotnosc.mjs';
 
 const P = {
@@ -272,6 +275,10 @@ log(`> zeskanowano ${Object.keys(rynek).length} aktywów`);
 
 const teraz = Date.now();
 const nowe = [];
+// Ceny wszystkich aktywow w tej chwili — ta sama migawka dla kazdego gracza,
+// zeby ich trejdy dalo sie potem porownywac z tym samym tlem rynkowym.
+const cenyTeraz = Object.fromEntries(Object.entries(rynek).map(([s, r]) => [s, r.m.price]));
+const migawka = migawkaRynku(cenyTeraz);
 
 for (const [id, def] of Object.entries(GRACZE)) {
   const g = stan.gracze[id];
@@ -287,6 +294,7 @@ for (const [id, def] of Object.entries(GRACZE)) {
     p.borrowPaid = (p.borrowPaid || 0) + p.notional * (p.side === 'LONG' ? P.BORROW_L : P.BORROW_S) * godz;
     p.lastAccrual = nowISO();
     p.bestPrice = p.side === 'LONG' ? Math.max(p.bestPrice ?? p.entryPrice, px) : Math.min(p.bestPrice ?? p.entryPrice, px);
+    p.worstPrice = p.side === 'LONG' ? Math.min(p.worstPrice ?? p.entryPrice, px) : Math.max(p.worstPrice ?? p.entryPrice, px);
     if (!p.trailArmed && (p.side === 'LONG' ? px - p.entryPrice : p.entryPrice - px) >= CFG.TRAIL_ARM_ATR * (p.atrAtEntry || r.m.atr)) {
       p.trailArmed = true;
     }
@@ -332,6 +340,9 @@ for (const [id, def] of Object.entries(GRACZE)) {
       // dlaczego weszlismy + jakie byly wtedy liczby, obok wyniku tego wejscia
       powodWejscia: p.powodWejscia || null,
       warunki: p.warunkiWejscia || null,
+      // jak daleko cena zaszla w obie strony i co robil w tym czasie caly rynek
+      ...wychylenia(p, p.atrAtEntry || r.m.atr),
+      rynek: zmianaRynku(p.rynekWejscie, migawka),
     });
     delete g.positions[sym];
   }
@@ -367,7 +378,8 @@ for (const [id, def] of Object.entries(GRACZE)) {
       liqPrice: liqPrice(kier, px, P.LEVERAGE),
       stopPrice: long ? px - CFG.STOP_ATR * r.m.atr : px + CFG.STOP_ATR * r.m.atr,
       takeProfit: long ? px + CFG.TAKE_PROFIT_ATR * r.m.atr : px - CFG.TAKE_PROFIT_ATR * r.m.atr,
-      atrAtEntry: r.m.atr, bestPrice: px, trailArmed: false, borrowPaid: 0,
+      atrAtEntry: r.m.atr, bestPrice: px, worstPrice: px, trailArmed: false, borrowPaid: 0,
+      rynekWejscie: migawka,
       // Powod i liczby zostaja PRZY POZYCJI, zeby przy zamknieciu trafily na ten sam
       // wiersz co wynik. Inaczej mielibysmy osobno "dlaczego" i osobno "co z tego wyszlo",
       // a zeby czegokolwiek sie nauczyc, trzeba miec jedno obok drugiego.

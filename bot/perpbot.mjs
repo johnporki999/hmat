@@ -22,7 +22,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { UNIVERSE, CFG, envNum, envBool, usd, pct, analyze, entrySignal, warunki } from './strategy.mjs';
+import {
+  UNIVERSE, CFG, envNum, envBool, usd, pct, analyze, entrySignal,
+  warunki, wychylenia, migawkaRynku, zmianaRynku,
+} from './strategy.mjs';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Konfiguracja
@@ -325,6 +328,10 @@ async function main() {
 
     pos.bestPrice =
       pos.side === 'LONG' ? Math.max(pos.bestPrice ?? pos.entryPrice, price) : Math.min(pos.bestPrice ?? pos.entryPrice, price);
+    // Najgorsza cena nie jest potrzebna do handlu — jest potrzebna, zeby pozniej
+    // odpowiedziec, czy stop byl o wlos od wyrzucenia nas z dobrej pozycji.
+    pos.worstPrice =
+      pos.side === 'LONG' ? Math.min(pos.worstPrice ?? pos.entryPrice, price) : Math.max(pos.worstPrice ?? pos.entryPrice, price);
     const armAt = CFG.TRAIL_ARM_ATR * (pos.atrAtEntry || m.atr);
     if (!pos.trailArmed && (pos.side === 'LONG' ? price - pos.entryPrice : pos.entryPrice - price) >= armAt) {
       pos.trailArmed = true;
@@ -383,6 +390,13 @@ async function main() {
       // dlaczego weszlismy + jakie byly wtedy liczby, obok wyniku tego wejscia
       powodWejscia: pos.powodWejscia || null,
       warunki: pos.warunkiWejscia || null,
+      // jak daleko cena zaszla w obie strony, zanim zamknelismy
+      ...wychylenia(pos, pos.atrAtEntry || m.atr),
+      // co robil w tym czasie caly rynek — zeby odroznic zly sygnal od zwyklego zjazdu
+      rynek: zmianaRynku(
+        pos.rynekWejscie,
+        migawkaRynku(Object.fromEntries(Object.entries(mkt).map(([s, x]) => [s, x.price])))
+      ),
       dry: true,
     });
     delete st.positions[sym];
@@ -478,8 +492,10 @@ async function main() {
         takeProfit: long ? price + CFG.TAKE_PROFIT_ATR * m.atr : price - CFG.TAKE_PROFIT_ATR * m.atr,
         atrAtEntry: m.atr,
         bestPrice: price,
+        worstPrice: price,
         trailArmed: false,
         borrowPaid: 0,
+        rynekWejscie: migawkaRynku(Object.fromEntries(Object.entries(mkt).map(([s, x]) => [s, x.price]))),
         // Powod i liczby zostaja PRZY POZYCJI, zeby przy zamknieciu trafily na ten
         // sam wiersz co wynik. Osobno "dlaczego" i osobno "co z tego wyszlo" nie
         // uczy niczego — dopiero jedno obok drugiego da sie policzyc.

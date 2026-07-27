@@ -278,6 +278,54 @@ export function warunki(m) {
   };
 }
 
+/**
+ * Jak daleko cena zaszla W NASZA STRONE i PRZECIW nam, zanim pozycja sie zamknela.
+ *
+ * Bez tych dwoch liczb nie da sie odroznic zlego WEJSCIA od zlego WYJSCIA — a to
+ * dwa zupelnie rozne bledy, wymagajace dwoch roznych poprawek:
+ *
+ *   duze mfe, strata  -> wejscie bylo dobre, wyszlismy za pozno albo za wczesnie
+ *   male mfe, strata  -> wejscie bylo zle, cena nigdy nie poszla w nasza strone
+ *   duze mae, zysk    -> mielismy racje, ale stop byl o wlos od wyrzucenia nas
+ *
+ * Mierzymy w ATR, zeby BONK i BTC dalo sie polozyc obok siebie na jednym wykresie.
+ */
+export function wychylenia(p, atr) {
+  if (!atr || !p.entryPrice) return { mfe: null, mae: null };
+  const long = p.side === 'LONG';
+  const naj = p.bestPrice ?? p.entryPrice;
+  const gorsza = p.worstPrice ?? p.entryPrice;
+  const r2 = (x) => +x.toFixed(2);
+  return {
+    mfe: r2((long ? naj - p.entryPrice : p.entryPrice - naj) / atr),
+    mae: r2((long ? p.entryPrice - gorsza : gorsza - p.entryPrice) / atr),
+  };
+}
+
+/**
+ * Ceny kilku duzych aktywow w chwili wejscia i wyjscia.
+ *
+ * Bez tego kazda strata wyglada jak blad naszego sygnalu. A jesli w tym czasie
+ * spadlo WSZYSTKO, to nie byl blad sygnalu tylko ruch calego rynku — i poprawianie
+ * sygnalu nic by nie dalo. Tego rozroznienia nie da sie zrobic pozniej, bo trzeba
+ * znac ceny dokladnie z tych dwoch momentow.
+ */
+export function migawkaRynku(ceny = {}) {
+  const z = (x) => (Number.isFinite(x) ? +x.toPrecision(8) : null);
+  return { SOL: z(ceny.SOL), BTC: z(ceny.BTC), ETH: z(ceny.ETH) };
+}
+
+/** Ile procent zmienil sie rynek miedzy dwiema migawkami. */
+export function zmianaRynku(wejscie, wyjscie) {
+  if (!wejscie || !wyjscie) return null;
+  const out = {};
+  for (const k of Object.keys(wejscie)) {
+    const a = wejscie[k], b = wyjscie[k];
+    out[k] = Number.isFinite(a) && Number.isFinite(b) && a !== 0 ? +(b / a - 1).toFixed(5) : null;
+  }
+  return out;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Sygnaly
 // ─────────────────────────────────────────────────────────────────────────────
