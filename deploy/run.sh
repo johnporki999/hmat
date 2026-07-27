@@ -67,6 +67,12 @@ for bot in $BOTY; do
     log "$PLIK zakonczyl sie bledem (kod $?)"
   fi
 done
+
+# Kolektor danych spoza wykresu. Sam sie throttluje do co 15 minut, wiec
+# mozna go wolac przy kazdym przebiegu. Jego blad nie moze zatrzymac bota.
+if [ "${KOLEKTOR:-1}" = "1" ]; then
+  if node kolektor.mjs >>"$LOG" 2>&1; then :; else log "kolektor zakonczyl sie bledem"; fi
+fi
 cd "$KATALOG"
 
 # Zapis stanu do repo — apka czyta go wlasnie stamtad

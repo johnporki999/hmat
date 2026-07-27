@@ -1,0 +1,178 @@
+/**
+ * HAJSOMAT — kolektor danych spoza wykresu.
+ *
+ * Zbiera to, czego nie widac na swiecach, i czego nie da sie pobrac wstecz.
+ * Historia tych danych u zrodel siega 30 dni albo wcale — wiec jedyny sposob,
+ * zeby miec ich rok, to zaczac zbierac dzisiaj.
+ *
+ * Co zbieramy dla kazdego aktywa:
+ *
+ *   Z Jupitera (co dzieje sie na lancuchu):
+ *     - liczba posiadaczy tokena i jej zmiana,
+ *     - plynnosc i jej zmiana,
+ *     - wolumen kupna i sprzedazy,
+ *     - wolumen ORGANICZNY — Jupiter odsiewa boty i sztuczny obrot,
+ *       wiec to jest to, co robia prawdziwi ludzie,
+ *     - liczba kupujacych, sprzedajacych i handlujacych netto.
+ *
+ *   Z Binance (co robia inni gracze na kontraktach):
+ *     - otwarte pozycje, czyli ile pieniedzy siedzi w rynku,
+ *     - jaka czesc najlepszych traderow gra na wzrost, a jaka na spadek,
+ *     - kto sie pcha po cenie: kupujacy czy sprzedajacy.
+ *
+ * Zapis: state/dane/RRRR-MM-DD.jsonl — jedna linia na aktywo na pomiar.
+ * Format JSONL, bo dopisywanie do niego jest tanie i git dobrze go pakuje.
+ *
+ * Wywolywany co przebieg bota, ale sam pilnuje, zeby zbierac nie czesciej
+ * niz co ODSTEP_MIN minut.
+ */
+
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { UNIVERSE, CFG, envNum, envBool } from './strategy.mjs';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '..');
+const DIR = path.join(ROOT, 'state', 'dane');
+const F_INFO = path.join(ROOT, 'state', 'dane-info.json');
+
+const ODSTEP_MIN = envNum('KOLEKTOR_ODSTEP_MIN', 15);
+const WYMUS = envBool('KOLEKTOR_WYMUS', false);
+
+const log = (...a) => console.log(...a);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const dzis = () => new Date().toISOString().slice(0, 10);
+
+async function pobierz(url, timeoutMs = 12000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const r = await fetch(url, {
+      signal: ctrl.signal,
+      headers: { 'user-agent': 'hajsomat-kolektor/1.0', accept: 'application/json' },
+    });
+    if (!r.ok) return null;
+    return await r.json();
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+/** Zaokragla, zeby pliki nie puchly od osiemnastu miejsc po przecinku. */
+const r = (v, m = 6) => (typeof v === 'number' && isFinite(v) ? Number(v.toFixed(m)) : null);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Zrodla
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Dane z lancucha: posiadacze, plynnosc, przeplywy organiczne. */
+async function zJupitera(sym) {
+  const mint = UNIVERSE[sym]?.mint;
+  if (!mint) return {};
+  const d = await pobierz(`https://lite-api.jup.ag/tokens/v2/search?query=${mint}`);
+  const arr = Array.isArray(d) ? d : d?.tokens || [];
+  const t = arr.find((x) => (x.id || x.address) === mint);
+  if (!t) return {};
+  const s = t.stats1h || {};
+  return {
+    px: r(t.usdPrice, 8),
+    hold: t.holderCount ?? null,
+    liq: r(t.liquidity, 0),
+    mcap: r(t.mcap, 0),
+    org: r(t.organicScore, 1),
+    // okno godzinne
+    h_pc: r(s.priceChange, 5),
+    h_hc: r(s.holderChange, 6),
+    h_lc: r(s.liquidityChange, 5),
+    h_bv: r(s.buyVolume, 0),
+    h_sv: r(s.sellVolume, 0),
+    h_bo: r(s.buyOrganicVolume, 0),
+    h_so: r(s.sellOrganicVolume, 0),
+    h_nb: s.numBuys ?? null,
+    h_ns: s.numSells ?? null,
+    h_nt: s.numTraders ?? null,
+    h_nob: s.numOrganicBuyers ?? null,
+    h_nnb: s.numNetBuyers ?? null,
+  };
+}
+
+/** Pozycjonowanie innych graczy. Nie kazdy token ma kontrakty na Binance. */
+async function zBinance(sym) {
+  const S = `${sym}USDT`;
+  const B = 'https://fapi.binance.com';
+  const [oi, lsa, lsp, tk] = await Promise.all([
+    pobierz(`${B}/fapi/v1/openInterest?symbol=${S}`),
+    pobierz(`${B}/futures/data/topLongShortAccountRatio?symbol=${S}&period=5m&limit=1`),
+    pobierz(`${B}/futures/data/topLongShortPositionRatio?symbol=${S}&period=5m&limit=1`),
+    pobierz(`${B}/futures/data/takerlongshortRatio?symbol=${S}&period=5m&limit=1`),
+  ]);
+  if (!oi && !lsa) return {}; // brak kontraktow na to aktywo
+  return {
+    oi: r(Number(oi?.openInterest), 2),
+    ls_a: r(Number(lsa?.[0]?.longShortRatio), 4),
+    ls_p: r(Number(lsp?.[0]?.longShortRatio), 4),
+    tk: r(Number(tk?.[0]?.buySellRatio), 4),
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main
+// ─────────────────────────────────────────────────────────────────────────────
+
+const info = (() => {
+  try {
+    return JSON.parse(fs.readFileSync(F_INFO, 'utf8'));
+  } catch {
+    return { start: null, ostatni: 0, pomiarow: 0, wierszy: 0 };
+  }
+})();
+
+const odOstatniego = (Date.now() - (info.ostatni || 0)) / 60000;
+if (!WYMUS && odOstatniego < ODSTEP_MIN) {
+  log(`> kolektor: ostatni pomiar ${odOstatniego.toFixed(1)} min temu, czekam do ${ODSTEP_MIN}`);
+  process.exit(0);
+}
+
+const aktywa = CFG.ASSETS.filter((s) => UNIVERSE[s]);
+log(`> kolektor: zbieram dane dla ${aktywa.length} aktywow...`);
+
+const teraz = Date.now();
+const wiersze = [];
+let zJup = 0;
+let zBin = 0;
+
+for (const sym of aktywa) {
+  const [j, b] = await Promise.all([zJupitera(sym), zBinance(sym)]);
+  if (Object.keys(j).length) zJup += 1;
+  if (Object.keys(b).length) zBin += 1;
+  if (!Object.keys(j).length && !Object.keys(b).length) continue;
+  wiersze.push(JSON.stringify({ t: teraz, sym, ...j, ...b }));
+  await sleep(250); // uprzejmosc wobec darmowych API
+}
+
+if (!wiersze.length) {
+  log('! kolektor: nie udalo sie pobrac niczego');
+  process.exit(0);
+}
+
+fs.mkdirSync(DIR, { recursive: true });
+const plik = path.join(DIR, `${dzis()}.jsonl`);
+fs.appendFileSync(plik, wiersze.join('\n') + '\n', 'utf8');
+
+info.start = info.start || new Date(teraz).toISOString();
+info.ostatni = teraz;
+info.ostatniISO = new Date(teraz).toISOString();
+info.pomiarow = (info.pomiarow || 0) + 1;
+info.wierszy = (info.wierszy || 0) + wiersze.length;
+info.aktywa = aktywa.length;
+info.dni = Math.max(1, Math.round((teraz - Date.parse(info.start)) / 86400000));
+info.odstepMin = ODSTEP_MIN;
+fs.writeFileSync(F_INFO, JSON.stringify(info, null, 2) + '\n', 'utf8');
+
+log(
+  `> kolektor: zapisano ${wiersze.length} wierszy (Jupiter ${zJup}, Binance ${zBin}) ` +
+    `— lacznie ${info.wierszy} wierszy przez ${info.dni} dni`
+);
