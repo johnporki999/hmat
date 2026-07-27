@@ -2,7 +2,7 @@
   "version": 1,
   "kind": "perp-sim",
   "createdAt": "2026-07-26T19:59:10.228Z",
-  "updatedAt": "2026-07-27T07:35:15.252Z",
+  "updatedAt": "2026-07-27T07:40:08.593Z",
   "cash": 102.9043625525751,
   "startEquity": 500,
   "peakEquity": 520.7506800449819,
@@ -12,7 +12,7 @@
       "side": "LONG",
       "entryPrice": 76.21,
       "entryTs": "2026-07-27T01:19:04.361Z",
-      "lastAccrual": "2026-07-27T07:35:15.249Z",
+      "lastAccrual": "2026-07-27T07:40:08.590Z",
       "qty": 8.033198019372945,
       "notional": 612.2100210564121,
       "margin": 204.07000701880403,
@@ -23,14 +23,14 @@
       "atrAtEntry": 0.21094814583850716,
       "bestPrice": 76.78,
       "trailArmed": true,
-      "borrowPaid": 0.053737148180107455
+      "borrowPaid": 0.05443553934594466
     },
     "JUP": {
       "sym": "JUP",
       "side": "LONG",
       "entryPrice": 0.19279,
       "entryTs": "2026-07-27T07:35:15.252Z",
-      "lastAccrual": "2026-07-27T07:35:15.252Z",
+      "lastAccrual": "2026-07-27T07:40:08.591Z",
       "qty": 3209.5079675592674,
       "notional": 618.7610410657511,
       "margin": 206.25368035525037,
@@ -41,7 +41,7 @@
       "atrAtEntry": 0.00042674547080168813,
       "bestPrice": 0.19279,
       "trailArmed": false,
-      "borrowPaid": 0
+      "borrowPaid": 0.0007058595639868358
     }
   },
   "cooldowns": {
@@ -60,7 +60,7 @@
     "liquidations": 0,
     "realizedPnl": 15.065801177791515,
     "feesUsd": 2.9369198650506227,
-    "borrowUsd": 0.13047635780696207
+    "borrowUsd": 0.1318806085367861
   },
   "perAsset": {
     "SOL": {
@@ -80,22 +80,22 @@
     }
   },
   "lastRun": {
-    "ts": "2026-07-27T07:35:15.252Z",
-    "action": "ZAMKNIECIE LONG W, LONG JUP",
-    "reason": "ZAMKNIECIE LONG W, LONG JUP",
-    "equityUsd": 515.2629442634865,
-    "unrealizedUsd": 2.0348943368568992,
+    "ts": "2026-07-27T07:40:08.593Z",
+    "action": "HOLD",
+    "reason": "wszystkie sloty zajete",
+    "equityUsd": 515.0205440721754,
+    "unrealizedUsd": 1.7924941455458778,
     "leverage": 3,
     "maxPositions": 2,
     "slotsFree": 0,
     "scan": [
       {
         "sym": "SOL",
-        "price": 76.47,
+        "price": 76.44,
         "side": "LONG",
         "score": 9,
-        "rsi": 51.82194741375389,
-        "volPct": 0.0026097608549857454,
+        "rsi": 50.735027409973185,
+        "volPct": 0.002610785093939821,
         "enter": false,
         "held": "LONG",
         "reason": "trzymam LONG"
@@ -107,9 +107,9 @@
         "score": 9,
         "rsi": 62.24617917871432,
         "volPct": 0.0022135249276502315,
-        "enter": true,
-        "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 62.2, cofniecie do sredniej"
+        "enter": false,
+        "held": "LONG",
+        "reason": "trzymam LONG"
       },
       {
         "sym": "RENDER",
@@ -124,14 +124,14 @@
       },
       {
         "sym": "BONK",
-        "price": 0.000003198,
+        "price": 0.000003196,
         "side": "LONG",
         "score": 9,
-        "rsi": 59.214532525397665,
-        "volPct": 0.0032748260633016636,
+        "rsi": 58.04355838584546,
+        "volPct": 0.0033215741218072196,
         "enter": true,
         "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 59.2, cofniecie do sredniej"
+        "reason": "gotowy: trend, trend rosnie, RSI 58.0, cofniecie do sredniej"
       },
       {
         "sym": "W",
@@ -146,25 +146,25 @@
       },
       {
         "sym": "PENGU",
-        "price": 0.006438,
+        "price": 0.006411,
         "side": "LONG",
-        "score": 6,
-        "rsi": 65.8485221315924,
-        "volPct": 0.003643411821752564,
-        "enter": false,
+        "score": 9,
+        "rsi": 57.57715747314566,
+        "volPct": 0.00377017173962388,
+        "enter": true,
         "held": null,
-        "reason": "1.95 ATR nad srednia — za daleko"
+        "reason": "gotowy: trend, trend rosnie, RSI 57.6, cofniecie do sredniej"
       },
       {
         "sym": "JTO",
-        "price": 0.62226,
+        "price": 0.62197,
         "side": "LONG",
         "score": 5,
-        "rsi": 85.53787169239008,
-        "volPct": 0.004206225491864399,
+        "rsi": 85.35899087024804,
+        "volPct": 0.00424608470366573,
         "enter": false,
         "held": null,
-        "reason": "RSI 85.5 — przegrzane"
+        "reason": "RSI 85.4 — przegrzane"
       },
       {
         "sym": "RAY",
@@ -234,19 +234,19 @@
       }
     ],
     "prices": {
-      "SOL": 76.47,
+      "SOL": 76.44,
       "JUP": 0.19279,
-      "JTO": 0.62226,
+      "JTO": 0.62197,
       "PYTH": 0.0433,
       "RAY": 0.642,
       "ORCA": 1.194,
       "RENDER": 1.483,
-      "BONK": 0.000003198,
+      "BONK": 0.000003196,
       "W": 0.00918,
       "TNSR": 0.0324,
       "DRIFT": 0.0126,
       "KMNO": 0.01802,
-      "PENGU": 0.006438
+      "PENGU": 0.006411
     }
   }
 }
