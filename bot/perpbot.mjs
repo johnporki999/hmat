@@ -157,7 +157,15 @@ async function getCandles(sym, minutes) {
 /**
  * Sygnal na spadek — lustrzane odbicie sygnalu na wzrost.
  * Trend spadkowy, RSI w oknie (odbitym), odbicie w gore do sredniej zamiast
- * cofniecia w dol, ta sama bramka oplacalnosci.
+ * cofniecia w dol.
+ *
+ * ZNANA NIESPOJNOSC, celowo NIEZMIENIANA teraz:
+ * ta sciezka dolicza do progu oplacalnosci oplate kontraktowa (OPEN_FEE * 2),
+ * a sciezka LONG w strategy.mjs juz nie. Short ma wiec ciut wyzsza poprzeczke.
+ * Zmierzone w bot/filtr.mjs: prog scina tylko 9% okazji, a sciete nie wypadaly
+ * lepiej od przepuszczonych — wiec skutek jest zaden. Nie ruszamy tego, bo liga
+ * chodzi na zywo i zmiana sygnalu rozjechalaby trejdy sprzed i po zmianie.
+ * Do wyrownania przy najblizszym resecie ligi.
  */
 function shortSignal(sym, m) {
   const costPct = CFG.EST_COST_PCT * (UNIVERSE[sym].costMul || 1) + P.OPEN_FEE * 2;
@@ -206,7 +214,16 @@ function shortSignal(sym, m) {
   score += 1;
 
   const enter = score >= CFG.MIN_SCORE;
-  return { score, enter, reason: enter ? `SHORT: ${good.join(', ')}` : `score ${score}/${CFG.MIN_SCORE}` };
+  return {
+    score,
+    enter,
+    // Te dwa pola musza tu byc, bo skaner bierze najlepszy z sygnalow LONG i SHORT
+    // i z niego zapisuje prognoze. Bez nich kazdy short trafialby do pliku bez
+    // prognozy — czyli dokladnie polowa trejdow bylaby nierozliczalna.
+    expectedMove: expected,
+    costPct,
+    reason: enter ? `SHORT: ${good.join(', ')}` : `score ${score}/${CFG.MIN_SCORE}`,
+  };
 }
 
 /** Cena, przy ktorej gielda zamyka pozycje i depozyt przepada. */
