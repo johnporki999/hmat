@@ -2,7 +2,7 @@
   "version": 1,
   "kind": "perp-sim",
   "createdAt": "2026-07-26T19:59:10.228Z",
-  "updatedAt": "2026-07-27T09:45:08.120Z",
+  "updatedAt": "2026-07-27T09:50:08.501Z",
   "cash": 297.4676363240469,
   "startEquity": 500,
   "peakEquity": 520.7506800449819,
@@ -12,7 +12,7 @@
       "side": "LONG",
       "entryPrice": 76.35,
       "entryTs": "2026-07-27T08:05:07.888Z",
-      "lastAccrual": "2026-07-27T09:45:08.118Z",
+      "lastAccrual": "2026-07-27T09:50:08.499Z",
       "qty": 8.077376077733602,
       "notional": 616.7076635349605,
       "margin": 205.56922117832016,
@@ -21,9 +21,9 @@
       "stopPrice": 76.04452544363494,
       "takeProfit": 76.9609491127301,
       "atrAtEntry": 0.19092159772816167,
-      "bestPrice": 76.43,
+      "bestPrice": 76.46,
       "trailArmed": false,
-      "borrowPaid": 0.014390397093225905
+      "borrowPaid": 0.015110803122538163
     }
   },
   "cooldowns": {
@@ -44,7 +44,7 @@
     "liquidations": 0,
     "realizedPnl": 5.610198723359472,
     "feesUsd": 4.776657843863813,
-    "borrowUsd": 0.16353266454891116
+    "borrowUsd": 0.16425307057822341
   },
   "perAsset": {
     "SOL": {
@@ -69,36 +69,36 @@
     }
   },
   "lastRun": {
-    "ts": "2026-07-27T09:45:08.120Z",
+    "ts": "2026-07-27T09:50:08.501Z",
     "action": "HOLD",
     "reason": "limit transakcji na dobe",
-    "equityUsd": 503.18401462682857,
-    "unrealizedUsd": 0.1471571244615288,
+    "equityUsd": 503.9102580677952,
+    "unrealizedUsd": 0.8734005654281534,
     "leverage": 3,
     "maxPositions": 2,
     "slotsFree": 1,
     "scan": [
       {
         "sym": "SOL",
-        "price": 76.37,
+        "price": 76.46,
         "side": "LONG",
         "score": 10,
-        "rsi": 50.50471743556943,
-        "volPct": 0.002247417644235586,
+        "rsi": 53.996471139550046,
+        "volPct": 0.0023288498158362857,
         "enter": false,
         "held": "LONG",
         "reason": "trzymam LONG"
       },
       {
         "sym": "JUP",
-        "price": 0.19159,
+        "price": 0.19157,
         "side": "LONG",
         "score": 9,
-        "rsi": 41.848929941517376,
-        "volPct": 0.001683410788829967,
-        "enter": false,
+        "rsi": 41.576524337181965,
+        "volPct": 0.0018513730238283186,
+        "enter": true,
         "held": null,
-        "reason": "pauza po stracie"
+        "reason": "gotowy: trend, trend rosnie, RSI 41.6, cofniecie do sredniej"
       },
       {
         "sym": "BONK",
@@ -112,17 +112,6 @@
         "reason": "pauza po stracie"
       },
       {
-        "sym": "PENGU",
-        "price": 0.006445,
-        "side": "LONG",
-        "score": 9,
-        "rsi": 59.2599199452742,
-        "volPct": 0.004731235258041338,
-        "enter": true,
-        "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 59.3, cofniecie do sredniej"
-      },
-      {
         "sym": "RENDER",
         "price": 1.485,
         "side": "LONG",
@@ -134,26 +123,37 @@
         "reason": "potencjal 0.54% maly wobec kosztow 0.56%"
       },
       {
-        "sym": "JTO",
-        "price": 0.62977,
+        "sym": "PENGU",
+        "price": 0.006467,
         "side": "LONG",
-        "score": 5,
-        "rsi": 79.22129602309282,
-        "volPct": 0.004682018986245831,
+        "score": 6,
+        "rsi": 62.14667296195638,
+        "volPct": 0.0050685828860044385,
         "enter": false,
         "held": null,
-        "reason": "RSI 79.2 — przegrzane"
+        "reason": "1.95 ATR nad srednia — za daleko"
+      },
+      {
+        "sym": "JTO",
+        "price": 0.62824,
+        "side": "LONG",
+        "score": 5,
+        "rsi": 74.60699418446593,
+        "volPct": 0.00486737681658881,
+        "enter": false,
+        "held": null,
+        "reason": "RSI 74.6 — przegrzane"
       },
       {
         "sym": "PYTH",
-        "price": 0.04499,
+        "price": 0.04485,
         "side": "LONG",
         "score": 5,
-        "rsi": 81.62895306188304,
-        "volPct": 0.004016607034377557,
+        "rsi": 76.61340886082452,
+        "volPct": 0.004268036481403174,
         "enter": false,
         "held": null,
-        "reason": "RSI 81.6 — przegrzane"
+        "reason": "RSI 76.6 — przegrzane"
       },
       {
         "sym": "RAY",
@@ -223,10 +223,10 @@
       }
     ],
     "prices": {
-      "SOL": 76.37,
-      "JUP": 0.19159,
-      "JTO": 0.62977,
-      "PYTH": 0.04499,
+      "SOL": 76.46,
+      "JUP": 0.19157,
+      "JTO": 0.62824,
+      "PYTH": 0.04485,
       "RAY": 0.636,
       "ORCA": 1.183,
       "RENDER": 1.485,
@@ -235,7 +235,7 @@
       "TNSR": 0.0322,
       "DRIFT": 0.0124,
       "KMNO": 0.01797,
-      "PENGU": 0.006445
+      "PENGU": 0.006467
     }
   }
 }
