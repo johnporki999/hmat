@@ -249,6 +249,35 @@ export function analyze(candles, cfg = CFG) {
   };
 }
 
+/**
+ * Zdjecie warunkow rynku w chwili decyzji — LICZBY, nie zdanie po polsku.
+ *
+ * Zdanie "gotowy: trend, RSI 43.2, cofniecie do sredniej" mowi czlowiekowi, co bot
+ * widzial. Ale za pol roku, przy kilkuset trejdach, nie da sie z takich zdan nic
+ * policzyc. Z liczb da sie: mozna posortowac trejdy po RSI i sprawdzic, czy nizsze
+ * RSI faktycznie dawalo lepszy wynik, czy tylko tak nam sie wydawalo.
+ *
+ * To jest roznica miedzy dziennikiem a danymi. Dziennik sie czyta, dane odpowiadaja
+ * na pytania, ktorych nie zadalismy, gdy je zapisywalismy.
+ *
+ * Osiem liczb, okolo 120 bajtow na trejd. Zapisujemy je przy WEJSCIU i przenosimy
+ * na wpis o ZAMKNIECIU — bo dopiero tam jest wynik, a warunek bez wyniku i wynik
+ * bez warunku sa oba bezuzyteczne.
+ */
+export function warunki(m) {
+  const z = (x, n) => (Number.isFinite(x) ? +x.toFixed(n) : null);
+  return {
+    rsi: z(m.rsi, 1),                                              // wykupienie / wyprzedanie
+    rsiPrev: z(m.rsiPrev, 1),                                      // czy RSI rosl czy spadal
+    ext: m.atr ? z((m.price - m.emaFast) / m.atr, 2) : null,       // ile ATR nad srednia szybka
+    nadTrendem: m.emaTrend ? z(m.price / m.emaTrend - 1, 4) : null, // ile % nad srednia dluga
+    fastNadSlow: m.emaSlow ? z(m.emaFast / m.emaSlow - 1, 4) : null, // uklad srednich
+    volPct: z(m.volPct, 4),                                        // zmiennosc jako % ceny
+    er: z(m.er, 3),                                                // ile ruchu bylo w jedna strone
+    slope: z(m.trendSlope, 5),                                     // nachylenie trendu
+  };
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Sygnaly
 // ─────────────────────────────────────────────────────────────────────────────

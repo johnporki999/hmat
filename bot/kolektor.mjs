@@ -30,7 +30,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { UNIVERSE, CFG, envNum, envBool } from './strategy.mjs';
+import { UNIVERSE, CFG, env, envNum, envBool } from './strategy.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -118,6 +118,98 @@ async function zBinance(sym) {
   };
 }
 
+/**
+ * Dane o calym rynku, nie o pojedynczym tokenie. Cztery zapytania na pomiar,
+ * a dotycza wszystkich aktywow naraz. Zapisujemy je jako osobny wiersz z
+ * symbolem _RYNEK.
+ *
+ * Aktywnosc deweloperow i obciazenie sieci sa calkowicie niezalezne od ceny —
+ * w przeciwienstwie do kapitalu zablokowanego, ktory liczy sie w dolarach
+ * i rosnie sam, gdy tokeny drozeja.
+ */
+/**
+ * Znane portfele gield na Solanie. Rosnace saldo = ludzie wplacaja tokeny na
+ * gielde, a wplacaja zwykle po to, zeby sprzedac. Sygnal calkowicie niezalezny
+ * od ceny.
+ *
+ * Przypisanie adresow do gield jest publiczna wiedza, ale nie da sie go
+ * potwierdzic z cala pewnoscia. Liczy sie trend sumy, nie to, czy konkretny
+ * adres na pewno nalezy do konkretnej gieldy.
+ */
+const PORTFELE_GIELD = [
+  '5tzFkiKscXHK5ZXCGbXZxdw7gTjjD1mBwuoFbhUvuAi9', // Binance
+  '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', // Binance
+  'H8sMJSCQxfKiFTCfDR3DUMLPwcRbM61LGFJ8N4dK3WjS', // Coinbase
+  '2AQdpHJ2JpcEgPiATUXjQxA8QmafFegfQwSLWSprPicm', // Coinbase
+  'AC5RDfQFmDS1deWZos921JfqscXdByf8BKHs5ACWjtW2', // Bybit
+];
+
+async function saldaGield() {
+  const rpc = env('RPC_URL', 'https://api.mainnet-beta.solana.com');
+  let suma = 0;
+
+  // Pojedynczo, bo publiczny wezel odrzuca zapytania zbiorcze bledem 429.
+  for (const adres of PORTFELE_GIELD) {
+    let ok = false;
+    try {
+      const r = await fetch(rpc, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getBalance', params: [adres] }),
+      });
+      const v = (await r.json())?.result?.value;
+      if (typeof v === 'number') {
+        suma += v / 1e9;
+        ok = true;
+      }
+    } catch {
+      /* nizej */
+    }
+    // Gdy choc jeden adres nie odpowie, suma bylaby mniejsza i wygladalaby
+    // jak wyplyw z gieldy, ktory sie nie wydarzyl. Lepiej nie zapisac nic
+    // niz zapisac liczbe, ktorej nie da sie porownac z poprzednimi.
+    if (!ok) return null;
+    await sleep(300);
+  }
+  return suma > 0 ? suma : null;
+}
+
+async function oRynku() {
+  const gieldy = await saldaGield();
+  const [fng, tps, cg, tvl] = await Promise.all([
+    pobierz('https://api.alternative.me/fng/?limit=1'),
+    (async () => {
+      try {
+        const r = await fetch('https://api.mainnet-beta.solana.com', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getRecentPerformanceSamples', params: [1] }),
+        });
+        const p = (await r.json())?.result?.[0];
+        return p ? p.numTransactions / p.samplePeriodSecs : null;
+      } catch {
+        return null;
+      }
+    })(),
+    pobierz(
+      'https://api.coingecko.com/api/v3/coins/solana?localization=false&tickers=false' +
+        '&market_data=false&community_data=true&developer_data=true'
+    ),
+    pobierz('https://api.llama.fi/v2/historicalChainTvl/Solana'),
+  ]);
+
+  const d = cg?.developer_data || {};
+  return {
+    fng: fng?.data?.[0]?.value ? Number(fng.data[0].value) : null,
+    tps: r(tps, 0),
+    dev_com: d.commit_count_4_weeks ?? null,
+    dev_ludzi: d.pull_request_contributors ?? null,
+    sent: r(cg?.sentiment_votes_up_percentage, 2),
+    tvl: Array.isArray(tvl) && tvl.length ? r(tvl[tvl.length - 1].tvl, 0) : null,
+    gield_sol: r(gieldy, 0),
+  };
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Main
 // ─────────────────────────────────────────────────────────────────────────────
@@ -151,6 +243,12 @@ for (const sym of aktywa) {
   if (!Object.keys(j).length && !Object.keys(b).length) continue;
   wiersze.push(JSON.stringify({ t: teraz, sym, ...j, ...b }));
   await sleep(250); // uprzejmosc wobec darmowych API
+}
+
+// warstwa rynkowa — jeden wiersz, dotyczy wszystkiego
+const rynek = await oRynku();
+if (Object.values(rynek).some((v) => v != null)) {
+  wiersze.push(JSON.stringify({ t: teraz, sym: '_RYNEK', ...rynek }));
 }
 
 if (!wiersze.length) {

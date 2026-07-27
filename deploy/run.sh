@@ -46,8 +46,9 @@ GALAZ="${GIT_BRANCH:-main}"
 # Ktore boty uruchomic. Domyslnie tylko kontraktowy — spot zostal wylaczony,
 # bo przy stalych oplatach sieciowych nie mial szans, a dzwignia daje ruchy
 # na tyle duze, ze oplaty przestaja decydowac.
-# Zeby uruchomic oba:  run.sh trade perp
-BOTY="${*:-perp}"
+# Liga botow chodzi obok — pieciu graczy na osobnych portfelach.
+# Zeby dorzucic spot:  run.sh trade perp liga
+BOTY="${*:-perp liga}"
 
 # Zabierz to, co przyszlo z zewnatrz (np. zmiany kodu wypchniete z komputera)
 git fetch origin "$GALAZ" --quiet 2>>"$LOG" || log "fetch nieudany"
@@ -58,6 +59,7 @@ for bot in $BOTY; do
   case "$bot" in
     trade) PLIK="trade.mjs" ;;
     perp)  PLIK="perpbot.mjs" ;;
+    liga)  PLIK="liga.mjs" ;;
     *) log "nieznany bot: $bot"; continue ;;
   esac
   log "--- $PLIK ---"

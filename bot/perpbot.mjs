@@ -22,7 +22,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { UNIVERSE, CFG, envNum, envBool, usd, pct, analyze, entrySignal } from './strategy.mjs';
+import { UNIVERSE, CFG, envNum, envBool, usd, pct, analyze, entrySignal, warunki } from './strategy.mjs';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Konfiguracja
@@ -350,6 +350,9 @@ async function main() {
       holdMs: Date.now() - Date.parse(pos.entryTs),
       liquidated,
       reason: ex.reason,
+      // dlaczego weszlismy + jakie byly wtedy liczby, obok wyniku tego wejscia
+      powodWejscia: pos.powodWejscia || null,
+      warunki: pos.warunkiWejscia || null,
       dry: true,
     });
     delete st.positions[sym];
@@ -442,6 +445,11 @@ async function main() {
         bestPrice: price,
         trailArmed: false,
         borrowPaid: 0,
+        // Powod i liczby zostaja PRZY POZYCJI, zeby przy zamknieciu trafily na ten
+        // sam wiersz co wynik. Osobno "dlaczego" i osobno "co z tego wyszlo" nie
+        // uczy niczego — dopiero jedno obok drugiego da sie policzyc.
+        powodWejscia: c.reason,
+        warunkiWejscia: warunki(m),
       };
 
       newTrades.push({
@@ -460,6 +468,7 @@ async function main() {
         takeProfit: st.positions[c.sym].takeProfit,
         pnlUsd: null,
         reason: c.reason,
+        warunki: st.positions[c.sym].warunkiWejscia,
         dry: true,
       });
       actions.push(`${c.side} ${c.sym}`);
