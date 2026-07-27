@@ -703,5 +703,102 @@
       "slope": -0.00281
     },
     "dry": true
+  },
+  {
+    "id": "1785189009212-PYTH",
+    "ts": "2026-07-27T21:50:09.212Z",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.04558,
+    "entryPrice": 0.04447,
+    "qty": 21656.83686124305,
+    "notional": 963.0795352194784,
+    "margin": 96.30795352194784,
+    "leverage": 10,
+    "pnlUsd": 23.426409159149888,
+    "pnlPct": 0.2432448027650301,
+    "borrowUsd": 0.03483203569820858,
+    "holdMs": 9300176,
+    "liquidated": false,
+    "reason": "TAKE PROFIT (+3.88 ATR)",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 52.0, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 52,
+      "rsiPrev": 52,
+      "ext": 0.24,
+      "nadTrendem": 0.0133,
+      "fastNadSlow": 0.0042,
+      "volPct": 0.0064,
+      "er": 0.11,
+      "slope": 0.00159
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0206,
+      "koszt": 0.0056,
+      "score": 9
+    },
+    "odrzucone": [
+      {
+        "sym": "JUP",
+        "side": "SHORT",
+        "score": 9,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "RENDER",
+        "side": "SHORT",
+        "score": 9,
+        "powod": "SHORT: trend spadkowy, trend przyspiesza, RSI 39.3, odbicie do sredniej"
+      },
+      {
+        "sym": "BONK",
+        "side": "SHORT",
+        "score": 9,
+        "powod": "SHORT: trend spadkowy, trend przyspiesza, RSI 45.1, odbicie do sredniej"
+      },
+      {
+        "sym": "W",
+        "side": "SHORT",
+        "score": 9,
+        "powod": "trzymam SHORT"
+      }
+    ],
+    "mfe": 3.88,
+    "mae": 0.07,
+    "rynek": {
+      "SOL": -0.00462,
+      "BTC": -0.00246,
+      "ETH": -0.00388
+    },
+    "dry": true
+  },
+  {
+    "id": "1785189009215-SOL",
+    "ts": "2026-07-27T21:50:09.215Z",
+    "sym": "SOL",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 75.46,
+    "qty": 15.735916764736762,
+    "notional": 1187.432279067036,
+    "margin": 118.74322790670361,
+    "leverage": 10,
+    "liqPrice": 82.2514,
+    "stopPrice": 75.87360161180952,
+    "takeProfit": 74.63279677638094,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, RSI 41.7, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 41.7,
+      "rsiPrev": 42.5,
+      "ext": -1.08,
+      "nadTrendem": -0.0027,
+      "fastNadSlow": -0.0022,
+      "volPct": 0.0034,
+      "er": 0.111,
+      "slope": 0.00012
+    },
+    "dry": true
   }
 ]
