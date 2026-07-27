@@ -2,7 +2,7 @@
   "version": 1,
   "kind": "perp-sim",
   "createdAt": "2026-07-26T19:59:10.228Z",
-  "updatedAt": "2026-07-27T10:50:07.870Z",
+  "updatedAt": "2026-07-27T10:55:07.914Z",
   "cash": 297.4676363240469,
   "startEquity": 500,
   "peakEquity": 520.7506800449819,
@@ -12,7 +12,7 @@
       "side": "LONG",
       "entryPrice": 76.35,
       "entryTs": "2026-07-27T08:05:07.888Z",
-      "lastAccrual": "2026-07-27T10:50:07.868Z",
+      "lastAccrual": "2026-07-27T10:55:07.912Z",
       "qty": 8.077376077733602,
       "notional": 616.7076635349605,
       "margin": 205.56922117832016,
@@ -23,7 +23,7 @@
       "atrAtEntry": 0.19092159772816167,
       "bestPrice": 76.58,
       "trailArmed": true,
-      "borrowPaid": 0.023743197079944368
+      "borrowPaid": 0.024462794879602026
     }
   },
   "cooldowns": {
@@ -44,7 +44,7 @@
     "liquidations": 0,
     "realizedPnl": 5.610198723359472,
     "feesUsd": 4.776657843863813,
-    "borrowUsd": 0.17288546453562964
+    "borrowUsd": 0.1736050623352873
   },
   "perAsset": {
     "SOL": {
@@ -69,22 +69,22 @@
     }
   },
   "lastRun": {
-    "ts": "2026-07-27T10:50:07.870Z",
+    "ts": "2026-07-27T10:55:07.914Z",
     "action": "HOLD",
     "reason": "limit transakcji na dobe",
-    "equityUsd": 504.4670419992792,
-    "unrealizedUsd": 1.430184496912159,
+    "equityUsd": 504.6278699230342,
+    "unrealizedUsd": 1.5910124206671412,
     "leverage": 3,
     "maxPositions": 2,
     "slotsFree": 1,
     "scan": [
       {
         "sym": "SOL",
-        "price": 76.53,
+        "price": 76.55,
         "side": "LONG",
         "score": 9,
-        "rsi": 56.28580385293954,
-        "volPct": 0.0020875659095755555,
+        "rsi": 57.31618682412437,
+        "volPct": 0.0021150134056521813,
         "enter": false,
         "held": "LONG",
         "reason": "trzymam LONG"
@@ -99,17 +99,6 @@
         "enter": true,
         "held": null,
         "reason": "SHORT: trend spadkowy, RSI 42.1, odbicie do sredniej, RSI zawraca w dol"
-      },
-      {
-        "sym": "PENGU",
-        "price": 0.006457,
-        "side": "LONG",
-        "score": 9,
-        "rsi": 60.10397342969992,
-        "volPct": 0.004657574748645042,
-        "enter": true,
-        "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 60.1, cofniecie do sredniej"
       },
       {
         "sym": "JUP",
@@ -134,15 +123,26 @@
         "reason": "gotowy: trend, RSI 52.4, cofniecie do sredniej"
       },
       {
-        "sym": "JTO",
-        "price": 0.63129,
+        "sym": "PENGU",
+        "price": 0.006467,
         "side": "LONG",
-        "score": 5,
-        "rsi": 73.18865825541235,
-        "volPct": 0.005256025310177815,
+        "score": 6,
+        "rsi": 61.8302647004637,
+        "volPct": 0.00480500388928423,
         "enter": false,
         "held": null,
-        "reason": "RSI 73.2 — przegrzane"
+        "reason": "1.65 ATR nad srednia — za daleko"
+      },
+      {
+        "sym": "JTO",
+        "price": 0.6305,
+        "side": "LONG",
+        "score": 5,
+        "rsi": 72.426001221815,
+        "volPct": 0.005262610972342828,
+        "enter": false,
+        "held": null,
+        "reason": "RSI 72.4 — przegrzane"
       },
       {
         "sym": "PYTH",
@@ -201,11 +201,11 @@
       },
       {
         "sym": "BONK",
-        "price": 0.000003133,
+        "price": 0.000003157,
         "side": "LONG",
         "score": 0,
-        "rsi": 38.701407211659216,
-        "volPct": 0.004031928207918637,
+        "rsi": 48.586273950308865,
+        "volPct": 0.004544287864965097,
         "enter": false,
         "held": null,
         "reason": "brak trendu wzrostowego"
@@ -223,19 +223,19 @@
       }
     ],
     "prices": {
-      "SOL": 76.53,
+      "SOL": 76.55,
       "JUP": 0.19146,
-      "JTO": 0.63129,
+      "JTO": 0.6305,
       "PYTH": 0.04487,
       "RAY": 0.633,
       "ORCA": 1.188,
       "RENDER": 1.484,
-      "BONK": 0.000003133,
+      "BONK": 0.000003157,
       "W": 0.00911,
       "TNSR": 0.0322,
       "DRIFT": 0.0124,
       "KMNO": 0.018,
-      "PENGU": 0.006457
+      "PENGU": 0.006467
     }
   }
 }
