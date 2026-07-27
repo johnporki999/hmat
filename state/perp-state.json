@@ -2,7 +2,7 @@
   "version": 1,
   "kind": "perp-sim",
   "createdAt": "2026-07-26T19:59:10.228Z",
-  "updatedAt": "2026-07-27T11:05:07.832Z",
+  "updatedAt": "2026-07-27T11:10:07.807Z",
   "cash": 297.4676363240469,
   "startEquity": 500,
   "peakEquity": 520.7506800449819,
@@ -12,7 +12,7 @@
       "side": "LONG",
       "entryPrice": 76.35,
       "entryTs": "2026-07-27T08:05:07.888Z",
-      "lastAccrual": "2026-07-27T11:05:07.831Z",
+      "lastAccrual": "2026-07-27T11:10:07.805Z",
       "qty": 8.077376077733602,
       "notional": 616.7076635349605,
       "margin": 205.56922117832016,
@@ -23,7 +23,7 @@
       "atrAtEntry": 0.19092159772816167,
       "bestPrice": 76.58,
       "trailArmed": true,
-      "borrowPaid": 0.025901585164936253
+      "borrowPaid": 0.026621015083063283
     }
   },
   "cooldowns": {
@@ -44,7 +44,7 @@
     "liquidations": 0,
     "realizedPnl": 5.610198723359472,
     "feesUsd": 4.776657843863813,
-    "borrowUsd": 0.17504385262062153
+    "borrowUsd": 0.17576328253874857
   },
   "perAsset": {
     "SOL": {
@@ -69,47 +69,36 @@
     }
   },
   "lastRun": {
-    "ts": "2026-07-27T11:05:07.832Z",
+    "ts": "2026-07-27T11:10:07.807Z",
     "action": "HOLD",
     "reason": "limit transakcji na dobe",
-    "equityUsd": 503.7379197641982,
-    "unrealizedUsd": 0.7010622618311155,
+    "equityUsd": 504.38339042049876,
+    "unrealizedUsd": 1.3465329181316628,
     "leverage": 3,
     "maxPositions": 2,
     "slotsFree": 1,
     "scan": [
       {
         "sym": "SOL",
-        "price": 76.44,
+        "price": 76.52,
         "side": "LONG",
         "score": 9,
-        "rsi": 51.70936940204538,
-        "volPct": 0.002069555571722703,
+        "rsi": 55.669934310811094,
+        "volPct": 0.0020673918962687324,
         "enter": false,
         "held": "LONG",
         "reason": "trzymam LONG"
       },
       {
-        "sym": "JTO",
-        "price": 0.62683,
-        "side": "LONG",
-        "score": 9,
-        "rsi": 63.40312405273312,
-        "volPct": 0.005334664768393332,
-        "enter": true,
-        "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 63.4, cofniecie do sredniej"
-      },
-      {
         "sym": "PENGU",
-        "price": 0.006434,
+        "price": 0.006432,
         "side": "LONG",
         "score": 9,
-        "rsi": 54.50484019894835,
-        "volPct": 0.004960462551991175,
+        "rsi": 54.121190649805484,
+        "volPct": 0.004984215361064725,
         "enter": true,
         "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 54.5, cofniecie do sredniej"
+        "reason": "gotowy: trend, trend rosnie, RSI 54.1, cofniecie do sredniej"
       },
       {
         "sym": "JUP",
@@ -134,6 +123,17 @@
         "reason": "potencjal 0.53% maly wobec kosztow 0.56%"
       },
       {
+        "sym": "JTO",
+        "price": 0.62821,
+        "side": "LONG",
+        "score": 6,
+        "rsi": 66.51921914422226,
+        "volPct": 0.005325220050939279,
+        "enter": false,
+        "held": null,
+        "reason": "1.81 ATR nad srednia — za daleko"
+      },
+      {
         "sym": "PYTH",
         "price": 0.04472,
         "side": "LONG",
@@ -146,14 +146,14 @@
       },
       {
         "sym": "W",
-        "price": 0.0091,
+        "price": 0.00908,
         "side": "SHORT",
         "score": 5,
-        "rsi": 40.506359924620924,
-        "volPct": 0.002565660534786321,
+        "rsi": 37.64842751266036,
+        "volPct": 0.00272864342457346,
         "enter": false,
         "held": null,
-        "reason": "1.65 ATR pod srednia — za nisko, czekam na odbicie"
+        "reason": "2.29 ATR pod srednia — za nisko, czekam na odbicie"
       },
       {
         "sym": "TNSR",
@@ -223,19 +223,19 @@
       }
     ],
     "prices": {
-      "SOL": 76.44,
+      "SOL": 76.52,
       "JUP": 0.19146,
-      "JTO": 0.62683,
+      "JTO": 0.62821,
       "PYTH": 0.04472,
       "RAY": 0.633,
       "ORCA": 1.188,
       "RENDER": 1.484,
       "BONK": 0.000003157,
-      "W": 0.0091,
+      "W": 0.00908,
       "TNSR": 0.0322,
       "DRIFT": 0.0124,
       "KMNO": 0.018,
-      "PENGU": 0.006434
+      "PENGU": 0.006432
     }
   }
 }
