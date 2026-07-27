@@ -390,6 +390,8 @@ async function main() {
       // dlaczego weszlismy + jakie byly wtedy liczby, obok wyniku tego wejscia
       powodWejscia: pos.powodWejscia || null,
       warunki: pos.warunkiWejscia || null,
+      prognoza: pos.prognoza || null,
+      odrzucone: pos.odrzucone || null,
       // jak daleko cena zaszla w obie strony, zanim zamknelismy
       ...wychylenia(pos, pos.atrAtEntry || m.atr),
       // co robil w tym czasie caly rynek — zeby odroznic zly sygnal od zwyklego zjazdu
@@ -442,6 +444,9 @@ async function main() {
       enter: best.enter && !held && Date.now() >= cd,
       held: held ? held.side : null,
       reason: held ? `trzymam ${held.side}` : Date.now() < cd ? 'pauza po stracie' : best.reason,
+      // prognoza bota: ile ruchu spodziewa sie zlapac wobec tego, ile ma zaplacic
+      expectedMove: best.expectedMove ?? null,
+      costPct: best.costPct ?? null,
     });
   }
   scan.sort((a, b) => b.score - a.score);
@@ -501,6 +506,21 @@ async function main() {
         // uczy niczego — dopiero jedno obok drugiego da sie policzyc.
         powodWejscia: c.reason,
         warunkiWejscia: warunki(m),
+        // Co bot PRZEWIDYWAL w chwili decyzji. Bez tego kazda strata da sie po fakcie
+        // opowiedziec jako "przeciez bylo widac" — a z tym da sie sprawdzic, czy
+        // przewidywanie bylo blednie ocenione, czy tylko nie wyszlo.
+        prognoza: {
+          spodziewanyRuch: c.expectedMove != null ? +c.expectedMove.toFixed(5) : null,
+          koszt: c.costPct != null ? +c.costPct.toFixed(5) : null,
+          score: c.score ?? null,
+        },
+        // Co jeszcze bylo na stole i dlaczego tego NIE wzielismy. Skaner i tak ocenia
+        // wszystkie aktywa co przebieg — bez zapisania tej listy przy trejdzie nie da
+        // sie pozniej odpowiedziec, jakie alternatywy w ogole rozwazano.
+        odrzucone: scan
+          .filter((x) => x.sym !== c.sym)
+          .slice(0, 4)
+          .map((x) => ({ sym: x.sym, side: x.side, score: x.score, powod: x.reason })),
       };
 
       newTrades.push({

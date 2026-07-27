@@ -393,6 +393,13 @@ export function entrySignal(sym, m, cfg = CFG, ctx = {}) {
   return {
     score,
     enter,
+    // Przewidywanie bota w chwili decyzji: ile ruchu spodziewa sie zlapac i ile
+    // ma kosztowac. Zapisujemy je, bo bez zapisanej PROGNOZY nie da sie pozniej
+    // odroznic "zle ocenilismy" od "ocenilismy dobrze, wyszlo inaczej" — a po
+    // fakcie zawsze wydaje sie, ze wiedzielismy.
+    expectedMove,
+    costPct,
+    prog: cfg.MIN_SCORE,
     reason: enter ? `gotowy: ${good.join(', ')}` : `score ${score}/${cfg.MIN_SCORE}: ${good.join(', ')}`,
   };
 }
