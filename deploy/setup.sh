@@ -61,8 +61,22 @@ WPIS="*/5 * * * * $KATALOG/deploy/run.sh >/dev/null 2>&1"
 if crontab -l 2>/dev/null | grep -Fq "$KATALOG/deploy/run.sh"; then
   echo "--- harmonogram juz ustawiony ---"
 else
-  ( crontab -l 2>/dev/null; echo "$WPIS" ) | crontab -
-  echo "--- harmonogram ustawiony: co 5 minut ---"
+  # UWAGA na pulapke: przy "set -e" polecenie crontab -l na maszynie bez
+  # zadnego harmonogramu konczy sie bledem i ubija caly podshell, zanim echo
+  # zdazy cokolwiek dopisac. Efekt: do crontab trafia pusty tekst, czyli
+  # kasujemy harmonogram zamiast go zalozyc, a skrypt raportuje sukces.
+  # Dlatego "|| true" i nawiasy klamrowe zamiast okraglych.
+  { crontab -l 2>/dev/null || true; echo "$WPIS"; } | crontab -
+
+  # Nie ufamy, ze sie udalo — sprawdzamy.
+  if crontab -l 2>/dev/null | grep -Fq "$KATALOG/deploy/run.sh"; then
+    echo "--- harmonogram ustawiony: co 5 minut ---"
+  else
+    echo ""
+    echo "!!! NIE UDALO SIE ustawic harmonogramu. Dodaj go recznie:"
+    echo "    (crontab -l 2>/dev/null; echo '$WPIS') | crontab -"
+    echo ""
+  fi
 fi
 
 echo ""
