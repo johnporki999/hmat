@@ -33,6 +33,10 @@ export const UNIVERSE = {
   RENDER: { mint: 'rndrizKT3MK1iimdxRdWabcF7Zg7AR5T4nud4EkHBof', dec: 8, kraken: 'RENDERUSD', costMul: 1.4 },
   BONK: { mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', dec: 5, kraken: 'BONKUSD', costMul: 1.6 },
   // Ponizsze sa wylaczone domyslnie — wlacz przez zmienna ASSETS, jesli chcesz.
+  // BTC i ETH — jedyne rynki poza SOL, ktore ma naprawde Jupiter Perps.
+  // Minty zweryfikowane w API Jupitera 27.07.2026 (cbBTC od Coinbase, ETH portal).
+  BTC: { mint: 'cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij', dec: 8, kraken: 'XBTUSD', costMul: 1.0 },
+  ETH: { mint: '7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs', dec: 8, kraken: 'ETHUSD', costMul: 1.0 },
   W: { mint: '85VBFQZC9TZkfaptBWjvUw7YbZjy52A6mjtPGjstQAmQ', dec: 6, kraken: 'WUSD', costMul: 1.5 },
   TNSR: { mint: 'TNSRxcUxoT9xBG3de7PiJyTDYu7kskLqcpddxnEJAS6', dec: 9, kraken: 'TNSRUSD', costMul: 1.6 },
   DRIFT: { mint: 'DriFtupJYLTosbwoN8koMbEYSx54aFAVLddWsbksjwg7', dec: 6, kraken: 'DRIFTUSD', costMul: 1.6 },

@@ -43,8 +43,11 @@ fi
 
 GALAZ="${GIT_BRANCH:-main}"
 
-# Ktore boty uruchomic: domyslnie oba
-BOTY="${*:-trade perp}"
+# Ktore boty uruchomic. Domyslnie tylko kontraktowy — spot zostal wylaczony,
+# bo przy stalych oplatach sieciowych nie mial szans, a dzwignia daje ruchy
+# na tyle duze, ze oplaty przestaja decydowac.
+# Zeby uruchomic oba:  run.sh trade perp
+BOTY="${*:-perp}"
 
 # Zabierz to, co przyszlo z zewnatrz (np. zmiany kodu wypchniete z komputera)
 git fetch origin "$GALAZ" --quiet 2>>"$LOG" || log "fetch nieudany"
