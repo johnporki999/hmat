@@ -45,8 +45,34 @@ const P = {
   LIQ_AT: envNum('PERP_LIQ_AT', 0.9),
 
   MIN_MARGIN_USD: envNum('PERP_MIN_MARGIN_USD', 20),
-  MAX_TRADES_PER_DAY: envNum('PERP_MAX_TRADES_PER_DAY', 10),
-  COOLDOWN_MIN: envNum('PERP_COOLDOWN_MIN', 45),
+
+  // ── Hamulce czasowe: domyslnie WYLACZONE ────────────────────────────────────
+  //
+  // Wczesniej bot stal bezczynnie po kilkanascie godzin na dobe, choc widzial
+  // okazje. Limit dobowy i pauza po stracie nie chronily przed niczym, czego nie
+  // pilnuje juz stop loss — ograniczaly tylko liczbe okazji.
+  //
+  // Wylaczenie ich ma tez druga zalete, wazniejsza niz sam handel: liga potrzebuje
+  // okolo 560 trejdow na gracza, zeby cokolwiek rozstrzygnac. Przy pieciu trejdach
+  // dziennie to byly lata. Wiecej wejsc to szybsza odpowiedz na pytanie, czy
+  // ktorakolwiek strategia w ogole bije rzut moneta.
+  //
+  // 0 = bez limitu. Wlaczysz z powrotem, ustawiajac liczbe.
+  MAX_TRADES_PER_DAY: envNum('PERP_MAX_TRADES_PER_DAY', 0),
+  COOLDOWN_MIN: envNum('PERP_COOLDOWN_MIN', 0),
+
+  // Ile pozycji naraz. Kazda zjada ALLOC_PCT kapitalu, wiec to nie jest hamulec
+  // czasowy tylko podzial pieniedzy — przy 0,4 wiecej niz dwie i tak sie nie zmiesci.
+  MAX_POSITIONS: envNum('PERP_MAX_POSITIONS', 2),
+
+  // ── Bezpiecznik, ktorego NIE wylaczam sam ───────────────────────────────────
+  //
+  // Ten jeden zostaje. Nie powoduje bezczynnosci — przy obsunieciu 3,6% jest
+  // daleko od progu 40% i nigdy sie nie odezwal. Odezwie sie dopiero, gdy cos
+  // pojdzie naprawde zle, i wtedy jego zadaniem jest zatrzymac bota, zanim
+  // zamieni symulacje w wykres spadajacy do zera bez zadnej informacji dla nas.
+  //
+  // Chcesz calkiem bez hamulcow: PERP_MAX_DRAWDOWN_PCT=1 w deploy/.env
   MAX_DRAWDOWN_PCT: envNum('PERP_MAX_DRAWDOWN_PCT', 0.4),
   RESET: envBool('PERP_RESET', false),
 };
@@ -323,8 +349,12 @@ async function main() {
     if (liquidated) st.stats.liquidations += 1;
     if (!liquidated && net >= 0) st.stats.wins += 1;
     else st.stats.losses += 1;
-    st.day.trades += 1;
-    if (net < 0) st.cooldowns[sym] = Date.now() + P.COOLDOWN_MIN * 60000;
+    // Licznik dobowy NIE rosnie przy zamknieciu. Limit ma ograniczac to, ile razy
+    // bot decyduje sie wejsc na rynek — zamkniecie nie jest decyzja, tylko skutkiem
+    // stopa albo take profitu, i tak czy siak zostanie wykonane, bo limit blokuje
+    // wylacznie otwieranie. Liczenie go tutaj zjadalo polowe budzetu za nic:
+    // przy limicie 10 bot mial faktycznie 5 pelnych trejdow na dobe, nie 10.
+    if (net < 0 && P.COOLDOWN_MIN > 0) st.cooldowns[sym] = Date.now() + P.COOLDOWN_MIN * 60000;
 
     const pa = st.perAsset[sym] || { trades: 0, wins: 0, pnl: 0 };
     pa.trades += 1;
@@ -382,7 +412,9 @@ async function main() {
     const m = mkt[sym];
     if (!m) continue;
     const held = st.positions[sym];
-    const cd = st.cooldowns[sym] || 0;
+    // Przy wylaczonej pauzie ignorujemy tez te zapisane wczesniej — inaczej stara
+    // pauza z pliku stanu blokowalaby wejscie jeszcze po zmianie ustawienia.
+    const cd = P.COOLDOWN_MIN > 0 ? st.cooldowns[sym] || 0 : 0;
     const L = P.ALLOW_LONG ? entrySignal(sym, m, CFG, {}) : { enter: false, score: 0, reason: 'long wylaczony' };
     const S = P.ALLOW_SHORT ? shortSignal(sym, m) : { enter: false, score: 0, reason: 'short wylaczony' };
     const best = S.score > L.score ? { ...S, side: 'SHORT' } : { ...L, side: 'LONG' };
@@ -404,7 +436,10 @@ async function main() {
 
   const blockers = [];
   if (st.halted) blockers.push(`bezpiecznik: ${st.haltReason}`);
-  if (st.day.trades >= P.MAX_TRADES_PER_DAY) blockers.push('limit transakcji na dobe');
+  // 0 znaczy "bez limitu" — bez tego warunku zero blokowaloby kazde wejscie
+  if (P.MAX_TRADES_PER_DAY > 0 && st.day.trades >= P.MAX_TRADES_PER_DAY) {
+    blockers.push('limit transakcji na dobe');
+  }
   let slots = P.MAX_POSITIONS - Object.keys(st.positions).length;
   if (slots <= 0) blockers.push('wszystkie sloty zajete');
 
@@ -496,6 +531,23 @@ async function main() {
     leverage: P.LEVERAGE,
     maxPositions: P.MAX_POSITIONS,
     slotsFree: Math.max(0, P.MAX_POSITIONS - Object.keys(st.positions).length),
+    // Zeby w apce dalo sie zobaczyc, DLACZEGO bot stoi, zamiast sie domyslac.
+    // Pauzy po stracie licza sie tylko te jeszcze wazne — wygasle nie sa blokada.
+    limity: {
+      dnia: st.day.trades,
+      dniaMax: P.MAX_TRADES_PER_DAY,
+      resetZaMs: Date.parse(`${utcDay()}T24:00:00Z`) - Date.now(),
+      pauzy:
+        P.COOLDOWN_MIN > 0
+          ? Object.entries(st.cooldowns || {})
+              .filter(([, v]) => v > Date.now())
+              .map(([sym, v]) => ({ sym, doMs: v - Date.now() }))
+          : [],
+      pauzaMin: P.COOLDOWN_MIN,
+      obsuniecie: st.peakEquity ? Math.max(0, 1 - equityUsd / st.peakEquity) : 0,
+      obsuniecieMax: P.MAX_DRAWDOWN_PCT,
+      wstrzymany: !!st.halted,
+    },
     scan,
     prices: Object.fromEntries(Object.entries(mkt).map(([s, m]) => [s, m.price])),
   };

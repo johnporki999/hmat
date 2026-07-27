@@ -40,8 +40,17 @@ import { istotnosc, ALFA, MOC, D_MIN, SLOWA } from './istotnosc.mjs';
 const P = {
   START: envNum('LIGA_START_USD', 500),
   LEVERAGE: envNum('LIGA_LEVERAGE', 3),
-  MAX_POZ: envNum('LIGA_MAX_POZYCJI', 2),
-  ALLOC: envNum('LIGA_ALLOC_PCT', 0.4),
+  // Liga nigdy nie miala limitu dobowego ani pauzy po stracie — jedynym hamulcem
+  // bylo to, ze gracz mogl trzymac tylko dwie pozycje naraz. Przy osmiu aktywach
+  // znaczylo to, ze widzial okazje i musial ja odpuscic.
+  //
+  // Cztery miejsca zamiast dwoch, ale depozyt na kazde o polowe mniejszy — laczne
+  // zaangazowanie kapitalu zostaje takie samo (4 x 0,2 = 2 x 0,4 = 80%), wiec
+  // porownanie graczy dalej mierzy pomysl na wejscie, a nie odwage w stawianiu.
+  // Wynik liczymy jako zwrot z wlozonego depozytu, wiec zmiana wielkosci pozycji
+  // nie psuje statystyki — a dwa razy wiecej trejdow to dwa razy szybsza odpowiedz.
+  MAX_POZ: envNum('LIGA_MAX_POZYCJI', 4),
+  ALLOC: envNum('LIGA_ALLOC_PCT', 0.2),
   OPEN_FEE: envNum('PERP_OPEN_FEE', 0.0006),
   BORROW_L: envNum('PERP_BORROW_LONG_H', 0.000014),
   BORROW_S: envNum('PERP_BORROW_SHORT_H', 0.000006),
