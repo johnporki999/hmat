@@ -168,6 +168,23 @@ const GRACZE = {
     },
   },
 
+  // Te same wejscia co Trend. Rozni ich JEDNA liczba: szerokosc stopa.
+  //
+  // Test na 5 latach (bot/wyjscia.mjs) pokazal, ze stop 1,6 ATR wyrzuca pozycje,
+  // ktore by wygraly — przy 3,5 ATR wynik przechodzil z -0,017% na +0,073% na trejd,
+  // i to na obu probkach. Ale to byl wynik z HISTORII, a historia zawsze wyglada
+  // lepiej niz przyszlosc: na probce testowej przewaga stopniala z +0,109% do +0,021%.
+  //
+  // Dlatego nie zmieniamy bota. Wstawiamy to jako osobnego gracza i sprawdzamy na
+  // trejdach, ktore sie jeszcze nie wydarzyly. Jesli Luzny pobije Trend takze tutaj,
+  // dopiero wtedy warto ruszac prawdziwego bota.
+  luzny: {
+    nazwa: 'Luzny',
+    opis: 'te same wejscia co Trend, ale stop 3,5 ATR zamiast 1,6',
+    wejscie: sygnalTrendu,
+    stopAtr: 3.5,
+  },
+
   kontra: {
     nazwa: 'Kontra',
     opis: 'kupuje panikę, sprzedaje euforię',
@@ -376,7 +393,12 @@ for (const [id, def] of Object.entries(GRACZE)) {
       sym, side: kier, entryPrice: px, entryTs: nowISO(), lastAccrual: nowISO(),
       qty: notional / px, notional, margin, leverage: P.LEVERAGE,
       liqPrice: liqPrice(kier, px, P.LEVERAGE),
-      stopPrice: long ? px - CFG.STOP_ATR * r.m.atr : px + CFG.STOP_ATR * r.m.atr,
+      // Jedyne miejsce, w ktorym gracze moga sie roznic mechanika — i tylko dlatego,
+      // ze Luzny istnieje wlasnie po to, zeby zmierzyc wplyw szerokosci stopa.
+      stopPrice: (() => {
+        const s = def.stopAtr ?? CFG.STOP_ATR;
+        return long ? px - s * r.m.atr : px + s * r.m.atr;
+      })(),
       takeProfit: long ? px + CFG.TAKE_PROFIT_ATR * r.m.atr : px - CFG.TAKE_PROFIT_ATR * r.m.atr,
       atrAtEntry: r.m.atr, bestPrice: px, worstPrice: px, trailArmed: false, borrowPaid: 0,
       rynekWejscie: migawka,
