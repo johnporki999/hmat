@@ -1,0 +1,12 @@
+# Windows commituje pliki z koncowkami CRLF. Skrypt powloki z takimi koncowkami
+# nie uruchomi sie na Linuksie — bash probuje wykonac interpreter o nazwie
+# "bash\r" i konczy bledem, ktory nic nikomu nie mowi.
+#
+# Ponizsze wymusza LF w repozytorium niezaleznie od ustawien komputera.
+
+* text=auto
+
+*.sh text eol=lf
+*.mjs text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
