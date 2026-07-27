@@ -2,35 +2,17 @@
   "version": 1,
   "kind": "perp-sim",
   "createdAt": "2026-07-26T19:59:10.228Z",
-  "updatedAt": "2026-07-27T08:00:08.751Z",
-  "cash": 102.9043625525751,
+  "updatedAt": "2026-07-27T08:05:07.888Z",
+  "cash": 101.73444041664257,
   "startEquity": 500,
   "peakEquity": 520.7506800449819,
   "positions": {
-    "SOL": {
-      "sym": "SOL",
-      "side": "LONG",
-      "entryPrice": 76.21,
-      "entryTs": "2026-07-27T01:19:04.361Z",
-      "lastAccrual": "2026-07-27T08:00:08.749Z",
-      "qty": 8.033198019372945,
-      "notional": 612.2100210564121,
-      "margin": 204.07000701880403,
-      "leverage": 3,
-      "liqPrice": 53.346999999999994,
-      "stopPrice": 75.87248296665838,
-      "takeProfit": 76.88503406668322,
-      "atrAtEntry": 0.21094814583850716,
-      "bestPrice": 76.78,
-      "trailArmed": true,
-      "borrowPaid": 0.05729289799407094
-    },
     "JUP": {
       "sym": "JUP",
       "side": "LONG",
       "entryPrice": 0.19279,
       "entryTs": "2026-07-27T07:35:15.252Z",
-      "lastAccrual": "2026-07-27T08:00:08.750Z",
+      "lastAccrual": "2026-07-27T08:05:07.886Z",
       "qty": 3209.5079675592674,
       "notional": 618.7610410657511,
       "margin": 206.25368035525037,
@@ -41,7 +23,25 @@
       "atrAtEntry": 0.00042674547080168813,
       "bestPrice": 0.19279,
       "trailArmed": false,
-      "borrowPaid": 0.0035937936895373995
+      "borrowPaid": 0.004313602533682795
+    },
+    "SOL": {
+      "sym": "SOL",
+      "side": "LONG",
+      "entryPrice": 76.35,
+      "entryTs": "2026-07-27T08:05:07.888Z",
+      "lastAccrual": "2026-07-27T08:05:07.888Z",
+      "qty": 8.077376077733602,
+      "notional": 616.7076635349605,
+      "margin": 205.56922117832016,
+      "leverage": 3,
+      "liqPrice": 53.44499999999999,
+      "stopPrice": 76.04452544363494,
+      "takeProfit": 76.9609491127301,
+      "atrAtEntry": 0.19092159772816167,
+      "bestPrice": 76.35,
+      "trailArmed": false,
+      "borrowPaid": 0
     }
   },
   "cooldowns": {
@@ -51,22 +51,22 @@
   "haltReason": null,
   "day": {
     "date": "2026-07-27",
-    "trades": 6
+    "trades": 8
   },
   "stats": {
-    "trades": 3,
-    "wins": 2,
+    "trades": 4,
+    "wins": 3,
     "losses": 1,
     "liquidations": 0,
-    "realizedPnl": 15.065801177791515,
-    "feesUsd": 2.9369198650506227,
-    "borrowUsd": 0.1376259013104629
+    "realizedPnl": 15.765117799496103,
+    "feesUsd": 3.674270475805446,
+    "borrowUsd": 0.13905790053432013
   },
   "perAsset": {
     "SOL": {
-      "trades": 1,
-      "wins": 1,
-      "pnl": 10.535017547010062
+      "trades": 2,
+      "wins": 2,
+      "pnl": 11.23433416871465
     },
     "JUP": {
       "trades": 1,
@@ -80,36 +80,25 @@
     }
   },
   "lastRun": {
-    "ts": "2026-07-27T08:00:08.751Z",
-    "action": "HOLD",
-    "reason": "wszystkie sloty zajete",
-    "equityUsd": 514.8541348190143,
-    "unrealizedUsd": 1.626084892384774,
+    "ts": "2026-07-27T08:05:07.888Z",
+    "action": "ZAMKNIECIE LONG SOL, LONG SOL",
+    "reason": "ZAMKNIECIE LONG SOL, LONG SOL",
+    "equityUsd": 513.5530283476794,
+    "unrealizedUsd": -0.004313602533682795,
     "leverage": 3,
     "maxPositions": 2,
     "slotsFree": 0,
     "scan": [
       {
-        "sym": "W",
-        "price": 0.00919,
-        "side": "LONG",
-        "score": 10,
-        "rsi": 49.56092886070845,
-        "volPct": 0.002754985128426422,
-        "enter": false,
-        "held": null,
-        "reason": "pauza po stracie"
-      },
-      {
         "sym": "SOL",
-        "price": 76.42,
+        "price": 76.35,
         "side": "LONG",
         "score": 9,
-        "rsi": 49.982375497461625,
-        "volPct": 0.0024141981981103244,
-        "enter": false,
-        "held": "LONG",
-        "reason": "trzymam LONG"
+        "rsi": 47.33554355933444,
+        "volPct": 0.002500610317330212,
+        "enter": true,
+        "held": null,
+        "reason": "gotowy: trend, trend rosnie, RSI 47.3, cofniecie do sredniej"
       },
       {
         "sym": "JUP",
@@ -124,25 +113,36 @@
       },
       {
         "sym": "BONK",
-        "price": 0.000003175,
+        "price": 0.000003172,
         "side": "LONG",
         "score": 9,
-        "rsi": 47.94289928357003,
-        "volPct": 0.0036931965076028974,
+        "rsi": 46.61823532788482,
+        "volPct": 0.0037642448379334582,
         "enter": true,
         "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 47.9, cofniecie do sredniej"
+        "reason": "gotowy: trend, trend rosnie, RSI 46.6, cofniecie do sredniej"
+      },
+      {
+        "sym": "W",
+        "price": 0.00917,
+        "side": "LONG",
+        "score": 9,
+        "rsi": 46.07021655011319,
+        "volPct": 0.002916781325933513,
+        "enter": false,
+        "held": null,
+        "reason": "pauza po stracie"
       },
       {
         "sym": "PENGU",
-        "price": 0.006409,
+        "price": 0.006404,
         "side": "LONG",
         "score": 9,
-        "rsi": 56.510126485794494,
-        "volPct": 0.0035829927484318518,
+        "rsi": 54.943625164755126,
+        "volPct": 0.003641558929082227,
         "enter": true,
         "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 56.5, cofniecie do sredniej"
+        "reason": "gotowy: trend, trend rosnie, RSI 54.9, cofniecie do sredniej"
       },
       {
         "sym": "RENDER",
@@ -227,26 +227,26 @@
         "side": "LONG",
         "score": 0,
         "rsi": 46.65038547009615,
-        "volPct": 0.0026215305999028227,
+        "volPct": 0.002769996452756666,
         "enter": false,
         "held": null,
         "reason": "brak trendu wzrostowego"
       }
     ],
     "prices": {
-      "SOL": 76.42,
+      "SOL": 76.35,
       "JUP": 0.19279,
       "JTO": 0.61965,
       "PYTH": 0.0433,
       "RAY": 0.642,
       "ORCA": 1.194,
       "RENDER": 1.482,
-      "BONK": 0.000003175,
-      "W": 0.00919,
+      "BONK": 0.000003172,
+      "W": 0.00917,
       "TNSR": 0.0324,
       "DRIFT": 0.0126,
       "KMNO": 0.01802,
-      "PENGU": 0.006409
+      "PENGU": 0.006404
     }
   }
 }
