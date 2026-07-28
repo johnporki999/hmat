@@ -195,6 +195,33 @@ const GRACZE = {
     },
   },
 
+  // Ten sam sygnal co Kontra, ta sama dzwignia, te same wyjscia i te same oplaty.
+  // Rozni ich jedno: ten nie pozwala przechylowi urosnac ponad JEDNA pozycje.
+  //
+  // Dlaczego nie "zero przechylu": przy jednej otwartej pozycji neutralnosc jest
+  // niemozliwa z definicji — cos musi byc pierwsze. Reguła dopuszcza wiec jedna
+  // pozycje bez pary, a kazda kolejna musi rownowazyc. Przy czterech miejscach
+  // daje to przechyl rzedu cwiartki zamiast calosci, jak u Kontry.
+  //
+  // Ile z tego wyjdzie w praktyce, zmierzy bot/ligabeta.mjs — jego beta powinna
+  // byc wyraznie blizsza zeru niz +3,29 Kontry. Jesli nie bedzie, regula jest za slaba
+  // i trzeba ja zaostrzyc; to tez jest wynik.
+  //
+  // Trzy mozliwe zakonczenia i kazde cos mowi:
+  //   bije Kontre      -> alfa byla prawdziwa, topila ja ekspozycja
+  //   wypada tak samo  -> beta Kontry nie miala znaczenia, szukamy dalej
+  //   wypada gorzej    -> to ekspozycja niosla wynik, nie sygnal
+  kontraN: {
+    nazwa: 'Kontra rowna',
+    opis: 'te same sygnaly co Kontra, ale nie przechyla sie w jedna strone rynku',
+    wejscie: (sym, m) => {
+      if (m.rsi < 30) return { kier: 'LONG', powod: `RSI ${m.rsi.toFixed(1)} — panika, kupuję` };
+      if (m.rsi > 70) return { kier: 'SHORT', powod: `RSI ${m.rsi.toFixed(1)} — euforia, sprzedaję` };
+      return null;
+    },
+    bezRynku: true,
+  },
+
   wybicie: {
     nazwa: 'Wybicie',
     opis: 'wchodzi na sile, gdy cena łamie zakres z 20 świec',
@@ -385,6 +412,26 @@ for (const [id, def] of Object.entries(GRACZE)) {
     const notional = margin * P.LEVERAGE;
     const oplata = notional * P.OPEN_FEE;
     const long = kier === 'LONG';
+
+    // Gracz "rowny" bierze DOKLADNIE te same sygnaly, ale odpuszcza te, ktore
+    // dolozylyby mu ekspozycji w strone, w ktora juz stoi.
+    //
+    // Po co: pomiar ligabeta.mjs pokazal, ze Kontra ma najpewniejszy sygnal w calej
+    // stawce (+3,07% ponad malpe), a mimo to jest ostatnia w tabeli — bo jej beta
+    // wynosi +3,29, czyli zachowuje sie jak zwykle trzymanie krypto. Kupowanie paniki
+    // oznacza wchodzenie na long wtedy, gdy rynek spada, i to ja topi.
+    //
+    // Ten gracz sprawdza, czy po odjeciu tego przypadkowego zakladu kierunkowego
+    // sygnal faktycznie dowozi. Nie zmieniamy sygnalu ani grosza — tylko ekspozycje.
+    if (def.bezRynku) {
+      const netto = Object.values(g.positions).reduce(
+        (a, p) => a + (p.side === 'LONG' ? p.notional : -p.notional), 0
+      );
+      const nettoPo = netto + (long ? notional : -notional);
+      // Wolno wejsc, gdy pozycja zmniejsza przechyl albo zostawia go w granicach
+      // jednej pozycji. Inaczej gracz pilby sie w jedna strone tak samo jak Kontra.
+      if (Math.abs(nettoPo) > Math.abs(netto) && Math.abs(nettoPo) > notional) continue;
+    }
 
     g.cash -= margin + oplata;
     g.stats.oplaty += oplata;
