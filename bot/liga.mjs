@@ -39,6 +39,9 @@ import {
   warunki, wychylenia, migawkaRynku, zmianaRynku,
 } from './strategy.mjs';
 import { istotnosc, ALFA, MOC, D_MIN, SLOWA } from './istotnosc.mjs';
+// Gracze i mechanika wyjsc siedza w osobnym pliku, bo korzysta z nich takze
+// ligahist.mjs — test tych samych graczy na pieciu latach swiec.
+import { stworzGraczy, liqPrice, pnlAt, czyWyjsc } from './gracze.mjs';
 
 const P = {
   START: envNum('LIGA_START_USD', 500),
@@ -62,6 +65,8 @@ const P = {
   RESET: envBool('LIGA_RESET', false),
   MALPA_SZANSA: envNum('LIGA_MALPA_SZANSA', 0.06), // na aktywo na przebieg
 };
+
+const GRACZE = stworzGraczy({ malpaSzansa: P.MALPA_SZANSA });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -121,184 +126,11 @@ async function swiece(sym, minut) {
 // Gracze — różnią się WYŁĄCZNIE pomysłem na wejście
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Sygnał bota kontraktowego. Zwraca {kier, powod} albo null.
- *
- * Każdy gracz musi umieć powiedzieć, CO go wywołało — inaczej za pół roku będziemy
- * mieli tabelę wyników bez żadnej informacji, dlaczego wyszła właśnie taka.
- */
-const sygnalTrendu = (sym, m, c) => {
-  const L = entrySignal(sym, m, CFG, {});
-  if (L.enter) return { kier: 'LONG', powod: L.reason };
-  // lustro: trend spadkowy i odbicie do średniej
-  const spadek = m.price < m.emaTrend && m.emaFast < m.emaSlow;
-  const okno = m.rsi >= 100 - CFG.RSI_MAX && m.rsi <= 100 - CFG.RSI_MIN;
-  const ext = (m.emaFast - m.price) / m.atr;
-  if (spadek && okno && ext <= CFG.MAX_EXT_ATR && m.volPct >= CFG.MIN_VOL_PCT) {
-    return {
-      kier: 'SHORT',
-      powod: `trend spadkowy, RSI ${m.rsi.toFixed(1)}, odbicie ${ext.toFixed(2)} ATR do średniej`,
-    };
-  }
-  return null;
-};
-
-/** Zwraca {kier:'LONG'|'SHORT', powod} albo null. */
-const GRACZE = {
-  trend: {
-    nazwa: 'Trend',
-    opis: 'kupuje cofnięcie we wzroście, sprzedaje odbicie w spadku',
-    wejscie: sygnalTrendu,
-  },
-
-  // Ten sam sygnał, przeciwny kierunek. Wchodzi dokładnie wtedy, kiedy Trend —
-  // więc obaj mają tyle samo okazji i te same koszty. Różni ich wyłącznie znak.
-  //
-  // Trzy możliwe wyniki i wszystkie są warte zobaczenia:
-  //   Trend wygrywa    → sygnał działa tak, jak myśleliśmy
-  //   Antytrend wygrywa → sygnał działa, tylko odwrotnie; to odkrycie, nie porażka
-  //   obaj przy zerze  → sygnał jest pusty, a różnica w tabeli to szum
-  antytrend: {
-    nazwa: 'Antytrend',
-    opis: 'te same sygnały co Trend, tylko postawione na głowie',
-    wejscie: (sym, m, c) => {
-      const k = sygnalTrendu(sym, m, c);
-      if (!k) return null;
-      return { kier: k.kier === 'LONG' ? 'SHORT' : 'LONG', powod: `odwrotnie do: ${k.powod}` };
-    },
-  },
-
-  // Te same wejscia co Trend. Rozni ich JEDNA liczba: szerokosc stopa.
-  //
-  // Test na 5 latach (bot/wyjscia.mjs) pokazal, ze stop 1,6 ATR wyrzuca pozycje,
-  // ktore by wygraly — przy 3,5 ATR wynik przechodzil z -0,017% na +0,073% na trejd,
-  // i to na obu probkach. Ale to byl wynik z HISTORII, a historia zawsze wyglada
-  // lepiej niz przyszlosc: na probce testowej przewaga stopniala z +0,109% do +0,021%.
-  //
-  // Dlatego nie zmieniamy bota. Wstawiamy to jako osobnego gracza i sprawdzamy na
-  // trejdach, ktore sie jeszcze nie wydarzyly. Jesli Luzny pobije Trend takze tutaj,
-  // dopiero wtedy warto ruszac prawdziwego bota.
-  luzny: {
-    nazwa: 'Luzny',
-    opis: 'te same wejscia co Trend, ale stop 3,5 ATR zamiast 1,6',
-    wejscie: sygnalTrendu,
-    stopAtr: 3.5,
-  },
-
-  // Te same wejscia co Trend, ta sama dzwignia, ten sam stop. Rozni ich smycz:
-  // trailing 0,5 ATR zamiast 2,0.
-  //
-  // Ten gracz wzial sie z rozliczenia PORAZEK na zywo. Okazalo sie, ze przecietna
-  // stratna pozycja zaszla 1,43-1,94 ATR w nasza strone, zanim sie zawalila —
-  // a trailing stoi 2,0 ATR ponizej szczytu, czyli przy takim szczycie wypada
-  // PONIZEJ ceny wejscia. Mechanizm od pilnowania zysku nie mial jak zadzialac.
-  //
-  // Sprawdzenie na 5 latach swiec (bot/wyjscia.mjs): trailing 0,5 ATR dal +0,102%
-  // na trejd wobec -0,017% obecnych zasad, dodatnio na obu probkach. To najlepszy
-  // wynik ze wszystkich 16 przetestowanych wariantow wyjscia.
-  //
-  // Ale to nadal historia. Tutaj sprawdzamy to na trejdach, ktore sie nie wydarzyly.
-  smycz: {
-    nazwa: 'Smycz',
-    opis: 'te same wejscia co Trend, ale trailing 0,5 ATR zamiast 2,0',
-    wejscie: sygnalTrendu,
-    trailAtr: 0.5,
-  },
-
-  kontra: {
-    nazwa: 'Kontra',
-    opis: 'kupuje panikę, sprzedaje euforię',
-    wejscie: (sym, m) => {
-      if (m.rsi < 30) return { kier: 'LONG', powod: `RSI ${m.rsi.toFixed(1)} — panika, kupuję` };
-      if (m.rsi > 70) return { kier: 'SHORT', powod: `RSI ${m.rsi.toFixed(1)} — euforia, sprzedaję` };
-      return null;
-    },
-  },
-
-  // Ten sam sygnal co Kontra, ta sama dzwignia, te same wyjscia i te same oplaty.
-  // Rozni ich jedno: ten nie pozwala przechylowi urosnac ponad JEDNA pozycje.
-  //
-  // Dlaczego nie "zero przechylu": przy jednej otwartej pozycji neutralnosc jest
-  // niemozliwa z definicji — cos musi byc pierwsze. Reguła dopuszcza wiec jedna
-  // pozycje bez pary, a kazda kolejna musi rownowazyc. Przy czterech miejscach
-  // daje to przechyl rzedu cwiartki zamiast calosci, jak u Kontry.
-  //
-  // Ile z tego wyjdzie w praktyce, zmierzy bot/ligabeta.mjs — jego beta powinna
-  // byc wyraznie blizsza zeru niz +3,29 Kontry. Jesli nie bedzie, regula jest za slaba
-  // i trzeba ja zaostrzyc; to tez jest wynik.
-  //
-  // Trzy mozliwe zakonczenia i kazde cos mowi:
-  //   bije Kontre      -> alfa byla prawdziwa, topila ja ekspozycja
-  //   wypada tak samo  -> beta Kontry nie miala znaczenia, szukamy dalej
-  //   wypada gorzej    -> to ekspozycja niosla wynik, nie sygnal
-  kontraN: {
-    nazwa: 'Kontra rowna',
-    opis: 'te same sygnaly co Kontra, ale nie przechyla sie w jedna strone rynku',
-    wejscie: (sym, m) => {
-      if (m.rsi < 30) return { kier: 'LONG', powod: `RSI ${m.rsi.toFixed(1)} — panika, kupuję` };
-      if (m.rsi > 70) return { kier: 'SHORT', powod: `RSI ${m.rsi.toFixed(1)} — euforia, sprzedaję` };
-      return null;
-    },
-    bezRynku: true,
-  },
-
-  wybicie: {
-    nazwa: 'Wybicie',
-    opis: 'wchodzi na sile, gdy cena łamie zakres z 20 świec',
-    wejscie: (sym, m, c) => {
-      if (c.length < 25) return null;
-      const okno = c.slice(-21, -1);
-      const max = Math.max(...okno.map((x) => x.h));
-      const min = Math.min(...okno.map((x) => x.l));
-      const px = c[c.length - 1].c;
-      if (px > max) return { kier: 'LONG', powod: `${px.toFixed(2)} nad szczytem 20 świec ${max.toFixed(2)}` };
-      if (px < min) return { kier: 'SHORT', powod: `${px.toFixed(2)} pod dołkiem 20 świec ${min.toFixed(2)}` };
-      return null;
-    },
-  },
-
-  malpa: {
-    nazwa: 'Małpa',
-    opis: 'rzuca monetą — punkt odniesienia dla całej reszty',
-    wejscie: () => {
-      if (Math.random() >= P.MALPA_SZANSA) return null;
-      return { kier: Math.random() < 0.5 ? 'LONG' : 'SHORT', powod: 'rzut monetą — żadnego powodu' };
-    },
-  },
-
-  byk: {
-    nazwa: 'Byk',
-    opis: 'kupuje SOL i nigdy nie sprzedaje',
-    wejscie: (sym) => (sym === 'SOL' ? { kier: 'LONG', powod: 'kupuję SOL i nie sprzedaję' } : null),
-    nigdyNieZamykaj: true,
-  },
-};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mechanika — identyczna dla wszystkich
 // ─────────────────────────────────────────────────────────────────────────────
 
-const liqPrice = (side, entry, lev) =>
-  side === 'LONG' ? entry * (1 - P.LIQ_AT / lev) : entry * (1 + P.LIQ_AT / lev);
-
-const pnlAt = (p, px) => (p.side === 'LONG' ? p.qty * (px - p.entryPrice) : p.qty * (p.entryPrice - px));
-
-function czyWyjsc(p, m, px) {
-  const long = p.side === 'LONG';
-  const a = p.atrAtEntry || m.atr;
-  const heldH = (Date.now() - Date.parse(p.entryTs)) / 3600000;
-  if (long ? px <= p.stopPrice : px >= p.stopPrice) return 'STOP LOSS';
-  if (long ? px >= p.takeProfit : px <= p.takeProfit) return 'TAKE PROFIT';
-  if (p.trailArmed) {
-    // Dlugosc smyczy zapisujemy przy pozycji, a nie bierzemy z konfiguracji, bo
-    // gracz Smycz ma wlasna. Starsze pozycje jej nie maja i dostaja wartosc z CFG.
-    const dl = p.trailAtr ?? CFG.TRAIL_ATR;
-    const tr = long ? p.bestPrice - dl * a : p.bestPrice + dl * a;
-    if (long ? px <= tr : px >= tr) return 'TRAILING STOP';
-  }
-  if (heldH > CFG.MAX_HOLD_HOURS && (long ? px < p.entryPrice : px > p.entryPrice)) return 'stop czasowy';
-  return null;
-}
 
 // sumaR i sumaR2 to sumy zwrotow i ich kwadratow. Trzymamy je tutaj, a nie liczymy
 // z pliku trejdow, bo plik trejdow ma limit dlugosci i po kilku miesiacach najstarsze
@@ -367,7 +199,7 @@ for (const [id, def] of Object.entries(GRACZE)) {
     }
 
     const zlikwidowany = p.side === 'LONG' ? px <= p.liqPrice : px >= p.liqPrice;
-    const powod = zlikwidowany ? 'LIKWIDACJA' : def.nigdyNieZamykaj ? null : czyWyjsc(p, r.m, px);
+    const powod = zlikwidowany ? 'LIKWIDACJA' : def.nigdyNieZamykaj ? null : czyWyjsc(p, r.m.atr, px, teraz);
     if (!powod) continue;
 
     const brutto = zlikwidowany ? -p.margin : pnlAt(p, px);
@@ -462,7 +294,7 @@ for (const [id, def] of Object.entries(GRACZE)) {
     g.positions[sym] = {
       sym, side: kier, entryPrice: px, entryTs: nowISO(), lastAccrual: nowISO(),
       qty: notional / px, notional, margin, leverage: P.LEVERAGE,
-      liqPrice: liqPrice(kier, px, P.LEVERAGE),
+      liqPrice: liqPrice(kier, px, P.LEVERAGE, P.LIQ_AT),
       // Jedyne miejsce, w ktorym gracze moga sie roznic mechanika — i tylko dlatego,
       // ze Luzny istnieje wlasnie po to, zeby zmierzyc wplyw szerokosci stopa.
       stopPrice: (() => {
@@ -472,6 +304,8 @@ for (const [id, def] of Object.entries(GRACZE)) {
       takeProfit: long ? px + CFG.TAKE_PROFIT_ATR * r.m.atr : px - CFG.TAKE_PROFIT_ATR * r.m.atr,
       atrAtEntry: r.m.atr, bestPrice: px, worstPrice: px, trailArmed: false, borrowPaid: 0,
       trailAtr: def.trailAtr ?? CFG.TRAIL_ATR,
+      minGodzin: def.minGodzin ?? 0,
+      stopZawsze: !!def.stopZawsze,
       rynekWejscie: migawka,
       // Powod i liczby zostaja PRZY POZYCJI, zeby przy zamknieciu trafily na ten sam
       // wiersz co wynik. Inaczej mielibysmy osobno "dlaczego" i osobno "co z tego wyszlo",

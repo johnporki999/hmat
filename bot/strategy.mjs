@@ -404,6 +404,78 @@ export function entrySignal(sym, m, cfg = CFG, ctx = {}) {
   };
 }
 
+/**
+ * Sygnal na spadek — lustrzane odbicie sygnalu na wzrost.
+ * Trend spadkowy, RSI w oknie (odbitym), odbicie w gore do sredniej zamiast
+ * cofniecia w dol.
+ *
+ * ZNANA NIESPOJNOSC, celowo NIEZMIENIANA teraz:
+ * ta sciezka dolicza do progu oplacalnosci oplate kontraktowa (OPEN_FEE * 2),
+ * a sciezka LONG w strategy.mjs juz nie. Short ma wiec ciut wyzsza poprzeczke.
+ * Zmierzone w bot/filtr.mjs: prog scina tylko 9% okazji, a sciete nie wypadaly
+ * lepiej od przepuszczonych — wiec skutek jest zaden. Nie ruszamy tego, bo liga
+ * chodzi na zywo i zmiana sygnalu rozjechalaby trejdy sprzed i po zmianie.
+ * Do wyrownania przy najblizszym resecie ligi.
+ */
+export function shortSignal(sym, m, cfg = CFG, dodatkowyKoszt = 0) {
+  const costPct = cfg.EST_COST_PCT * (UNIVERSE[sym].costMul || 1) + dodatkowyKoszt;
+  const good = [];
+  let score = 0;
+
+  if (!(m.price < m.emaTrend && m.emaFast < m.emaSlow)) {
+    return { score: 0, enter: false, reason: 'brak trendu spadkowego' };
+  }
+  score += 3;
+  good.push('trend spadkowy');
+
+  if (m.trendSlope < -0.0005) {
+    score += 1;
+    good.push('trend przyspiesza');
+  }
+  if (m.volPct < cfg.MIN_VOL_PCT) return { score, enter: false, reason: `zmiennosc ${pct(m.volPct)} za niska` };
+  if (m.volPct > cfg.MAX_VOL_PCT) return { score, enter: false, reason: `zmiennosc ${pct(m.volPct)} za wysoka` };
+  score += 1;
+
+  // Okno RSI odbite: to, co dla dlugiej pozycji bylo 38-68, tu jest 32-62.
+  const lo = 100 - cfg.RSI_MAX;
+  const hi = 100 - cfg.RSI_MIN;
+  if (m.rsi > hi) return { score, enter: false, reason: `RSI ${m.rsi.toFixed(1)} — jeszcze nie spada` };
+  if (m.rsi < lo) return { score, enter: false, reason: `RSI ${m.rsi.toFixed(1)} — wyprzedane, nie gonie dolu` };
+  score += 1;
+  good.push(`RSI ${m.rsi.toFixed(1)}`);
+
+  // Odbicie w gore do sredniej — lustro "cofniecia" z sygnalu dlugiego.
+  const ext = (m.emaFast - m.price) / m.atr;
+  if (ext > cfg.MAX_EXT_ATR) {
+    return { score, enter: false, reason: `${ext.toFixed(2)} ATR pod srednia — za nisko, czekam na odbicie` };
+  }
+  score += 2;
+  good.push('odbicie do sredniej');
+
+  if (m.rsi < m.rsiPrev) {
+    score += 1;
+    good.push('RSI zawraca w dol');
+  }
+
+  const expected = (cfg.TAKE_PROFIT_ATR * m.atr) / m.price;
+  if (expected < costPct * cfg.COST_EDGE_MULT) {
+    return { score, enter: false, reason: `potencjal ${pct(expected)} maly wobec kosztow ${pct(costPct)}` };
+  }
+  score += 1;
+
+  const enter = score >= cfg.MIN_SCORE;
+  return {
+    score,
+    enter,
+    // Te dwa pola musza tu byc, bo skaner bierze najlepszy z sygnalow LONG i SHORT
+    // i z niego zapisuje prognoze. Bez nich kazdy short trafialby do pliku bez
+    // prognozy — czyli dokladnie polowa trejdow bylaby nierozliczalna.
+    expectedMove: expected,
+    costPct,
+    reason: enter ? `SHORT: ${good.join(', ')}` : `score ${score}/${cfg.MIN_SCORE}`,
+  };
+}
+
 export function exitSignal(pos, m, price, cfg = CFG, nowMs = Date.now()) {
   const a = pos.atrAtEntry || m.atr;
   const gainAtr = (price - pos.entryPrice) / a;

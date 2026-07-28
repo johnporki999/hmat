@@ -24,7 +24,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   UNIVERSE, CFG, envNum, envBool, usd, pct, analyze, entrySignal,
-  warunki, wychylenia, migawkaRynku, zmianaRynku,
+  warunki, wychylenia, migawkaRynku, zmianaRynku, shortSignal,
 } from './strategy.mjs';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -154,77 +154,6 @@ async function getCandles(sym, minutes) {
 // Sygnaly
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Sygnal na spadek — lustrzane odbicie sygnalu na wzrost.
- * Trend spadkowy, RSI w oknie (odbitym), odbicie w gore do sredniej zamiast
- * cofniecia w dol.
- *
- * ZNANA NIESPOJNOSC, celowo NIEZMIENIANA teraz:
- * ta sciezka dolicza do progu oplacalnosci oplate kontraktowa (OPEN_FEE * 2),
- * a sciezka LONG w strategy.mjs juz nie. Short ma wiec ciut wyzsza poprzeczke.
- * Zmierzone w bot/filtr.mjs: prog scina tylko 9% okazji, a sciete nie wypadaly
- * lepiej od przepuszczonych — wiec skutek jest zaden. Nie ruszamy tego, bo liga
- * chodzi na zywo i zmiana sygnalu rozjechalaby trejdy sprzed i po zmianie.
- * Do wyrownania przy najblizszym resecie ligi.
- */
-function shortSignal(sym, m) {
-  const costPct = CFG.EST_COST_PCT * (UNIVERSE[sym].costMul || 1) + P.OPEN_FEE * 2;
-  const good = [];
-  let score = 0;
-
-  if (!(m.price < m.emaTrend && m.emaFast < m.emaSlow)) {
-    return { score: 0, enter: false, reason: 'brak trendu spadkowego' };
-  }
-  score += 3;
-  good.push('trend spadkowy');
-
-  if (m.trendSlope < -0.0005) {
-    score += 1;
-    good.push('trend przyspiesza');
-  }
-  if (m.volPct < CFG.MIN_VOL_PCT) return { score, enter: false, reason: `zmiennosc ${pct(m.volPct)} za niska` };
-  if (m.volPct > CFG.MAX_VOL_PCT) return { score, enter: false, reason: `zmiennosc ${pct(m.volPct)} za wysoka` };
-  score += 1;
-
-  // Okno RSI odbite: to, co dla dlugiej pozycji bylo 38-68, tu jest 32-62.
-  const lo = 100 - CFG.RSI_MAX;
-  const hi = 100 - CFG.RSI_MIN;
-  if (m.rsi > hi) return { score, enter: false, reason: `RSI ${m.rsi.toFixed(1)} — jeszcze nie spada` };
-  if (m.rsi < lo) return { score, enter: false, reason: `RSI ${m.rsi.toFixed(1)} — wyprzedane, nie gonie dolu` };
-  score += 1;
-  good.push(`RSI ${m.rsi.toFixed(1)}`);
-
-  // Odbicie w gore do sredniej — lustro "cofniecia" z sygnalu dlugiego.
-  const ext = (m.emaFast - m.price) / m.atr;
-  if (ext > CFG.MAX_EXT_ATR) {
-    return { score, enter: false, reason: `${ext.toFixed(2)} ATR pod srednia — za nisko, czekam na odbicie` };
-  }
-  score += 2;
-  good.push('odbicie do sredniej');
-
-  if (m.rsi < m.rsiPrev) {
-    score += 1;
-    good.push('RSI zawraca w dol');
-  }
-
-  const expected = (CFG.TAKE_PROFIT_ATR * m.atr) / m.price;
-  if (expected < costPct * CFG.COST_EDGE_MULT) {
-    return { score, enter: false, reason: `potencjal ${pct(expected)} maly wobec kosztow ${pct(costPct)}` };
-  }
-  score += 1;
-
-  const enter = score >= CFG.MIN_SCORE;
-  return {
-    score,
-    enter,
-    // Te dwa pola musza tu byc, bo skaner bierze najlepszy z sygnalow LONG i SHORT
-    // i z niego zapisuje prognoze. Bez nich kazdy short trafialby do pliku bez
-    // prognozy — czyli dokladnie polowa trejdow bylaby nierozliczalna.
-    expectedMove: expected,
-    costPct,
-    reason: enter ? `SHORT: ${good.join(', ')}` : `score ${score}/${CFG.MIN_SCORE}`,
-  };
-}
 
 /** Cena, przy ktorej gielda zamyka pozycje i depozyt przepada. */
 const liqPrice = (side, entry, lev) =>
@@ -449,7 +378,7 @@ async function main() {
     // pauza z pliku stanu blokowalaby wejscie jeszcze po zmianie ustawienia.
     const cd = P.COOLDOWN_MIN > 0 ? st.cooldowns[sym] || 0 : 0;
     const L = P.ALLOW_LONG ? entrySignal(sym, m, CFG, {}) : { enter: false, score: 0, reason: 'long wylaczony' };
-    const S = P.ALLOW_SHORT ? shortSignal(sym, m) : { enter: false, score: 0, reason: 'short wylaczony' };
+    const S = P.ALLOW_SHORT ? shortSignal(sym, m, CFG, P.OPEN_FEE * 2) : { enter: false, score: 0, reason: 'short wylaczony' };
     const best = S.score > L.score ? { ...S, side: 'SHORT' } : { ...L, side: 'LONG' };
     scan.push({
       sym,
