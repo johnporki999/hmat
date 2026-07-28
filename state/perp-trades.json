@@ -1382,5 +1382,102 @@
       "slope": -0.00414
     },
     "dry": true
+  },
+  {
+    "id": "1785204609829-W",
+    "ts": "2026-07-28T02:10:09.829Z",
+    "sym": "W",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.00888,
+    "entryPrice": 0.0088,
+    "qty": 245057.19698598448,
+    "notional": 2156.5033334766636,
+    "margin": 215.65033334766636,
+    "leverage": 10,
+    "pnlUsd": -20.922202163782487,
+    "pnlPct": -0.09701910420909114,
+    "borrowUsd": 0.023724404817676827,
+    "holdMs": 6600798,
+    "liquidated": false,
+    "reason": "STOP LOSS przy $0.01",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.6, odbicie do sredniej",
+    "warunki": {
+      "rsi": 44.6,
+      "rsiPrev": 40.6,
+      "ext": -0.98,
+      "nadTrendem": -0.0251,
+      "fastNadSlow": -0.0083,
+      "volPct": 0.0053,
+      "er": 0.158,
+      "slope": -0.00266
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01685,
+      "koszt": 0.0072,
+      "score": 9
+    },
+    "odrzucone": [
+      {
+        "sym": "PYTH",
+        "side": "LONG",
+        "score": 10,
+        "powod": "trzymam LONG"
+      },
+      {
+        "sym": "TNSR",
+        "side": "SHORT",
+        "score": 6,
+        "powod": "1.73 ATR pod srednia — za nisko, czekam na odbicie"
+      },
+      {
+        "sym": "PENGU",
+        "side": "SHORT",
+        "score": 6,
+        "powod": "1.70 ATR pod srednia — za nisko, czekam na odbicie"
+      },
+      {
+        "sym": "SOL",
+        "side": "SHORT",
+        "score": 5,
+        "powod": "RSI 31.4 — wyprzedane, nie gonie dolu"
+      }
+    ],
+    "mfe": 0.65,
+    "mae": 1.73,
+    "rynek": {
+      "SOL": -0.01148,
+      "BTC": -0.00867,
+      "ETH": -0.00692
+    },
+    "dry": true
+  },
+  {
+    "id": "1785204609832-RENDER",
+    "ts": "2026-07-28T02:10:09.832Z",
+    "sym": "RENDER",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 1.407,
+    "qty": 1375.4272307472886,
+    "notional": 1935.2261136614352,
+    "margin": 193.5226113661435,
+    "leverage": 10,
+    "liqPrice": 1.53363,
+    "stopPrice": 1.417307577830119,
+    "takeProfit": 1.3863848443397624,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 35.9, odbicie do sredniej",
+    "warunki": {
+      "rsi": 35.9,
+      "rsiPrev": 29,
+      "ext": -1.32,
+      "nadTrendem": -0.037,
+      "fastNadSlow": -0.0149,
+      "volPct": 0.0046,
+      "er": 0.387,
+      "slope": -0.00416
+    },
+    "dry": true
   }
 ]
