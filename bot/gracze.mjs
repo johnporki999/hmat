@@ -212,6 +212,37 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     bezRynku: true,
   },
 
+  // Jedyny ocalaly z farmy 600 sit (bot/cache/farma.mjs, 28.07.2026).
+  //
+  // Farma wygenerowala 300 losowych kombinacji warunkow wejscia plus 300 sit czysto
+  // losowych jako kontrole i przepuscila wszystkie przez 5 lat na 10 aktywach —
+  // 7,4 miliona zasymulowanych trejdow. Podium probki uczacej okazalo sie pulapka
+  // (najlepsze sito: +0,319% na uczacej, -0,063% na testowej). To jedno wyszlo czysto:
+  //
+  //   uczaca +0,105%, testowa +0,105% (co do tysiecznej), 6311 trejdow
+  //   dodatni w 5 z 6 lat, w tym w 2026; na plusie 8 z 10 aktywow
+  //   nie dziala na BTC i ETH — dziala na altach, czyli tam, gdzie rynek
+  //   jest za maly dla duzych graczy (zgodnie z teoria projektu)
+  //
+  // Po ludzku: kupuj mocne wyprzedanie, ale tylko gdy spadek jest prosty
+  // i jednokierunkowy, a nie pila. To ta sama rodzina co Kontra (ktora ma
+  // najpewniejsza alfe ponad malpe na zywo) plus filtr prostoty ruchu —
+  // dwie niezalezne metody doszly do tego samego miejsca.
+  //
+  // Zastrzezenie zapisane uczciwie: sito wyroznione sposrod dziesiatki takze
+  // po obejrzeniu probki testowej, wiec to trop, nie dowod. Dowodem bedzie
+  // to, co zrobi TUTAJ, na trejdach, ktore sie jeszcze nie wydarzyly.
+  sito5: {
+    nazwa: 'Sito 5',
+    opis: 'z farmy 600 sit: kupuje mocne wyprzedanie, gdy spadek jest prosty',
+    wejscie: (sym, m) => {
+      if (m.er != null && m.er >= 0.35 && m.rsi < 35) {
+        return { kier: 'LONG', powod: `prosty zjazd (ER ${m.er.toFixed(2)}), RSI ${m.rsi.toFixed(1)} — kupuję` };
+      }
+      return null;
+    },
+  },
+
   wybicie: {
     nazwa: 'Wybicie',
     opis: 'wchodzi na sile, gdy cena łamie zakres z 20 świec',

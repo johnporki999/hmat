@@ -100,6 +100,17 @@ async function zJupitera(sym) {
 }
 
 /** Pozycjonowanie innych graczy. Nie kazdy token ma kontrakty na Binance. */
+/**
+ * UWAGA: na serwerze w USA ta funkcja NIE dziala — Binance blokuje amerykanskie
+ * adresy IP (HTTP 451) i przez pierwsze dwa dni zbierania oddawala pusto PO CICHU.
+ * Wpadka wyszla dopiero przy recznym przegladzie danych.
+ *
+ * Nic nie przepadlo: dokladnie te metryki (oi, ls_a, ls_p, tk) Binance publikuje
+ * w otwartym archiwum pod data.binance.vision/data/futures/um/daily/metrics/,
+ * co 5 minut, z historia od lat — i CDN dziala takze z USA. Ta rodzina danych
+ * jest wiec W PELNI odtwarzalna wstecz i zywe zbieranie nie jest konieczne.
+ * Funkcje zostawiamy, bo z polskiego IP dziala i wypelnia wiersze na biezaco.
+ */
 async function zBinance(sym) {
   const S = `${sym}USDT`;
   const B = 'https://fapi.binance.com';
@@ -308,3 +319,10 @@ log(
   `> kolektor: zapisano ${wiersze.length} wierszy (Jupiter ${zJup}, Binance ${zBin}) ` +
     `— lacznie ${info.wierszy} wierszy przez ${info.dni} dni`
 );
+
+// Cicha awaria zrodla to najgorszy rodzaj awarii — przez dwa dni "Binance 0"
+// nie rzucalo sie w oczy w logu pelnym zielonych komunikatow. Od teraz krzyczymy.
+if (zBin === 0 && aktywa.length > 0) {
+  log('! UWAGA: Binance nie oddal NICZEGO. Na serwerze w USA to normalne (blokada 451)');
+  log('!        i niegrozne: te metryki sa w pelni odtwarzalne z data.binance.vision.');
+}
