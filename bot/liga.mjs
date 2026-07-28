@@ -185,6 +185,26 @@ const GRACZE = {
     stopAtr: 3.5,
   },
 
+  // Te same wejscia co Trend, ta sama dzwignia, ten sam stop. Rozni ich smycz:
+  // trailing 0,5 ATR zamiast 2,0.
+  //
+  // Ten gracz wzial sie z rozliczenia PORAZEK na zywo. Okazalo sie, ze przecietna
+  // stratna pozycja zaszla 1,43-1,94 ATR w nasza strone, zanim sie zawalila —
+  // a trailing stoi 2,0 ATR ponizej szczytu, czyli przy takim szczycie wypada
+  // PONIZEJ ceny wejscia. Mechanizm od pilnowania zysku nie mial jak zadzialac.
+  //
+  // Sprawdzenie na 5 latach swiec (bot/wyjscia.mjs): trailing 0,5 ATR dal +0,102%
+  // na trejd wobec -0,017% obecnych zasad, dodatnio na obu probkach. To najlepszy
+  // wynik ze wszystkich 16 przetestowanych wariantow wyjscia.
+  //
+  // Ale to nadal historia. Tutaj sprawdzamy to na trejdach, ktore sie nie wydarzyly.
+  smycz: {
+    nazwa: 'Smycz',
+    opis: 'te same wejscia co Trend, ale trailing 0,5 ATR zamiast 2,0',
+    wejscie: sygnalTrendu,
+    trailAtr: 0.5,
+  },
+
   kontra: {
     nazwa: 'Kontra',
     opis: 'kupuje panikę, sprzedaje euforię',
@@ -270,7 +290,10 @@ function czyWyjsc(p, m, px) {
   if (long ? px <= p.stopPrice : px >= p.stopPrice) return 'STOP LOSS';
   if (long ? px >= p.takeProfit : px <= p.takeProfit) return 'TAKE PROFIT';
   if (p.trailArmed) {
-    const tr = long ? p.bestPrice - CFG.TRAIL_ATR * a : p.bestPrice + CFG.TRAIL_ATR * a;
+    // Dlugosc smyczy zapisujemy przy pozycji, a nie bierzemy z konfiguracji, bo
+    // gracz Smycz ma wlasna. Starsze pozycje jej nie maja i dostaja wartosc z CFG.
+    const dl = p.trailAtr ?? CFG.TRAIL_ATR;
+    const tr = long ? p.bestPrice - dl * a : p.bestPrice + dl * a;
     if (long ? px <= tr : px >= tr) return 'TRAILING STOP';
   }
   if (heldH > CFG.MAX_HOLD_HOURS && (long ? px < p.entryPrice : px > p.entryPrice)) return 'stop czasowy';
@@ -448,6 +471,7 @@ for (const [id, def] of Object.entries(GRACZE)) {
       })(),
       takeProfit: long ? px + CFG.TAKE_PROFIT_ATR * r.m.atr : px - CFG.TAKE_PROFIT_ATR * r.m.atr,
       atrAtEntry: r.m.atr, bestPrice: px, worstPrice: px, trailArmed: false, borrowPaid: 0,
+      trailAtr: def.trailAtr ?? CFG.TRAIL_ATR,
       rynekWejscie: migawka,
       // Powod i liczby zostaja PRZY POZYCJI, zeby przy zamknieciu trafily na ten sam
       // wiersz co wynik. Inaczej mielibysmy osobno "dlaczego" i osobno "co z tego wyszlo",
