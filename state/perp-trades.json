@@ -3738,5 +3738,102 @@
       "slope": 0.00075
     },
     "dry": true
+  },
+  {
+    "id": "1785267309427-RENDER",
+    "ts": "2026-07-28T19:35:09.427Z",
+    "sym": "RENDER",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 1.424,
+    "entryPrice": 1.424,
+    "qty": 928.6611979092161,
+    "notional": 1322.4135458227236,
+    "margin": 132.24135458227235,
+    "leverage": 10,
+    "pnlUsd": -0.8198953184390261,
+    "pnlPct": -0.006199991833333333,
+    "borrowUsd": 0.026447190945392048,
+    "holdMs": 11999512,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 57.0, odbicie do sredniej",
+    "warunki": {
+      "rsi": 57,
+      "rsiPrev": 57,
+      "ext": 1.03,
+      "nadTrendem": -0.0114,
+      "fastNadSlow": -0.0003,
+      "volPct": 0.0047,
+      "er": 0.09,
+      "slope": -0.00164
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01498,
+      "koszt": 0.0068,
+      "score": 9
+    },
+    "odrzucone": [
+      {
+        "sym": "JTO",
+        "side": "SHORT",
+        "score": 9,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "JUP",
+        "side": "LONG",
+        "score": 6,
+        "powod": "3.52 ATR nad srednia — za daleko"
+      },
+      {
+        "sym": "PYTH",
+        "side": "SHORT",
+        "score": 6,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "SOL",
+        "side": "SHORT",
+        "score": 5,
+        "powod": "RSI 64.6 — jeszcze nie spada"
+      }
+    ],
+    "mfe": 2.1,
+    "mae": 0.75,
+    "rynek": {
+      "SOL": 0.00094,
+      "BTC": -0.00038,
+      "ETH": 0.00254
+    },
+    "dry": true
+  },
+  {
+    "id": "1785267309436-PYTH",
+    "ts": "2026-07-28T19:35:09.436Z",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.04162,
+    "qty": 31544.796368970132,
+    "notional": 1312.8944248765367,
+    "margin": 131.28944248765367,
+    "leverage": 10,
+    "liqPrice": 0.0453658,
+    "stopPrice": 0.04193117181810261,
+    "takeProfit": 0.04099765636379477,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 42.9, odbicie do sredniej",
+    "warunki": {
+      "rsi": 42.9,
+      "rsiPrev": 39.5,
+      "ext": -0.88,
+      "nadTrendem": -0.0339,
+      "fastNadSlow": -0.0102,
+      "volPct": 0.0047,
+      "er": 0.115,
+      "slope": -0.00394
+    },
+    "dry": true
   }
 ]
