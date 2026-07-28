@@ -3516,5 +3516,102 @@
       "slope": -0.00373
     },
     "dry": true
+  },
+  {
+    "id": "1785259809807-DRIFT",
+    "ts": "2026-07-28T17:30:09.807Z",
+    "sym": "DRIFT",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.0115,
+    "entryPrice": 0.0114,
+    "qty": 61272.60729588221,
+    "notional": 698.5077231730572,
+    "margin": 69.85077231730573,
+    "leverage": 10,
+    "pnlUsd": -6.546715291413558,
+    "pnlPct": -0.0937243078956135,
+    "borrowUsd": 0.0003499279215393906,
+    "holdMs": 300580,
+    "liquidated": false,
+    "reason": "STOP LOSS przy $0.01",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.9, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 44.9,
+      "rsiPrev": 62.3,
+      "ext": -1.16,
+      "nadTrendem": -0.0399,
+      "fastNadSlow": -0.0039,
+      "volPct": 0.0025,
+      "er": 0.111,
+      "slope": -0.00373
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00794,
+      "koszt": 0.0076,
+      "score": 10
+    },
+    "odrzucone": [
+      {
+        "sym": "RENDER",
+        "side": "SHORT",
+        "score": 9,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "ETH",
+        "side": "LONG",
+        "score": 8,
+        "powod": "gotowy: trend, RSI 57.6, cofniecie do sredniej"
+      },
+      {
+        "sym": "JUP",
+        "side": "LONG",
+        "score": 6,
+        "powod": "1.75 ATR nad srednia — za daleko"
+      },
+      {
+        "sym": "JTO",
+        "side": "SHORT",
+        "score": 6,
+        "powod": "trzymam SHORT"
+      }
+    ],
+    "mfe": 0,
+    "mae": 3.53,
+    "rynek": {
+      "SOL": -0.00027,
+      "BTC": -0.00001,
+      "ETH": -0.00031
+    },
+    "dry": true
+  },
+  {
+    "id": "1785259809809-ETH",
+    "ts": "2026-07-28T17:30:09.809Z",
+    "sym": "ETH",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 1906.34,
+    "qty": 0.32987270052555334,
+    "notional": 628.8495239198834,
+    "margin": 62.88495239198834,
+    "leverage": 10,
+    "liqPrice": 1734.7694,
+    "stopPrice": 1891.9868596325005,
+    "takeProfit": 1935.046280734999,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 57.1, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 57.1,
+      "rsiPrev": 57.6,
+      "ext": 0.66,
+      "nadTrendem": 0.0013,
+      "fastNadSlow": 0.0035,
+      "volPct": 0.0047,
+      "er": 0.118,
+      "slope": 0.00055
+    },
+    "dry": true
   }
 ]
