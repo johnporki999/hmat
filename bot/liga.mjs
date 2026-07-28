@@ -41,7 +41,7 @@ import {
 import { istotnosc, ALFA, MOC, D_MIN, SLOWA } from './istotnosc.mjs';
 // Gracze i mechanika wyjsc siedza w osobnym pliku, bo korzysta z nich takze
 // ligahist.mjs — test tych samych graczy na pieciu latach swiec.
-import { stworzGraczy, liqPrice, pnlAt, czyWyjsc } from './gracze.mjs';
+import { stworzGraczy, liqPrice, pnlAt, czyWyjsc, prognozaWejscia } from './gracze.mjs';
 
 const P = {
   START: envNum('LIGA_START_USD', 500),
@@ -239,6 +239,7 @@ for (const [id, def] of Object.entries(GRACZE)) {
       // dlaczego weszlismy + jakie byly wtedy liczby, obok wyniku tego wejscia
       powodWejscia: p.powodWejscia || null,
       warunki: p.warunkiWejscia || null,
+      prognoza: p.prognoza || null,
       // jak daleko cena zaszla w obie strony i co robil w tym czasie caly rynek
       ...wychylenia(p, p.atrAtEntry || r.m.atr),
       rynek: zmianaRynku(p.rynekWejscie, migawka),
@@ -312,11 +313,15 @@ for (const [id, def] of Object.entries(GRACZE)) {
       // a zeby czegokolwiek sie nauczyc, trzeba miec jedno obok drugiego.
       powodWejscia: powod,
       warunkiWejscia: warunki(r.m),
+      // Obietnica zlozona przed wynikiem: ile ruchu gracz spodziewa sie zlapac
+      // i ile ma za to zaplacic. Wraca na wpisie o zamknieciu, obok rezultatu.
+      prognoza: prognozaWejscia(r.m, 2 * P.OPEN_FEE, sygnal.score ?? null),
     };
     nowe.push({
       id: `${teraz}-${id}-${sym}-o`, ts: nowISO(), gracz: id, sym, side: kier, type: 'OPEN',
       price: px, margin, notional, leverage: P.LEVERAGE, liqPrice: g.positions[sym].liqPrice, pnlUsd: null,
       reason: powod, warunki: g.positions[sym].warunkiWejscia,
+      prognoza: g.positions[sym].prognoza,
     });
   }
 }

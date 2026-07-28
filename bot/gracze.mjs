@@ -24,7 +24,7 @@ import { CFG, entrySignal, shortSignal, envNum } from './strategy.mjs';
  */
 export const sygnalTrendu = (sym, m, c) => {
   const L = entrySignal(sym, m, CFG, {});
-  if (L.enter) return { kier: 'LONG', powod: L.reason };
+  if (L.enter) return { kier: 'LONG', powod: L.reason, score: L.score };
 
   // Short leci przez TEN SAM shortSignal, ktorego uzywa bot kontraktowy.
   //
@@ -34,9 +34,24 @@ export const sygnalTrendu = (sym, m, c) => {
   // na serwerze. Podnoszenie MIN_SCORE nie zmienialo liczby trejdow ani o jeden,
   // co wlasnie zdradzilo blad.
   const S = shortSignal(sym, m, CFG);
-  if (S.enter) return { kier: 'SHORT', powod: S.reason };
+  if (S.enter) return { kier: 'SHORT', powod: S.reason, score: S.score };
   return null;
 };
+
+/**
+ * Prognoza gracza w chwili wejscia — LICZBY zapisane PRZED wynikiem.
+ *
+ * Kazdy gracz ligi ma te same wyjscia, wiec kazdy skladajac pozycje "obiecuje"
+ * to samo: zlapanie ruchu do wysokosci take profitu. Zapisujemy te obietnice
+ * razem z kosztem rundy, bo bez utrwalonej prognozy kazda strate da sie po
+ * fakcie opowiedziec jako "przeciez bylo widac" — a z nia bot/dlaczego.mjs
+ * odroznia "zle ocenilismy" od "ocenilismy dobrze, wyszlo inaczej".
+ */
+export const prognozaWejscia = (m, oplataRundy, score = null) => ({
+  spodziewanyRuch: +((CFG.TAKE_PROFIT_ATR * m.atr) / m.price).toFixed(5),
+  koszt: +oplataRundy.toFixed(5),
+  score,
+});
 
 /** Zwraca {kier:'LONG'|'SHORT', powod} albo null. */
 export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => ({
