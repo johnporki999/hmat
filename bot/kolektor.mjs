@@ -228,6 +228,40 @@ if (!WYMUS && odOstatniego < ODSTEP_MIN) {
   process.exit(0);
 }
 
+/**
+ * Prawdziwy koszt rundy na Jupiterze, mierzony teraz — nie zakladany.
+ *
+ * To najwazniejsza pojedyncza liczba w calym projekcie: rozstrzygala o porzuceniu
+ * spotu, o filtrze oplacalnosci i o wyniku Cierpliwego. A my znamy ja z JEDNEGO
+ * pomiaru z 26 lipca. Koszt zmienia sie z plynnoscia — w spokojny wtorek i w panike
+ * to sa inne swiaty — i tej zmiennosci nie da sie pobrac wstecz.
+ *
+ * Pomiar: kwotowanie USDC -> token dla 150 USD, potem token -> USDC dla tego,
+ * co wyszlo. Ile ubylo z konca wobec poczatku, to koszt rundy (spread + wplyw
+ * na cene, bez oplat sieciowych, ktore sa stale).
+ */
+const USDC = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const KWOTA_RT = 150_000_000; // 150 USD w jednostkach USDC (6 miejsc)
+
+async function kosztRundy(sym) {
+  const mint = UNIVERSE[sym].mint;
+  const q = (inM, outM, amount) =>
+    pobierz(
+      `https://lite-api.jup.ag/swap/v1/quote?inputMint=${inM}&outputMint=${outM}` +
+        `&amount=${amount}&slippageBps=50`
+    );
+  const tam = await q(USDC, mint, KWOTA_RT);
+  if (!tam?.outAmount) return null;
+  await sleep(250);
+  const nazad = await q(mint, USDC, tam.outAmount);
+  if (!nazad?.outAmount) return null;
+  const strata = (KWOTA_RT - Number(nazad.outAmount)) / KWOTA_RT;
+  // Lekko ujemna "strata" to prawdziwy pomiar: na hiperplynnnym SOL kwotowania
+  // potrafia sie skrzyzowac o ulamek punktu bazowego i koszt wychodzi ~zero.
+  // Odrzucamy dopiero wartosci bez sensu w obie strony.
+  return strata > -0.01 && strata < 0.2 ? +strata.toFixed(5) : null;
+}
+
 const aktywa = CFG.ASSETS.filter((s) => UNIVERSE[s]);
 log(`> kolektor: zbieram dane dla ${aktywa.length} aktywow...`);
 
@@ -237,11 +271,11 @@ let zJup = 0;
 let zBin = 0;
 
 for (const sym of aktywa) {
-  const [j, b] = await Promise.all([zJupitera(sym), zBinance(sym)]);
+  const [j, b, rt] = await Promise.all([zJupitera(sym), zBinance(sym), kosztRundy(sym)]);
   if (Object.keys(j).length) zJup += 1;
   if (Object.keys(b).length) zBin += 1;
-  if (!Object.keys(j).length && !Object.keys(b).length) continue;
-  wiersze.push(JSON.stringify({ t: teraz, sym, ...j, ...b }));
+  if (!Object.keys(j).length && !Object.keys(b).length && rt == null) continue;
+  wiersze.push(JSON.stringify({ t: teraz, sym, ...j, ...b, ...(rt != null ? { rt } : {}) }));
   await sleep(250); // uprzejmosc wobec darmowych API
 }
 
