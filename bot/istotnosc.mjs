@@ -75,7 +75,10 @@ export function istotnosc(gracze, defs, idMalpy, porownan) {
   const ileTrzeba = (d) => Math.ceil((2 * (zAlfa + zBeta) ** 2) / Math.max(d, D_MIN) ** 2);
 
   return Object.keys(defs)
-    .filter((id) => id !== idMalpy && !defs[id].nigdyNieZamykaj)
+    // pozaTestem wylacza z porownan graczy, ktorych zwroty na trejd sa kopia innego
+    // gracza (np. Krawiec = Trend z innym depozytem) — liczenie ich dwa razy tylko
+    // zaostrzaloby prog Bonferroniego wszystkim, nie dodajac zadnej informacji.
+    .filter((id) => id !== idMalpy && !defs[id].nigdyNieZamykaj && !defs[id].pozaTestem)
     .map((id) => {
       const A = opis(gracze[id]?.stats);
       const out = {

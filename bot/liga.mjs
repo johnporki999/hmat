@@ -262,7 +262,16 @@ for (const [id, def] of Object.entries(GRACZE)) {
     if (!sygnal) continue;
     const { kier, powod } = sygnal;
 
-    const margin = Math.min(g.cash, kapital * P.ALLOC);
+    // Krawiec szyje depozyt na miare ryzyka: tak, zeby uderzenie w stop zabralo
+    // zawsze ryzykoPct kapitalu, niezaleznie od tego, jak dzikie jest aktywo.
+    // Gorny limit ten sam co u wszystkich (ALLOC), zeby spokojny rynek nie
+    // rozdmuchal pozycji w nieskonczonosc.
+    let margin = Math.min(g.cash, kapital * P.ALLOC);
+    if (def.ryzykoPct && r.m.volPct > 0) {
+      const stopA = def.stopAtr ?? CFG.STOP_ATR;
+      const naMiare = (kapital * def.ryzykoPct) / (P.LEVERAGE * stopA * r.m.volPct);
+      margin = Math.min(g.cash, kapital * P.ALLOC, naMiare);
+    }
     if (margin < P.MIN_MARGIN) break;
     const px = r.m.price;
     const notional = margin * P.LEVERAGE;
@@ -344,7 +353,7 @@ const ranking = Object.entries(GRACZE).map(([id, def]) => {
 }).sort((a, b) => b.kapital - a.kapital);
 
 // ── ile jeszcze trejdow, zeby to przestalo byc przypadkiem ──
-const strategie = Object.keys(GRACZE).filter((id) => id !== 'malpa' && !GRACZE[id].nigdyNieZamykaj);
+const strategie = Object.keys(GRACZE).filter((id) => id !== 'malpa' && !GRACZE[id].nigdyNieZamykaj && !GRACZE[id].pozaTestem);
 const testy = istotnosc(stan.gracze, GRACZE, 'malpa', strategie.length);
 
 stan.updatedAt = nowISO();

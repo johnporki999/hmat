@@ -175,6 +175,33 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     stopZawsze: true,
   },
 
+  // Te same wejscia i wyjscia co Trend. Rozni go JEDNO: wielkosc depozytu.
+  //
+  // Wszyscy inni stawiaja staly procent kapitalu, wiec przy stopie 1,6 ATR trejd
+  // na dzikim aktywie (ATR 3% ceny) moze zabrac ~6x wiecej pieniedzy niz na
+  // spokojnym (0,5%). Krawiec szyje depozyt na miare: dobiera go tak, zeby
+  // KAZDY trejd ryzykowal ta sama czesc kapitalu — 1% przy uderzeniu w stop.
+  //
+  //   depozyt = kapital * 1% / (dzwignia * stopATR * zmiennosc)
+  //   (z limitem gora = zwykle 20% i podloga = MIN_MARGIN)
+  //
+  // Czego to NIE zmieni: przewagi na trejd — zmierzono, ze zwrot z depozytu nie
+  // zalezy od stawki. Co MA zmienic: sciezke pieniedzy — mniejsze wahania przy tej
+  // samej sredniej to mniejszy podatek od zmiennosci (ta sama strategia dawala od
+  // -66% do +8% zaleznie wylacznie od stawki) i mniejsze likwidacje.
+  //
+  // pozaTestem: jego zwroty NA TREJD sa z definicji niemal kopia Trendu (te same
+  // wejscia/wyjscia), wiec porownywanie go z malpa testem zwrotow byloby liczeniem
+  // Trendu dwa razy i tylko psuloby prog Bonferroniego wszystkim. Krawca rozlicza
+  // KRZYWA KAPITALU w tabeli — to tam mieszka jego pomysl.
+  krawiec: {
+    nazwa: 'Krawiec',
+    opis: 'te same wejscia co Trend, ale depozyt szyty na miare ryzyka trejdu',
+    wejscie: sygnalTrendu,
+    ryzykoPct: 0.01,
+    pozaTestem: true,
+  },
+
   kontra: {
     nazwa: 'Kontra',
     opis: 'kupuje panikę, sprzedaje euforię',
