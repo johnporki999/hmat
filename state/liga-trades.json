@@ -1,91 +1,5 @@
 [
   {
-    "id": "1785186615879-wybicie-JUP-o",
-    "ts": "2026-07-27T21:10:15.881Z",
-    "gracz": "wybicie",
-    "sym": "JUP",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.18752,
-    "margin": 96.18511393209049,
-    "notional": 288.5553417962715,
-    "leverage": 3,
-    "liqPrice": 0.131264,
-    "pnlUsd": null,
-    "reason": "0.19 nad szczytem 20 świec 0.19",
-    "warunki": {
-      "rsi": 52.5,
-      "rsiPrev": 51.5,
-      "ext": 0.87,
-      "nadTrendem": -0.006,
-      "fastNadSlow": -0.0063,
-      "volPct": 0.0029,
-      "er": 0.171,
-      "slope": -0.00099
-    }
-  },
-  {
-    "id": "1785187815965-kontra-JTO",
-    "ts": "2026-07-27T21:30:15.966Z",
-    "gracz": "kontra",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.57784,
-    "entryPrice": 0.5836,
-    "margin": 100.6554869957351,
-    "notional": 301.9664609872053,
-    "leverage": 3,
-    "pnlUsd": -3.1734981683627725,
-    "pnlPct": -0.0315283176613833,
-    "holdMs": 10199718,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "RSI 23.3 — panika, kupuję",
-    "warunki": {
-      "rsi": 23.3,
-      "rsiPrev": 26.4,
-      "ext": -3.93,
-      "nadTrendem": -0.0273,
-      "fastNadSlow": -0.0104,
-      "volPct": 0.0059,
-      "er": 0.295,
-      "slope": -0.00136
-    },
-    "mfe": 0.35,
-    "mae": 1.66,
-    "rynek": {
-      "SOL": 0.00452,
-      "BTC": 0.0009,
-      "ETH": 0.00696
-    }
-  },
-  {
-    "id": "1785187815965-kontra-JTO-o",
-    "ts": "2026-07-27T21:30:15.967Z",
-    "gracz": "kontra",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.57784,
-    "margin": 97.30127805922227,
-    "notional": 291.9038341776668,
-    "leverage": 3,
-    "liqPrice": 0.404488,
-    "pnlUsd": null,
-    "reason": "RSI 27.7 — panika, kupuję",
-    "warunki": {
-      "rsi": 27.7,
-      "rsiPrev": 27.7,
-      "ext": -3.1,
-      "nadTrendem": -0.0335,
-      "fastNadSlow": -0.0158,
-      "volPct": 0.0046,
-      "er": 0.502,
-      "slope": -0.00295
-    }
-  },
-  {
     "id": "1785188716050-trend-PYTH",
     "ts": "2026-07-27T21:45:16.051Z",
     "gracz": "trend",
@@ -51040,6 +50954,107 @@
       "SOL": 0.00204,
       "BTC": 0.00078,
       "ETH": 0.00257
+    }
+  },
+  {
+    "id": "1785332715737-antytrend-BTC",
+    "ts": "2026-07-29T13:45:15.738Z",
+    "gracz": "antytrend",
+    "sym": "BTC",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 64398.7,
+    "entryPrice": 64359.8,
+    "margin": 87.24581157606093,
+    "notional": 261.7374347281828,
+    "leverage": 3,
+    "pnlUsd": -0.3196895390177045,
+    "pnlPct": -0.003664239385738295,
+    "holdMs": 10199165,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: gotowy: trend, trend rosnie, RSI 53.4, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 53.4,
+      "rsiPrev": 68,
+      "ext": 0.1,
+      "nadTrendem": 0.0049,
+      "fastNadSlow": 0.0039,
+      "volPct": 0.0021,
+      "er": 0.172,
+      "slope": 0.00069
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00657,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2.08,
+    "mae": 0.69,
+    "rynek": {
+      "SOL": -0.0019,
+      "BTC": 0.0006,
+      "ETH": -0.00227
+    }
+  },
+  {
+    "id": "1785332715737-antytrend-SOL-o",
+    "ts": "2026-07-29T13:45:15.739Z",
+    "gracz": "antytrend",
+    "sym": "SOL",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 73.61,
+    "margin": 84.51661601626802,
+    "notional": 253.54984804880405,
+    "leverage": 3,
+    "liqPrice": 51.526999999999994,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 46.3, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 46.3,
+      "rsiPrev": 46.6,
+      "ext": -0.44,
+      "nadTrendem": -0.0059,
+      "fastNadSlow": -0.0003,
+      "volPct": 0.0025,
+      "er": 0.079,
+      "slope": -0.00065
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00785,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1785332715737-malpa-ORCA-o",
+    "ts": "2026-07-29T13:45:15.740Z",
+    "gracz": "malpa",
+    "sym": "ORCA",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 1.144,
+    "margin": 87.16010522321307,
+    "notional": 261.4803156696392,
+    "leverage": 3,
+    "liqPrice": 1.4871999999999999,
+    "pnlUsd": null,
+    "reason": "rzut monetą — żadnego powodu",
+    "warunki": {
+      "rsi": 21.7,
+      "rsiPrev": 21.7,
+      "ext": -6.59,
+      "nadTrendem": -0.0158,
+      "fastNadSlow": -0.0021,
+      "volPct": 0.0011,
+      "er": 0.333,
+      "slope": -0.00101
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00365,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
