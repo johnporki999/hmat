@@ -50,7 +50,13 @@ async function pobierz(url, timeoutMs = 12000) {
   try {
     const r = await fetch(url, {
       signal: ctrl.signal,
-      headers: { 'user-agent': 'hajsomat-kolektor/1.0', accept: 'application/json' },
+      headers: {
+        'user-agent': 'hajsomat-kolektor/1.0',
+        accept: 'application/json',
+        // darmowy klucz z portal.jup.ag podnosi limit z 0,5 do 1 zapytania/s;
+        // bez klucza tez dziala — naglowek po prostu nie jest wysylany
+        ...(env('JUP_API_KEY') ? { 'x-api-key': env('JUP_API_KEY') } : {}),
+      },
     });
     if (!r.ok) return null;
     return await r.json();
@@ -72,7 +78,7 @@ const r = (v, m = 6) => (typeof v === 'number' && isFinite(v) ? Number(v.toFixed
 async function zJupitera(sym) {
   const mint = UNIVERSE[sym]?.mint;
   if (!mint) return {};
-  const d = await pobierz(`https://lite-api.jup.ag/tokens/v2/search?query=${mint}`);
+  const d = await pobierz(`https://api.jup.ag/tokens/v2/search?query=${mint}`);
   const arr = Array.isArray(d) ? d : d?.tokens || [];
   const t = arr.find((x) => (x.id || x.address) === mint);
   if (!t) return {};
@@ -258,12 +264,12 @@ async function kosztRundy(sym) {
   const mint = UNIVERSE[sym].mint;
   const q = (inM, outM, amount) =>
     pobierz(
-      `https://lite-api.jup.ag/swap/v1/quote?inputMint=${inM}&outputMint=${outM}` +
+      `https://api.jup.ag/swap/v1/quote?inputMint=${inM}&outputMint=${outM}` +
         `&amount=${amount}&slippageBps=50`
     );
   const tam = await q(USDC, mint, KWOTA_RT);
   if (!tam?.outAmount) return null;
-  await sleep(250);
+  await sleep(env('JUP_API_KEY') ? 400 : 1500);
   const nazad = await q(mint, USDC, tam.outAmount);
   if (!nazad?.outAmount) return null;
   const strata = (KWOTA_RT - Number(nazad.outAmount)) / KWOTA_RT;
@@ -287,7 +293,11 @@ for (const sym of aktywa) {
   if (Object.keys(b).length) zBin += 1;
   if (!Object.keys(j).length && !Object.keys(b).length && rt == null) continue;
   wiersze.push(JSON.stringify({ t: teraz, sym, ...j, ...b, ...(rt != null ? { rt } : {}) }));
-  await sleep(250); // uprzejmosc wobec darmowych API
+  // Nowa bramka api.jup.ag bez klucza pozwala na 30 zapytan na minute, a robimy
+  // 3 na aktywo (wyszukiwarka + dwa kwotowania kosztu rundy). Dwie i pol sekundy
+  // przerwy miedzy aktywami trzyma nas bezpiecznie pod limitem — kolektor i tak
+  // biega co 15 minut, wiec dodatkowa minuta przebiegu nie robi roznicy.
+  await sleep(env('JUP_API_KEY') ? 1500 : 7000);
 }
 
 // warstwa rynkowa — jeden wiersz, dotyczy wszystkiego

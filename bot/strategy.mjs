@@ -75,7 +75,10 @@ export function makeCFG(overrides = {}) {
     RESET_SIM: envBool('RESET_SIM', false),
 
     RPC_URL: env('RPC_URL', 'https://api.mainnet-beta.solana.com'),
-    JUP_BASE: env('JUP_API_KEY') ? 'https://api.jup.ag/swap/v1' : 'https://lite-api.jup.ag/swap/v1',
+    // lite-api.jup.ag jest wygaszane (limity stopniowo obcinane az do wycofania).
+    // Nowa bramka api.jup.ag dziala takze BEZ klucza (0,5 zapytania/s); darmowy
+    // klucz z portal.jup.ag podnosi do 1/s — wpisz go w JUP_API_KEY, jesli chcesz.
+    JUP_BASE: 'https://api.jup.ag/swap/v1',
     JUP_API_KEY: env('JUP_API_KEY'),
 
     ASSETS: env('ASSETS', 'SOL,JUP,JTO,PYTH,RAY,ORCA,RENDER,BONK')
