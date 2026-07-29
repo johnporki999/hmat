@@ -175,6 +175,40 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     stopZawsze: true,
   },
 
+  // Cierpliwy plus doba wolnego po kazdej wygranej. Pomysl z pytania z 29.07.2026:
+  // "a jakby zrobic bota co jak ma dobrego trejda, to czeka pare godzin".
+  //
+  // Pomysl mial dwie mozliwe wersje i tylko jedna dziala (bot/cache/czekacz.mjs,
+  // silnik skalibrowany pomiarem wykonania, 10 aktywow, 5 lat):
+  //
+  //   trzymaj wygrana pozycje dluzej -> GORZEJ u wszystkich (nawet u malpy):
+  //     blokowanie TP/traila to czas na wyparowanie zysku plus dodatkowe odsetki
+  //   pauza 24h po wygranym trejdzie -> Cierpliwy z -0,114% na +0,024% na trejd,
+  //     PIERWSZY dodatni wynik zasad na zywo w historii naszych symulacji
+  //
+  // Cztery testy uczciwosci, wszystkie zaliczone (sprawdz-b24.mjs, sjesta-aktywa.mjs):
+  //   1. podzial historii 60/40 — poprawa w OBU polowkach (+0,10 pp i +0,20 pp),
+  //   2. malpa z ta sama pauza nie zyskuje NIC — pauza sama w sobie jest pusta,
+  //      dziala dopiero na wejsciach Cierpliwego,
+  //   3. dawka jak w mechanizmie, nie jak w szumie: 4h nic, 12h troche, 24h duzo,
+  //   4. poprawa na 7 z 10 aktywow (najmocniej BONK +0,73 pp; wyjatek ORCA).
+  //
+  // Mechanizm po ludzku: wygrane Cierpliwego przychodza na KONCU dlugich ruchow
+  // (trzyma minimum 12h), wiec natychmiastowy powrot to dosiadanie zdyszanego konia.
+  // Doba przerwy pozwala rynkowi rozdac karty od nowa.
+  //
+  // Zastrzezenie zapisane uczciwie: to najlepsza z 30 komorek tabeli czekacza,
+  // wiec mimo czterech testow to trop, nie dowod. Dowodem bedzie to, co zrobi
+  // TUTAJ — na trejdach, ktore sie jeszcze nie wydarzyly. Pauza liczy sie
+  // osobno per aktywo, bo dokladnie tak byla symulowana.
+  sjesta: {
+    nazwa: 'Sjesta',
+    opis: 'jak Cierpliwy, ale po wygranej ma dobę wolnego na tym aktywie',
+    wejscie: sygnalTrendu,
+    minGodzin: envNum('MIN_GODZIN', 12),
+    pauzaPoWygranejH: 24,
+  },
+
   // Te same wejscia i wyjscia co Trend. Rozni go JEDNO: wielkosc depozytu.
   //
   // Wszyscy inni stawiaja staly procent kapitalu, wiec przy stopie 1,6 ATR trejd

@@ -213,6 +213,12 @@ for (const [id, def] of Object.entries(GRACZE)) {
     if (!zlikwidowany && netto >= 0) g.stats.wygrane += 1;
     else g.stats.przegrane += 1;
 
+    // Sjesta: zapamietujemy czas wygranej na aktywie — jej regula blokuje wejscia
+    // na tym aktywie przez pauzaPoWygranejH godzin (sprawdzane przy wejsciach nizej).
+    if (def.pauzaPoWygranejH && !zlikwidowany && netto > 0) {
+      (g.ostatniaWygrana = g.ostatniaWygrana || {})[sym] = teraz;
+    }
+
     // Zwrot z wlozonego depozytu. Wszyscy gracze wkladaja ten sam procent kapitalu,
     // wiec te liczby sa porownywalne miedzy graczami niezaleznie od tego, ile ktory ma.
     const R = p.margin ? (zlikwidowany ? -1 : netto / p.margin) : 0;
@@ -258,6 +264,10 @@ for (const [id, def] of Object.entries(GRACZE)) {
     if (sloty <= 0) break;
     const r = rynek[sym];
     if (!r || g.positions[sym]) continue;
+    // Sjesta: po wygranym trejdzie doba wolnego NA TYM AKTYWIE — dokladnie tak
+    // byla testowana (kazde aktywo symulowane osobno), wiec tak tez gra na zywo.
+    if (def.pauzaPoWygranejH && g.ostatniaWygrana?.[sym]
+      && teraz - g.ostatniaWygrana[sym] < def.pauzaPoWygranejH * 3600000) continue;
     const sygnal = def.wejscie(sym, r.m, r.c);
     if (!sygnal) continue;
     const { kier, powod } = sygnal;
