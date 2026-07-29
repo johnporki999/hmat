@@ -5262,5 +5262,102 @@
       "slope": 0.00254
     },
     "dry": true
+  },
+  {
+    "id": "1785290709693-ETH",
+    "ts": "2026-07-29T02:05:09.693Z",
+    "sym": "ETH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 1901.36,
+    "entryPrice": 1912.3,
+    "qty": 0.8005826457015789,
+    "notional": 1530.9541933751293,
+    "margin": 153.09541933751294,
+    "leverage": 10,
+    "pnlUsd": -9.696592792138132,
+    "pnlPct": -0.06333692303857309,
+    "borrowUsd": 0.019646132137736864,
+    "holdMs": 3299814,
+    "liquidated": false,
+    "reason": "STOP LOSS przy $1901.36",
+    "powodWejscia": "gotowy: trend, RSI 48.8, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 48.8,
+      "rsiPrev": 52.3,
+      "ext": -0.35,
+      "nadTrendem": 0.003,
+      "fastNadSlow": 0.0035,
+      "volPct": 0.0032,
+      "er": 0.118,
+      "slope": 0.00042
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0102,
+      "koszt": 0.004,
+      "score": 8
+    },
+    "odrzucone": [
+      {
+        "sym": "PENGU",
+        "side": "SHORT",
+        "score": 10,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "JTO",
+        "side": "SHORT",
+        "score": 9,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "BONK",
+        "side": "LONG",
+        "score": 9,
+        "powod": "trzymam LONG"
+      },
+      {
+        "sym": "RAY",
+        "side": "SHORT",
+        "score": 8,
+        "powod": "potencjal 0.57% maly wobec kosztow 0.64%"
+      }
+    ],
+    "mfe": 0.07,
+    "mae": 1.8,
+    "rynek": {
+      "SOL": -0.00625,
+      "BTC": -0.00301,
+      "ETH": -0.00572
+    },
+    "dry": true
+  },
+  {
+    "id": "1785290709696-DRIFT",
+    "ts": "2026-07-29T02:05:09.696Z",
+    "sym": "DRIFT",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.0114,
+    "qty": 143517.0697991976,
+    "notional": 1636.0945957108527,
+    "margin": 163.60945957108527,
+    "leverage": 10,
+    "liqPrice": 0.012426000000000001,
+    "stopPrice": 0.01145172162788421,
+    "takeProfit": 0.011296556744231584,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 45.3, odbicie do sredniej",
+    "warunki": {
+      "rsi": 45.3,
+      "rsiPrev": 28.9,
+      "ext": -0.97,
+      "nadTrendem": -0.0299,
+      "fastNadSlow": -0.0024,
+      "volPct": 0.0028,
+      "er": 0.111,
+      "slope": -0.00314
+    },
+    "dry": true
   }
 ]
