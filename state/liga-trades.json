@@ -1,76 +1,5 @@
 [
   {
-    "id": "1785251115885-wybicie-W-o",
-    "ts": "2026-07-28T15:05:15.889Z",
-    "gracz": "wybicie",
-    "sym": "W",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.00896,
-    "margin": 100.76459504034092,
-    "notional": 302.2937851210228,
-    "leverage": 3,
-    "liqPrice": 0.006271999999999999,
-    "pnlUsd": null,
-    "reason": "0.01 nad szczytem 20 świec 0.01",
-    "warunki": {
-      "rsi": 69.1,
-      "rsiPrev": 55.8,
-      "ext": 3.98,
-      "nadTrendem": 0.0042,
-      "fastNadSlow": 0.0012,
-      "volPct": 0.0037,
-      "er": 0.135,
-      "slope": -0.00092
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01197,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1785251416492-trend-PYTH",
-    "ts": "2026-07-28T15:10:16.493Z",
-    "gracz": "trend",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.04243,
-    "entryPrice": 0.04204,
-    "margin": 105.07752897072857,
-    "notional": 315.2325869121857,
-    "leverage": 3,
-    "pnlUsd": -3.115405853562362,
-    "pnlPct": -0.029648640238106667,
-    "holdMs": 3600558,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 41.1, odbicie do sredniej",
-    "warunki": {
-      "rsi": 41.1,
-      "rsiPrev": 36.1,
-      "ext": -1.37,
-      "nadTrendem": -0.0306,
-      "fastNadSlow": -0.0086,
-      "volPct": 0.0048,
-      "er": 0.145,
-      "slope": -0.00261
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01533,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 0,
-    "mae": 1.94,
-    "rynek": {
-      "SOL": 0.01045,
-      "BTC": 0.00432,
-      "ETH": 0.00858
-    }
-  },
-  {
     "id": "1785251416492-trend-SOL",
     "ts": "2026-07-28T15:10:16.493Z",
     "gracz": "trend",
@@ -53193,6 +53122,77 @@
       "SOL": 0.01019,
       "BTC": 0.00601,
       "ETH": 0.01045
+    }
+  },
+  {
+    "id": "1785369016422-antytrend-JUP",
+    "ts": "2026-07-29T23:50:16.423Z",
+    "gracz": "antytrend",
+    "sym": "JUP",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.1975,
+    "entryPrice": 0.19568,
+    "margin": 79.80867641442015,
+    "notional": 239.42602924326044,
+    "leverage": 3,
+    "pnlUsd": -2.371610642573208,
+    "pnlPct": -0.029716200657911123,
+    "holdMs": 2700480,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "odwrotnie do: gotowy: trend, trend rosnie, RSI 56.8, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 56.8,
+      "rsiPrev": 58.9,
+      "ext": 1.34,
+      "nadTrendem": 0.0243,
+      "fastNadSlow": 0.0015,
+      "volPct": 0.0056,
+      "er": 0.032,
+      "slope": 0.00142
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01786,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0.09,
+    "mae": 1.67,
+    "rynek": {
+      "SOL": 0.00109,
+      "BTC": 0.00103,
+      "ETH": 0.00272
+    }
+  },
+  {
+    "id": "1785369016422-antytrend-JTO-o",
+    "ts": "2026-07-29T23:50:16.423Z",
+    "gracz": "antytrend",
+    "sym": "JTO",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.54264,
+    "margin": 79.53246810867888,
+    "notional": 238.59740432603667,
+    "leverage": 3,
+    "liqPrice": 0.37984799999999996,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 57.4, odbicie do sredniej",
+    "warunki": {
+      "rsi": 57.4,
+      "rsiPrev": 50,
+      "ext": 1.45,
+      "nadTrendem": -0.0153,
+      "fastNadSlow": -0.0016,
+      "volPct": 0.0043,
+      "er": 0.082,
+      "slope": -0.00219
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01371,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
