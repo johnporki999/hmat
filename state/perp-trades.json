@@ -5775,5 +5775,143 @@
       "slope": 0.00206
     },
     "dry": true
+  },
+  {
+    "id": "1785298209617-DRIFT",
+    "ts": "2026-07-29T04:10:09.617Z",
+    "sym": "DRIFT",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.0112,
+    "entryPrice": 0.0114,
+    "qty": 143517.0697991976,
+    "notional": 1636.0945957108527,
+    "margin": 163.60945957108527,
+    "leverage": 10,
+    "pnlUsd": 27.701306238112647,
+    "pnlPct": 0.16931359782456187,
+    "borrowUsd": 0.020450964300439564,
+    "holdMs": 7499921,
+    "liquidated": false,
+    "reason": "TAKE PROFIT (+6.19 ATR)",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 45.3, odbicie do sredniej",
+    "warunki": {
+      "rsi": 45.3,
+      "rsiPrev": 28.9,
+      "ext": -0.97,
+      "nadTrendem": -0.0299,
+      "fastNadSlow": -0.0024,
+      "volPct": 0.0028,
+      "er": 0.111,
+      "slope": -0.00314
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00907,
+      "koszt": 0.0076,
+      "score": 9
+    },
+    "odrzucone": [
+      {
+        "sym": "JUP",
+        "side": "LONG",
+        "score": 9,
+        "powod": "trzymam LONG"
+      },
+      {
+        "sym": "SOL",
+        "side": "SHORT",
+        "score": 6,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "JTO",
+        "side": "SHORT",
+        "score": 6,
+        "powod": "2.68 ATR pod srednia — za nisko, czekam na odbicie"
+      },
+      {
+        "sym": "RAY",
+        "side": "SHORT",
+        "score": 6,
+        "powod": "4.09 ATR pod srednia — za nisko, czekam na odbicie"
+      }
+    ],
+    "mfe": 6.19,
+    "mae": 0,
+    "rynek": {
+      "SOL": 0.00096,
+      "BTC": 0.00076,
+      "ETH": -0.00516
+    },
+    "dry": true
+  },
+  {
+    "id": "1785298209617-JUP",
+    "ts": "2026-07-29T04:10:09.617Z",
+    "sym": "JUP",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.1873,
+    "entryPrice": 0.18921,
+    "qty": 1496.2356046979874,
+    "notional": 283.1027387649062,
+    "margin": 28.310273876490616,
+    "leverage": 10,
+    "pnlUsd": -3.0296536360364894,
+    "pnlPct": -0.10701604828176427,
+    "borrowUsd": 0.0019819878043975713,
+    "holdMs": 1800245,
+    "liquidated": false,
+    "reason": "STOP LOSS przy $0.19",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 42.7, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 42.7,
+      "rsiPrev": 42.1,
+      "ext": -1.66,
+      "nadTrendem": 0.0092,
+      "fastNadSlow": 0.0078,
+      "volPct": 0.0053,
+      "er": 0.018,
+      "slope": 0.00206
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01709,
+      "koszt": 0.0052,
+      "score": 10
+    },
+    "odrzucone": [
+      {
+        "sym": "SOL",
+        "side": "SHORT",
+        "score": 10,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "PYTH",
+        "side": "SHORT",
+        "score": 10,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "DRIFT",
+        "side": "SHORT",
+        "score": 8,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "JTO",
+        "side": "SHORT",
+        "score": 6,
+        "powod": "2.19 ATR pod srednia — za nisko, czekam na odbicie"
+      }
+    ],
+    "mfe": 0,
+    "mae": 1.89,
+    "rynek": {
+      "SOL": 0.00027,
+      "BTC": -0.00063,
+      "ETH": -0.00299
+    },
+    "dry": true
   }
 ]
