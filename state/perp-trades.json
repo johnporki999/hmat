@@ -6773,5 +6773,102 @@
       "slope": -0.00307
     },
     "dry": true
+  },
+  {
+    "id": "1785315009598-PYTH",
+    "ts": "2026-07-29T08:50:09.598Z",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.04151,
+    "entryPrice": 0.04109,
+    "qty": 41998.56717864272,
+    "notional": 1725.7211253704295,
+    "margin": 172.57211253704295,
+    "leverage": 10,
+    "pnlUsd": -18.680008853212296,
+    "pnlPct": -0.10824465539994241,
+    "borrowUsd": 0.00517796296023271,
+    "holdMs": 1800278,
+    "liquidated": false,
+    "reason": "STOP LOSS przy $0.04",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 55.5, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 55.5,
+      "rsiPrev": 63,
+      "ext": 0.88,
+      "nadTrendem": -0.0271,
+      "fastNadSlow": -0.0051,
+      "volPct": 0.0057,
+      "er": 0.118,
+      "slope": -0.00307
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01837,
+      "koszt": 0.0068,
+      "score": 10
+    },
+    "odrzucone": [
+      {
+        "sym": "BTC",
+        "side": "LONG",
+        "score": 10,
+        "powod": "gotowy: trend, trend rosnie, RSI 61.9, cofniecie do sredniej, RSI zawraca"
+      },
+      {
+        "sym": "JUP",
+        "side": "LONG",
+        "score": 9,
+        "powod": "gotowy: trend, trend rosnie, RSI 52.1, cofniecie do sredniej"
+      },
+      {
+        "sym": "JTO",
+        "side": "SHORT",
+        "score": 9,
+        "powod": "trzymam SHORT"
+      },
+      {
+        "sym": "RENDER",
+        "side": "SHORT",
+        "score": 9,
+        "powod": "SHORT: trend spadkowy, trend przyspiesza, RSI 35.7, odbicie do sredniej"
+      }
+    ],
+    "mfe": 0.04,
+    "mae": 1.78,
+    "rynek": {
+      "SOL": 0.00149,
+      "BTC": 0.00095,
+      "ETH": 0.00045
+    },
+    "dry": true
+  },
+  {
+    "id": "1785315009600-BTC",
+    "ts": "2026-07-29T08:50:09.600Z",
+    "sym": "BTC",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 64371.7,
+    "qty": 0.02562750090836914,
+    "notional": 1649.6858002232657,
+    "margin": 164.96858002232656,
+    "leverage": 10,
+    "liqPrice": 58578.246999999996,
+    "stopPrice": 64171.2879488672,
+    "takeProfit": 64772.52410226559,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 62.9, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 62.9,
+      "rsiPrev": 62,
+      "ext": 1.57,
+      "nadTrendem": 0.0057,
+      "fastNadSlow": 0.0033,
+      "volPct": 0.0019,
+      "er": 0.153,
+      "slope": 0.00058
+    },
+    "dry": true
   }
 ]
