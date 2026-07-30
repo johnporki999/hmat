@@ -360,6 +360,7 @@ for (const [id, def] of Object.entries(GRACZE)) {
       takeProfit: long ? px + CFG.TAKE_PROFIT_ATR * r.m.atr : px - CFG.TAKE_PROFIT_ATR * r.m.atr,
       atrAtEntry: r.m.atr, bestPrice: px, worstPrice: px, trailArmed: false, borrowPaid: 0,
       trailAtr: def.trailAtr ?? CFG.TRAIL_ATR,
+      bezSmyczy: !!def.bezSmyczy,
       minGodzin: def.minGodzin ?? 0,
       stopZawsze: !!def.stopZawsze,
       rynekWejscie: migawka,

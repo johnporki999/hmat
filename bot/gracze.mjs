@@ -416,6 +416,48 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     },
   },
 
+  // Panika z wyjsciami dopasowanymi do jej wlasnego rezimu: stop 3,5 ATR
+  // zamiast 1,6 i BEZ smyczy.
+  //
+  // Skad: ostatnia nietknieta os wokol Paniki (bot/cache/wyjscia-paniki*.mjs,
+  // 31.07.2026). Jej wyjscia byly odziedziczone po regulach ligi, a te powstaly
+  // dla normalnych warunkow. Panika gra tam, gdzie cena skacze 2% na swiece
+  // kwadransowa — stop 1,6 ATR i smycz 2,0 ATR sa w tym rezimie WEWNATRZ SZUMU
+  // i zamieniaja przyszle wygrane w straty, zanim ruch zdazy sie rozwinac.
+  //
+  // Kazda wartosc sprawdzana na DWOCH ROZLACZNYCH polowach monet ORAZ dwoch
+  // polowach historii; "lepsze" tylko przy poprawie we wszystkich czterech:
+  //
+  //   stop:  1,0 → +3,2 | 1,6 (obecny) → +3,8 | 2,4 → +4,5 | 3,5 → +5,0 | bez → +6,1
+  //   smycz: 1,0 → +3,5 | 2,0 (obecna) → +4,0 | 3,0 → +3,9 | bez smyczy → +4,5
+  //   take profit: brak zwyciezcy, stop czasowy: bez znaczenia
+  //
+  // Polaczenie stop 3,5 + bez smyczy daje +6,1/+5,7 wobec +3,8/+4,2 u Paniki,
+  // przy likwidacjach 0,8% wobec 0,6% — czyli niemal caly zysk przy ryzyku
+  // praktycznie nietknietym.
+  //
+  // DLACZEGO NIE "BEZ STOPA W OGOLE": tamten uklad daje najwiecej (+8,1/+9,0),
+  // ale likwidacje skacza z 0,6% na 4,2%, czyli siedmiokrotnie. Pomiar dzwigni
+  // (bot/cache/lewar2.mjs) pokazal, ze taki handel — wiecej sredniej za wiecej
+  // ogona — konczy sie gorszym KAPITALEM mimo lepszej sredniej. Bierzemy srodek
+  // rampy, nie rog, tak samo jak przy Sicie ostrym.
+  //
+  // Paniki NIE zmieniamy — jej reguly sa pre-rejestrowane (Aneks 5), a zmiana
+  // w trakcie uniewaznilaby eksperyment. Ci dwaj graja obok siebie i to liga
+  // rozstrzygnie, czy luzniejsze wyjscia sa warte swojej ceny.
+  panikaLuzna: {
+    nazwa: 'Panika luźna',
+    opis: 'jak Panika, ale ze stopem 3,5 ATR i bez smyczy — wyjścia dopasowane do burzy',
+    wejscie: (sym, m) => {
+      if (m.volPct >= 0.02 && m.rsi <= 28) {
+        return { kier: 'LONG', powod: `panika: zmienność ${(m.volPct * 100).toFixed(1)}% ATR, RSI ${m.rsi.toFixed(1)} — kupuję luźno` };
+      }
+      return null;
+    },
+    stopAtr: 3.5,
+    bezSmyczy: true,
+  },
+
   wybicie: {
     nazwa: 'Wybicie',
     opis: 'wchodzi na sile, gdy cena łamie zakres z 20 świec',
@@ -504,7 +546,10 @@ export function czyWyjsc(p, atr, px, terazMs, swieca = null) {
   // Dwa nasze narzedzia dawaly sprzeczne wyniki dla gracza Smycz wlasnie z tego powodu.
   if (wStop) return 'STOP LOSS';
   if (long ? goraCeny >= p.takeProfit : dolCeny <= p.takeProfit) return 'TAKE PROFIT';
-  if (p.trailArmed) {
+  // Smycz da sie WYLACZYC calkiem (Panika luzna). Pomiar na 73 obcych monetach
+  // pokazal, ze w rezimie skrajnej zmiennosci smycz 2,0 ATR lezy wewnatrz szumu
+  // i wyrzuca pozycje, zanim ruch zdazy sie rozwinac.
+  if (p.trailArmed && !p.bezSmyczy) {
     // Dlugosc smyczy zapisujemy przy pozycji, bo gracz Smycz ma wlasna.
     const dl = p.trailAtr ?? CFG.TRAIL_ATR;
     const tr = long ? p.bestPrice - dl * a : p.bestPrice + dl * a;
