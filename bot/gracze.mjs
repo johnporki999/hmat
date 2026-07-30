@@ -209,6 +209,33 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     pauzaPoWygranejH: 24,
   },
 
+  // Cierpliwy, ktory nie otwiera niczego przez 24h po tapnieciu calego rynku
+  // (dobowy ruch BTC ponad 5%). BTC jest tu CZUJNIKIEM, nie aktywem do handlu.
+  //
+  // Jedyny ocalaly z baterii szesciu rodzin regul "kiedy grac" (29.07.2026,
+  // bot/cache/motanie*.mjs, wnioski w bot/cache/MOTANIE-WNIOSKI.md). Bateria
+  // dala 16 "zwyciezcow" przy oczekiwanych ~14 falszywych z samego przypadku,
+  // wiec o wszystkim decydowaly dogrywki — i tylko ta rodzina je przeszla:
+  //
+  //   dawka: progi 3/4/5/6/8/10% — efekt maleje PLYNNIE z progiem (wzgorze,
+  //     nie szpikulec, jak przy zdemaskowanym "oknie azjatyckim"),
+  //   kontrola: malpa nie zyskuje przy ZADNEJ z szesciu dawek — czyli to nie
+  //     jest efekt rezimu rynku, tylko jakosci naszych wejsc w chaosie,
+  //   spojnosc: poprawa w obu polowkach historii u trend/luzny/cierpliwy,
+  //   szerokosc: 7 z 10 aktywow,
+  //   mechanizm zgodny z niezalezna analiza tapniecia: po wstrzasie calego
+  //   rynku sygnaly trendowe altow strzelaja w chaos skorelowany.
+  //
+  // Prog 5% jest z baterii, nie z dogrywki. Najlepiej wypadl 3%, ale zostal
+  // wybrany PO obejrzeniu dawki, wiec do ligi wchodzi wersja pre-rejestrowana.
+  sejsmograf: {
+    nazwa: 'Sejsmograf',
+    opis: 'jak Cierpliwy, ale milczy przez dobę po tąpnięciu całego rynku',
+    wejscie: sygnalTrendu,
+    minGodzin: envNum('MIN_GODZIN', 12),
+    sejsmograf: true,
+  },
+
   // Te same wejscia i wyjscia co Trend. Rozni go JEDNO: wielkosc depozytu.
   //
   // Wszyscy inni stawiaja staly procent kapitalu, wiec przy stopie 1,6 ATR trejd

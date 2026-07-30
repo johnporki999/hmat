@@ -172,6 +172,32 @@ if (!Object.keys(rynek).length) {
 }
 log(`> zeskanowano ${Object.keys(rynek).length} aktywów`);
 
+// ── sejsmograf: czy w ostatniej dobie rynkiem tąpnęło ────────────────────────
+//
+// BTC sluzy tu WYLACZNIE jako czujnik i NIE wchodzi do uniwersum ligi — dodanie
+// go jako aktywa do handlu zmieniloby boisko wszystkim graczom w polowie
+// eksperymentu i uniewaznilo porownania, ktore zbieramy od lipca.
+//
+// Regula (bot/cache/MOTANIE-WNIOSKI.md): jesli w ciagu ostatnich 24h byla
+// chwila, w ktorej dobowy ruch BTC przekroczyl prog, gracz-sejsmograf nie
+// otwiera niczego. Wyjscia dzialaja normalnie — cisza dotyczy tylko wejsc.
+const SEJSMO_PROG = envNum('SEJSMO_PROG', 0.05);
+let rynekTrzasl = false;
+{
+  const c = await swiece('BTC', CFG.CANDLE_MINUTES);
+  if (c && c.length > 192) {
+    for (let i = c.length - 96; i < c.length; i++) {
+      if (Math.abs(c[i].c / c[i - 96].c - 1) > SEJSMO_PROG) { rynekTrzasl = true; break; }
+    }
+    const doba = Math.abs(c[c.length - 1].c / c[c.length - 97].c - 1);
+    log(`> sejsmograf: BTC ${(doba * 100).toFixed(2)}% w dobę — ${rynekTrzasl ? 'CISZA (tąpnęło w ostatniej dobie)' : 'spokój'}`);
+  } else {
+    // Brak odczytu = brak podstaw do ciszy. Lepiej, zeby Sejsmograf zagral
+    // jak Cierpliwy, niz zeby awaria pobierania udawala trzesienie ziemi.
+    log('> sejsmograf: brak świec BTC — traktuję jako spokój');
+  }
+}
+
 const teraz = Date.now();
 const nowe = [];
 // Ceny wszystkich aktywow w tej chwili — ta sama migawka dla kazdego gracza,
@@ -268,6 +294,8 @@ for (const [id, def] of Object.entries(GRACZE)) {
     // byla testowana (kazde aktywo symulowane osobno), wiec tak tez gra na zywo.
     if (def.pauzaPoWygranejH && g.ostatniaWygrana?.[sym]
       && teraz - g.ostatniaWygrana[sym] < def.pauzaPoWygranejH * 3600000) continue;
+    // Sejsmograf: cisza po trzesieniu calego rynku (czujnik liczony wyzej).
+    if (def.sejsmograf && rynekTrzasl) continue;
     const sygnal = def.wejscie(sym, r.m, r.c);
     if (!sygnal) continue;
     const { kier, powod } = sygnal;
