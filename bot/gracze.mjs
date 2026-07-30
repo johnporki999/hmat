@@ -372,6 +372,50 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     },
   },
 
+  // Kupuje glebokie wyprzedanie, ale TYLKO gdy rynkiem rzuca: ATR co najmniej
+  // 2% ceny na swiece kwadransowa (okolo 20% zmiennosci dziennej — krach albo
+  // wystrzal) i RSI ponizej 28.
+  //
+  // To nie jest nowy mechanizm. To TEN SAM pomysl co Sito 5, ograniczony do
+  // chwil, w ktorych ruch jest dosc duzy, zeby zaplacic bramke. Sito ma racje,
+  // tylko za czesto gra o stawke mniejsza od oplaty.
+  //
+  // Skad: przeszukanie 5000 wariantow Sita na naszych 10 monetach i sprawdzenie
+  // zwyciezcow na 73 obcych (bot/cache/warianty*.mjs, sprawdzam.mjs, 31.07.2026).
+  // Korelacja wynikow rozwojowych i testowych: 0,953. Dla porownania farma
+  // 150 tysiecy sit miala 0,207 — tam szukalismy szczesliwcow, tu trafilismy
+  // w cos strukturalnego.
+  //
+  // PIEC TESTOW, KTORE MOGLY GO ZABIC — i czego nauczyl kazdy:
+  //   1. KOSZT LICZONY Z DANYCH, nie z zalozenia. Spread oszacowany estymatorem
+  //      Corwina-Schultza wychodzi w tych chwilach 0,315% na strone, czyli
+  //      PIEC RAZY wiecej niz nasze 0,06%. Przy tym koszcie sama zmiennosc
+  //      ginie (-2,20% na trejd, kapital x0,04), a polaczenie z wyprzedaniem
+  //      przezywa: +2,85% i kapital x1,43. Odwrotnie, niz sie wydawalo.
+  //   2. Wejscie swiece pozniej (15 min opoznienia, trzy razy gorzej niz realne
+  //      pieciominutowe odpytywanie): +1,98%, kapital x1,34.
+  //   3. Obie polowy historii dodatnie: +1,78% i +3,54%.
+  //   4. Szerokosc: 58 z 69 monet na plusie; po usunieciu piatki najlepszych
+  //      zostaje +2,49% i x1,38.
+  //   5. Przy PODWOJONYM oszacowanym spreadzie: +1,09%, kapital x1,05 — czyli
+  //      przewaga jest cienka, ale wciaz dodatnia.
+  //
+  // Ryzyko zapisane wprost: Corwin-Schultz to estymator, nie pomiar. W cienkiej
+  // ksiedze zlecen podczas krachu prawdziwy koszt moze przebic nawet podwojony
+  // szacunek — a tam zostaje juz tylko +1,09%. Nie mierzymy tez wplywu wlasnego
+  // zlecenia na cene. To jest glowna niepewnosc tego gracza i liga ma ja
+  // rozstrzygnac na prawdziwych trejdach.
+  panika: {
+    nazwa: 'Panika',
+    opis: 'kupuje głębokie wyprzedanie, ale tylko gdy rynkiem naprawdę rzuca',
+    wejscie: (sym, m) => {
+      if (m.volPct >= 0.02 && m.rsi <= 28) {
+        return { kier: 'LONG', powod: `panika: zmienność ${(m.volPct * 100).toFixed(1)}% ATR, RSI ${m.rsi.toFixed(1)} — kupuję` };
+      }
+      return null;
+    },
+  },
+
   wybicie: {
     nazwa: 'Wybicie',
     opis: 'wchodzi na sile, gdy cena łamie zakres z 20 świec',
