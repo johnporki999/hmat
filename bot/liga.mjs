@@ -183,6 +183,7 @@ log(`> zeskanowano ${Object.keys(rynek).length} aktywów`);
 // otwiera niczego. Wyjscia dzialaja normalnie — cisza dotyczy tylko wejsc.
 const SEJSMO_PROG = envNum('SEJSMO_PROG', 0.05);
 let rynekTrzasl = false;
+let odczytSejsmo = null;
 {
   const c = await swiece('BTC', CFG.CANDLE_MINUTES);
   if (c && c.length > 192) {
@@ -190,13 +191,20 @@ let rynekTrzasl = false;
       if (Math.abs(c[i].c / c[i - 96].c - 1) > SEJSMO_PROG) { rynekTrzasl = true; break; }
     }
     const doba = Math.abs(c[c.length - 1].c / c[c.length - 97].c - 1);
+    odczytSejsmo = { ts: nowISO(), doba: +doba.toFixed(5), cisza: rynekTrzasl, prog: SEJSMO_PROG };
     log(`> sejsmograf: BTC ${(doba * 100).toFixed(2)}% w dobę — ${rynekTrzasl ? 'CISZA (tąpnęło w ostatniej dobie)' : 'spokój'}`);
   } else {
     // Brak odczytu = brak podstaw do ciszy. Lepiej, zeby Sejsmograf zagral
     // jak Cierpliwy, niz zeby awaria pobierania udawala trzesienie ziemi.
+    //
+    // Odczyt ladujemy w stanie (a nie tylko w logu), bo raz juz nas kosztowala
+    // awaria widoczna WYLACZNIE w logach: Binance oddawal 451 przez dwa dni,
+    // a my mielismy zera i zadnego alarmu. bot/zdrowie.mjs to sprawdza.
+    odczytSejsmo = { ts: nowISO(), doba: null, cisza: false, prog: SEJSMO_PROG, blad: 'brak świec BTC' };
     log('> sejsmograf: brak świec BTC — traktuję jako spokój');
   }
 }
+stan.sejsmo = odczytSejsmo;
 
 const teraz = Date.now();
 const nowe = [];

@@ -331,6 +331,47 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     },
   },
 
+  // Sito 5 z zakrecona srubka: ER >= 0,45 zamiast 0,35 i RSI < 25 zamiast 35.
+  //
+  // Skad: pomiar selektywnosci na 73 zywych monetach spoza naszego podworka
+  // (bot/cache/selektywnosc.mjs, 30.07.2026). Siatka 25 progow dala najczystszy
+  // ksztalt w calym projekcie — przewaga nad malpa rosnie MONOTONICZNIE w obie
+  // strony zaostrzania, a wszystkie 25 komorek ma ten sam znak na obu polowkach
+  // historii:
+  //
+  //   ER>=0,15  +0,21 ... +0,47      ER>=0,45  +0,79 ... +1,27
+  //   ER>=0,35  +0,34 ... +0,58      ER>=0,55  +2,98 ... +3,95
+  //
+  // To gladka rampa, nie szpikulec — odwrotnie niz "okno azjatyckie", ktore
+  // rozpadlo sie przy pierwszym dotknieciu. Wniosek pochodny: oryginalne progi
+  // Sita 5 byly ZA LUZNE, a nie przepasowane.
+  //
+  // DLACZEGO SRODEK RAMPY, A NIE NAJLEPSZY ROG: przy ER>=0,55 zostaje 7-9
+  // trejdow na monete na rok, wiec pojedyncze zdarzenia waza tam za duzo,
+  // a +3,95 pp to liczba, ktorej sam nie brałbym powaznie. 0,45/25 lezy na
+  // gladkiej czesci krzywej i daje ~31 trejdow na monete na rok.
+  //
+  // CENA, KTORA PLACIMY, ZAPISANA WPROST: zaostrzenie mnozy przewage na trejd
+  // ~19x, ale dzieli liczbe trejdow ~100x. Laczny urobek SPADA (144 -> 27
+  // w jednostkach umownych). Ten gracz jest wiec zakladem o to, ze w lidze
+  // waskim gardlem sa MIEJSCA (4 sloty), a nie okazje — jesli tak, ostrzejszy
+  // filtr jest darmowy, bo odrzuca trejdy, ktorych i tak nie dalo sie wziac.
+  //
+  // Zaleznosc od Sita 5 zapisana uczciwie: kazde wejscie Ostrego Sita jest tez
+  // wejsciem Sita 5 (warunki sa zagniezdzone), wiec ci dwaj gracze NIE sa
+  // niezalezni. Rozlicza ich to samo kryterium co wszystkich, ale przy czytaniu
+  // tabeli trzeba o tym pamietac.
+  sitoOstre: {
+    nazwa: 'Sito ostre',
+    opis: 'jak Sito 5, ale wchodzi tylko przy bardzo prostym zjeździe i głębokim wyprzedaniu',
+    wejscie: (sym, m) => {
+      if (m.er != null && m.er >= 0.45 && m.rsi < 25) {
+        return { kier: 'LONG', powod: `bardzo prosty zjazd (ER ${m.er.toFixed(2)}), RSI ${m.rsi.toFixed(1)} — kupuję` };
+      }
+      return null;
+    },
+  },
+
   wybicie: {
     nazwa: 'Wybicie',
     opis: 'wchodzi na sile, gdy cena łamie zakres z 20 świec',
