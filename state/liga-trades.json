@@ -1,106 +1,5 @@
 [
   {
-    "id": "1785296116195-trend-PYTH-o",
-    "ts": "2026-07-29T03:35:16.197Z",
-    "gracz": "trend",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.04048,
-    "margin": 98.89249690487743,
-    "notional": 296.6774907146323,
-    "leverage": 3,
-    "liqPrice": 0.052624000000000004,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 34.7, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 34.7,
-      "rsiPrev": 36.8,
-      "ext": -1.5,
-      "nadTrendem": -0.0484,
-      "fastNadSlow": -0.0124,
-      "volPct": 0.0065,
-      "er": 0.347,
-      "slope": -0.00462
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0208,
-      "koszt": 0.0012,
-      "score": 10
-    }
-  },
-  {
-    "id": "1785296116195-trend-RAY-o",
-    "ts": "2026-07-29T03:35:16.197Z",
-    "gracz": "trend",
-    "sym": "RAY",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.605,
-    "margin": 98.89249690487743,
-    "notional": 296.6774907146323,
-    "leverage": 3,
-    "liqPrice": 0.7865,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 51.8, odbicie do sredniej",
-    "warunki": {
-      "rsi": 51.8,
-      "rsiPrev": 51.8,
-      "ext": 0.46,
-      "nadTrendem": -0.0106,
-      "fastNadSlow": -0.0004,
-      "volPct": 0.0022,
-      "er": 0.019,
-      "slope": -0.00123
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00715,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1785296116195-antytrend-BONK",
-    "ts": "2026-07-29T03:35:16.197Z",
-    "gracz": "antytrend",
-    "sym": "BONK",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.000002998,
-    "entryPrice": 0.000003066,
-    "margin": 92.07754173785389,
-    "notional": 276.2326252135617,
-    "leverage": 3,
-    "pnlUsd": 5.954396980406571,
-    "pnlPct": 0.06466720188250492,
-    "holdMs": 13800372,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "odwrotnie do: gotowy: trend, trend rosnie, RSI 50.0, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 50,
-      "rsiPrev": 48.7,
-      "ext": -0.3,
-      "nadTrendem": 0.0049,
-      "fastNadSlow": 0.007,
-      "volPct": 0.0042,
-      "er": 0.133,
-      "slope": 0.00074
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01331,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 5.33,
-    "mae": 1.57,
-    "rynek": {
-      "SOL": -0.00653,
-      "BTC": -0.00142,
-      "ETH": -0.01166
-    }
-  },
-  {
     "id": "1785296116195-antytrend-RAY-o",
     "ts": "2026-07-29T03:35:16.197Z",
     "gracz": "antytrend",
@@ -53168,6 +53067,118 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.01264,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1785427516210-wybicie-BONK",
+    "ts": "2026-07-30T16:05:16.211Z",
+    "gracz": "wybicie",
+    "sym": "BONK",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.000002942,
+    "entryPrice": 0.000002905,
+    "margin": 91.2029249076409,
+    "notional": 273.6087747229227,
+    "leverage": 3,
+    "pnlUsd": -3.6494376496160017,
+    "pnlPct": -0.04001448038329585,
+    "holdMs": 899524,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "0.00 pod dołkiem 20 świec 0.00",
+    "warunki": {
+      "rsi": 28.7,
+      "rsiPrev": 38.3,
+      "ext": -4.5,
+      "nadTrendem": -0.0276,
+      "fastNadSlow": -0.0022,
+      "volPct": 0.0041,
+      "er": 0.195,
+      "slope": -0.00108
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01301,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0,
+    "mae": 3.13,
+    "rynek": {
+      "SOL": 0.00174,
+      "BTC": 0.00141,
+      "ETH": 0.00198
+    }
+  },
+  {
+    "id": "1785427516210-malpa-BONK",
+    "ts": "2026-07-30T16:05:16.212Z",
+    "gracz": "malpa",
+    "sym": "BONK",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.000002942,
+    "entryPrice": 0.000002905,
+    "margin": 88.2461264864279,
+    "notional": 264.7383794592837,
+    "leverage": 3,
+    "pnlUsd": -3.531122897193014,
+    "pnlPct": -0.04001448038329586,
+    "holdMs": 899524,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "rzut monetą — żadnego powodu",
+    "warunki": {
+      "rsi": 28.7,
+      "rsiPrev": 38.3,
+      "ext": -4.5,
+      "nadTrendem": -0.0276,
+      "fastNadSlow": -0.0022,
+      "volPct": 0.0041,
+      "er": 0.195,
+      "slope": -0.00108
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01301,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0,
+    "mae": 3.13,
+    "rynek": {
+      "SOL": 0.00174,
+      "BTC": 0.00141,
+      "ETH": 0.00198
+    }
+  },
+  {
+    "id": "1785427516210-malpa-W-o",
+    "ts": "2026-07-30T16:05:16.212Z",
+    "gracz": "malpa",
+    "sym": "W",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.00833,
+    "margin": 87.48984966680467,
+    "notional": 262.469549000414,
+    "leverage": 3,
+    "liqPrice": 0.005831,
+    "pnlUsd": null,
+    "reason": "rzut monetą — żadnego powodu",
+    "warunki": {
+      "rsi": 45.6,
+      "rsiPrev": 45.6,
+      "ext": -1.06,
+      "nadTrendem": -0.0194,
+      "fastNadSlow": -0.0003,
+      "volPct": 0.0016,
+      "er": 0.03,
+      "slope": -0.00171
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00523,
       "koszt": 0.0012,
       "score": null
     }
