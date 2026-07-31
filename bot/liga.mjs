@@ -35,7 +35,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  UNIVERSE, CFG, envNum, envBool, usd, pct, analyze, entrySignal,
+  UNIVERSE, CFG, env, envNum, envBool, usd, pct, analyze, entrySignal,
   warunki, wychylenia, migawkaRynku, zmianaRynku,
 } from './strategy.mjs';
 import { istotnosc, ALFA, MOC, D_MIN, SLOWA } from './istotnosc.mjs';
@@ -71,9 +71,16 @@ const GRACZE = stworzGraczy({ malpaSzansa: P.MALPA_SZANSA });
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const DIR = path.join(ROOT, 'state');
-const F_STAN = path.join(DIR, 'liga-state.json');
-const F_TREJDY = path.join(DIR, 'liga-trades.json');
-const F_EQUITY = path.join(DIR, 'liga-equity.json');
+
+// Ten sam kod obsluguje DWIE ligi. Rozni je wylacznie konfiguracja podana
+// w zmiennych srodowiskowych: przedrostek plikow stanu i lista aktywow.
+// Dzieki temu nie ma drugiej kopii czterystu linii mechaniki, ktora po
+// miesiacu cichutko rozjechalaby sie z pierwsza — a wtedy porownanie
+// obu lig nie mierzyloby niczego.
+const PREFIKS = env('LIGA_PREFIX', 'liga');
+const F_STAN = path.join(DIR, `${PREFIKS}-state.json`);
+const F_TREJDY = path.join(DIR, `${PREFIKS}-trades.json`);
+const F_EQUITY = path.join(DIR, `${PREFIKS}-equity.json`);
 
 const log = (...a) => console.log(...a);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -157,7 +164,11 @@ let equity = P.RESET ? [] : readJSON(F_EQUITY, []);
 if (P.RESET) log('> reset ligi');
 
 // dane rynkowe raz dla wszystkich graczy
-const aktywa = CFG.ASSETS.filter((s) => UNIVERSE[s]);
+// Liga A gra na aktywach bota (CFG.ASSETS). Liga B dostaje wlasna liste
+// przez LIGA_ASSETS — bez tego dzielilyby uniwersum i nie bylo by czego porownywac.
+const listaAktywow = env('LIGA_ASSETS', '');
+const aktywa = (listaAktywow ? listaAktywow.split(',').map((s) => s.trim()) : CFG.ASSETS)
+  .filter((s) => UNIVERSE[s]);
 const rynek = {};
 for (const sym of aktywa) {
   const c = await swiece(sym, CFG.CANDLE_MINUTES);

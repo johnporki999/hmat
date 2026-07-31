@@ -42,6 +42,45 @@ export const UNIVERSE = {
   DRIFT: { mint: 'DriFtupJYLTosbwoN8koMbEYSx54aFAVLddWsbksjwg7', dec: 6, kraken: 'DRIFTUSD', costMul: 1.6 },
   KMNO: { mint: 'KMNo3nJsBXfcpJTVhZcXLW7RmTwTt4GVFE7suUBo9sS', dec: 6, kraken: 'KMNOUSD', costMul: 1.6 },
   PENGU: { mint: '2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv', dec: 6, kraken: 'PENGUUSD', costMul: 1.7 },
+
+  // ── uniwersum Ligi B (31.07.2026) ────────────────────────────────────────
+  //
+  // Dwadziescia cztery alty spoza ekosystemu Solany, dobrane regula zapisana
+  // przed wyborem: wszystkie monety z naszego wszechswiata, ktore Kraken
+  // notuje do USD (bo serwer stoi w USA, gdzie Binance oddaje 451), bez
+  // aktywow ODWZOROWUJACYCH inne (WBTC to opakowany BTC, PAXG to zloto —
+  // to nie sa niezalezne rynki), co druga alfabetycznie do 25 sztuk.
+  //
+  // mint: null — to sa aktywa spoza Solany i bot spotowy ich nie dotyka.
+  // Sluza wylacznie Lidze B, ktora jest symulacja na swiecach.
+  //
+  // costMul 1,5 dla wszystkich: to alty srednie i male, wiec zakladamy koszt
+  // wyzszy niz dla SOL, ale nizszy niz dla najbardziej niszowych. Zalozenie
+  // celowo ostrozne — zawyzony koszt oznacza mniej trejdow, nie wiecej.
+  '1INCH': { mint: null, dec: 18, kraken: '1INCHUSD', costMul: 1.5 },
+  ALCX: { mint: null, dec: 18, kraken: 'ALCXUSD', costMul: 1.5 },
+  ARB: { mint: null, dec: 18, kraken: 'ARBUSD', costMul: 1.5 },
+  ASTR: { mint: null, dec: 18, kraken: 'ASTRUSD', costMul: 1.5 },
+  AVA: { mint: null, dec: 18, kraken: 'AVAUSD', costMul: 1.5 },
+  BCH: { mint: null, dec: 8, kraken: 'BCHUSD', costMul: 1.5 },
+  CELO: { mint: null, dec: 18, kraken: 'CELOUSD', costMul: 1.5 },
+  CTSI: { mint: null, dec: 18, kraken: 'CTSIUSD', costMul: 1.5 },
+  EDU: { mint: null, dec: 18, kraken: 'EDUUSD', costMul: 1.5 },
+  FIDA: { mint: null, dec: 6, kraken: 'FIDAUSD', costMul: 1.5 },
+  GALA: { mint: null, dec: 8, kraken: 'GALAUSD', costMul: 1.5 },
+  HFT: { mint: null, dec: 18, kraken: 'HFTUSD', costMul: 1.5 },
+  JST: { mint: null, dec: 18, kraken: 'JSTUSD', costMul: 1.5 },
+  LQTY: { mint: null, dec: 18, kraken: 'LQTYUSD', costMul: 1.5 },
+  MASK: { mint: null, dec: 18, kraken: 'MASKUSD', costMul: 1.5 },
+  NEO: { mint: null, dec: 8, kraken: 'NEOUSD', costMul: 1.5 },
+  OGN: { mint: null, dec: 18, kraken: 'OGNUSD', costMul: 1.5 },
+  QNT: { mint: null, dec: 18, kraken: 'QNTUSD', costMul: 1.5 },
+  RLC: { mint: null, dec: 9, kraken: 'RLCUSD', costMul: 1.5 },
+  SAND: { mint: null, dec: 18, kraken: 'SANDUSD', costMul: 1.5 },
+  STORJ: { mint: null, dec: 8, kraken: 'STORJUSD', costMul: 1.5 },
+  SUPER: { mint: null, dec: 18, kraken: 'SUPERUSD', costMul: 1.5 },
+  VET: { mint: null, dec: 18, kraken: 'VETUSD', costMul: 1.5 },
+  YFI: { mint: null, dec: 18, kraken: 'YFIUSD', costMul: 1.5 },
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

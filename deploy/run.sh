@@ -46,9 +46,20 @@ GALAZ="${GIT_BRANCH:-main}"
 # Ktore boty uruchomic. Domyslnie tylko kontraktowy — spot zostal wylaczony,
 # bo przy stalych oplatach sieciowych nie mial szans, a dzwignia daje ruchy
 # na tyle duze, ze oplaty przestaja decydowac.
-# Liga botow chodzi obok — pieciu graczy na osobnych portfelach.
-# Zeby dorzucic spot:  run.sh trade perp liga
-BOTY="${*:-perp liga}"
+# Liga botow chodzi obok — kazdy gracz na osobnym portfelu.
+#
+# Od 31.07.2026 dzialaja DWIE ligi na tym samym kodzie:
+#   liga  — 8 aktywow Solany, 4 miejsca po 20% kapitalu (jak dotad),
+#   ligab — 24 alty spoza Solany, 10 miejsc po 8%.
+# Laczne zaangazowanie kapitalu jest w obu takie samo (80%), rozni je
+# wylacznie ROZPROSZENIE. Dzieki temu roznica miedzy nimi mierzy jedna rzecz.
+#
+# Zeby dorzucic spot:  run.sh trade perp liga ligab
+BOTY="${*:-perp liga ligab}"
+
+# Uniwersum Ligi B — 24 alty, wszystkie notowane przez Krakena (Binance oddaje
+# 451 z amerykanskiego IP, wiec to jedyne zrodlo swiec na tym serwerze).
+LIGAB_AKTYWA="1INCH,ALCX,ARB,ASTR,AVA,BCH,CELO,CTSI,EDU,FIDA,GALA,HFT,JST,LQTY,MASK,NEO,OGN,QNT,RLC,SAND,STORJ,SUPER,VET,YFI"
 
 # Zabierz to, co przyszlo z zewnatrz (np. zmiany kodu wypchniete z komputera)
 git fetch origin "$GALAZ" --quiet 2>>"$LOG" || log "fetch nieudany"
@@ -56,17 +67,22 @@ git merge --ff-only "origin/$GALAZ" --quiet 2>>"$LOG" || log "nie moge przewinac
 
 cd "$KATALOG/bot"
 for bot in $BOTY; do
+  USTAW=""
   case "$bot" in
     trade) PLIK="trade.mjs" ;;
     perp)  PLIK="perpbot.mjs" ;;
     liga)  PLIK="liga.mjs" ;;
+    # Ta sama liga.mjs, inna konfiguracja — bez drugiej kopii mechaniki,
+    # ktora po miesiacu rozjechalaby sie z pierwsza.
+    ligab) PLIK="liga.mjs"
+           USTAW="LIGA_PREFIX=liga-b LIGA_ASSETS=$LIGAB_AKTYWA LIGA_MAX_POZYCJI=10 LIGA_ALLOC_PCT=0.08" ;;
     *) log "nieznany bot: $bot"; continue ;;
   esac
-  log "--- $PLIK ---"
-  if node "$PLIK" >>"$LOG" 2>&1; then
-    log "$PLIK OK"
+  log "--- $bot ($PLIK) ---"
+  if env $USTAW node "$PLIK" >>"$LOG" 2>&1; then
+    log "$bot OK"
   else
-    log "$PLIK zakonczyl sie bledem (kod $?)"
+    log "$bot zakonczyl sie bledem (kod $?)"
   fi
 done
 
