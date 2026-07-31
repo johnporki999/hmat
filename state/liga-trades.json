@@ -1,87 +1,5 @@
 [
   {
-    "id": "1785350116440-wybicie-SOL",
-    "ts": "2026-07-29T18:35:16.443Z",
-    "gracz": "wybicie",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 73.42,
-    "entryPrice": 74.12,
-    "margin": 97.97444709923998,
-    "notional": 293.92334129771996,
-    "leverage": 3,
-    "pnlUsd": -2.954608864740021,
-    "pnlPct": -0.030156933284321036,
-    "holdMs": 2099961,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "74.12 nad szczytem 20 świec 73.84",
-    "warunki": {
-      "rsi": 65.2,
-      "rsiPrev": 60.7,
-      "ext": 2.42,
-      "nadTrendem": 0.0027,
-      "fastNadSlow": -0.0014,
-      "volPct": 0.0039,
-      "er": 0.08,
-      "slope": -0.00086
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01255,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0,
-    "mae": 2.41,
-    "rynek": {
-      "SOL": -0.00944,
-      "BTC": -0.0091,
-      "ETH": -0.01195
-    }
-  },
-  {
-    "id": "1785350416053-antytrend-DRIFT",
-    "ts": "2026-07-29T18:40:16.054Z",
-    "gracz": "antytrend",
-    "sym": "DRIFT",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.0111,
-    "entryPrice": 0.0111,
-    "margin": 82.9390595912572,
-    "notional": 248.81717877377162,
-    "leverage": 3,
-    "pnlUsd": -0.15161218485520253,
-    "pnlPct": -0.001827994983333333,
-    "holdMs": 2399576,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 52.3, odbicie do sredniej",
-    "warunki": {
-      "rsi": 52.3,
-      "rsiPrev": 37.4,
-      "ext": 1.22,
-      "nadTrendem": -0.0335,
-      "fastNadSlow": -0.0091,
-      "volPct": 0.0028,
-      "er": 0.167,
-      "slope": -0.00441
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00903,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 3.19,
-    "mae": 0,
-    "rynek": {
-      "SOL": -0.00243,
-      "BTC": -0.00466,
-      "ETH": -0.0045
-    }
-  },
-  {
     "id": "1785350416053-antytrend-PYTH-o",
     "ts": "2026-07-29T18:40:16.055Z",
     "gracz": "antytrend",
@@ -53203,6 +53121,77 @@
       "SOL": -0.00768,
       "BTC": -0.00669,
       "ETH": -0.00621
+    }
+  },
+  {
+    "id": "1785487215980-smycz-PYTH",
+    "ts": "2026-07-31T08:40:15.981Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.03984,
+    "entryPrice": 0.03995,
+    "margin": 84.6263429632167,
+    "notional": 253.8790288896501,
+    "leverage": 3,
+    "pnlUsd": 0.5453174059478532,
+    "pnlPct": 0.0064438257267583725,
+    "holdMs": 3299950,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 39.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 39.2,
+      "rsiPrev": 39.2,
+      "ext": -1.5,
+      "nadTrendem": -0.0197,
+      "fastNadSlow": -0.0064,
+      "volPct": 0.0038,
+      "er": 0.209,
+      "slope": -0.00172
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01224,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 2.29,
+    "mae": 0.33,
+    "rynek": {
+      "SOL": -0.00068,
+      "BTC": -0.00072,
+      "ETH": 0.00113
+    }
+  },
+  {
+    "id": "1785487215980-smycz-PENGU-o",
+    "ts": "2026-07-31T08:40:15.982Z",
+    "gracz": "smycz",
+    "sym": "PENGU",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.006061,
+    "margin": 85.08622222636207,
+    "notional": 255.25866667908622,
+    "leverage": 3,
+    "liqPrice": 0.0042427,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 52.6, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 52.6,
+      "rsiPrev": 57.7,
+      "ext": 0.33,
+      "nadTrendem": 0.0195,
+      "fastNadSlow": 0.005,
+      "volPct": 0.0057,
+      "er": 0.003,
+      "slope": 0.00199
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01835,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
