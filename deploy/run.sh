@@ -54,8 +54,15 @@ GALAZ="${GIT_BRANCH:-main}"
 # Laczne zaangazowanie kapitalu jest w obu takie samo (80%), rozni je
 # wylacznie ROZPROSZENIE. Dzieki temu roznica miedzy nimi mierzy jedna rzecz.
 #
-# Zeby dorzucic spot:  run.sh trade perp liga ligab
-BOTY="${*:-perp liga ligab}"
+# Od 31.07.2026 chodzi tez `realny` — bot na Hyperliquid, ktory ma zmierzyc,
+# ile NAPRAWDE kosztuje wejscie i wyjscie. Domyslnie w trybie suchym
+# (REALNY_SUCHY nieustawione = 1), a tryb zywy nie jest jeszcze napisany —
+# wiec dzis nie ma mozliwosci, zeby wydal choc grosz. Zeby to zmienilo sie
+# swiadomie, a nie przypadkiem, wlaczenie wymaga REALNY_SUCHY=0 w deploy/.env
+# ORAZ dopisania obslugi podpisywania zlecen w bot/realny.mjs.
+#
+# Zeby dorzucic spot:  run.sh trade perp liga ligab realny
+BOTY="${*:-perp liga ligab realny}"
 
 # Uniwersum Ligi B — 24 alty, wszystkie notowane przez Krakena (Binance oddaje
 # 451 z amerykanskiego IP, wiec to jedyne zrodlo swiec na tym serwerze).
@@ -76,6 +83,7 @@ for bot in $BOTY; do
     # ktora po miesiacu rozjechalaby sie z pierwsza.
     ligab) PLIK="liga.mjs"
            USTAW="LIGA_PREFIX=liga-b LIGA_ASSETS=$LIGAB_AKTYWA LIGA_MAX_POZYCJI=10 LIGA_ALLOC_PCT=0.08" ;;
+    realny) PLIK="realny.mjs" ;;
     *) log "nieznany bot: $bot"; continue ;;
   esac
   log "--- $bot ($PLIK) ---"
