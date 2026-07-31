@@ -69,7 +69,19 @@ for (const [id, def] of Object.entries(gracze)) {
   // Brak gracza w stanie znaczy co innego przed i po wdrozeniu nowego kodu.
   // Odczyt sejsmografu jest znacznikiem: jesli jest, serwer JUZ chodzi na
   // nowej wersji, wiec brak gracza to prawdziwa awaria, a nie oczekiwanie.
-  if (n === 0 && otw === 0 && dni > 2) ALARM(`${def.nazwa}: 0 trejdow i 0 pozycji po ${dni.toFixed(1)} dniach — cos blokuje wejscia`);
+  // Cisza gracza nie musi znaczyc awarii — u najbardziej wybrednych sygnal jest
+  // po prostu rzadki. Pomiar (bot/cache/wiarygodnosc.mjs, 31.07.2026): Panika ma
+  // 96 sygnalow rocznie na osmiu aktywach ligi, czyli 0,26 na dobe. Po dwoch
+  // dniach szansa na zero wynosi u niej 60% — prog "2 dni" produkowal wiec
+  // fałszywy alarm przy zdrowym bocie, a falszywy alarm uczy ignorowac alarmy.
+  //
+  // Prog 14 dni: przy tempie Paniki szansa na zero spada ponizej 3%, wiec cisza
+  // naprawde zaczyna znaczyc usterke. Do tego czasu tylko odnotowujemy.
+  if (n === 0 && otw === 0) {
+    if (dni > 14) ALARM(`${def.nazwa}: 0 trejdow i 0 pozycji po ${dni.toFixed(1)} dniach — cos blokuje wejscia`);
+    else if (dni > 2) UWAGA(`${def.nazwa}: jeszcze nic nie zagral (${dni.toFixed(1)} dnia) — u wybrednych graczy to normalne do ~14 dni`);
+    continue;
+  }
   else if (n === 0 && dni > 2) UWAGA(`${def.nazwa}: jeszcze zadnego zamknietego trejdu (${otw} otwartych)`);
   else OK(`${def.nazwa}: ${n} trejdow, ${otw} otwartych`);
 }

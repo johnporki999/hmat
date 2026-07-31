@@ -266,7 +266,20 @@ for (const [id, def] of Object.entries(GRACZE)) {
 
     // Zwrot z wlozonego depozytu. Wszyscy gracze wkladaja ten sam procent kapitalu,
     // wiec te liczby sa porownywalne miedzy graczami niezaleznie od tego, ile ktory ma.
-    const R = p.margin ? (zlikwidowany ? -1 : netto / p.margin) : 0;
+    //
+    // Doliczamy oplate WEJSCIOWA, ktorej nie ma w `netto`. Nie jest to blad
+    // ksiegowy: przy otwarciu zeszla juz z gotowki (g.cash -= margin + oplata),
+    // wiec kapital i ranking byly caly czas poprawne. Ale R sluzy do czegos
+    // innego — do testu istotnosci — i tam liczy sie PELNY koszt rundy.
+    //
+    // Pomiar na 747 zywych trejdach (bot/cache/przyrzad.mjs, 31.07.2026): przy
+    // dzwigni 3x brak tej oplaty zawyzal kazde R o rowne 0,180 pkt proc.
+    // To duzo, bo typowe R graczy miesci sie w +-0,5%.
+    //
+    // Porownania Z MALPA byly odporne na ten blad, bo malpa dostawala to samo
+    // zawyzenie. Zafalszowana byla wylacznie liczba bezwzgledna.
+    const oplataWejscia = zlikwidowany ? 0 : p.notional * P.OPEN_FEE;
+    const R = p.margin ? (zlikwidowany ? -1 : (netto - oplataWejscia) / p.margin) : 0;
     g.stats.sumaR = (g.stats.sumaR || 0) + R;
     g.stats.sumaR2 = (g.stats.sumaR2 || 0) + R * R;
 
@@ -284,6 +297,11 @@ for (const [id, def] of Object.entries(GRACZE)) {
       leverage: p.leverage,
       pnlUsd: zlikwidowany ? -p.margin : netto,
       pnlPct: p.margin ? (zlikwidowany ? -1 : netto / p.margin) : 0,
+      // pnlUsd i pnlPct opisuja SAMO ZAMKNIECIE, bez oplaty wejsciowej, ktora
+      // zeszla z gotowki wczesniej. R to pelny zwrot z rundy, z obiema oplatami —
+      // i to jego trzeba uzywac w analizach. Bez tego pola latwo policzyc
+      // pnlUsd/margin i zawyzyc kazdy wynik o 0,18 pkt proc. (tak sie wlasnie stalo).
+      R,
       holdMs: teraz - Date.parse(p.entryTs),
       liquidated: zlikwidowany,
       reason: powod,
