@@ -453,12 +453,19 @@ pisz(F_TREJDY, trejdy.slice(-500));
 log(`> kapital ${usd(stan.kapital)} (start ${usd(P.START)}), pozycji ${Object.keys(stan.pozycje).length}, trejdow ${stan.zamkniete}/${P.MAX_TREJDOW}`);
 
 // ── podsumowanie poslizgu — to, po co ten bot istnieje ──────────────────────
-const zPoslizgiem = trejdy.filter((t) => t.poslizg != null && t.cenaWypelnienia != null);
-if (zPoslizgiem.length >= 3 && !P.SUCHY) {
+// Liczymy WYLACZNIE trejdy po ostatnim przelaczeniu na tryb zywy. Te sprzed
+// niego pochodza z trybu suchego, gdzie poslizg jest zerowy z definicji —
+// wciagniecie ich do mediany rozcienczyloby jedyna liczbe, po ktora tu jestesmy.
+const odKtorego = trejdy.map((t) => t.typ).lastIndexOf('RESET') + 1;
+const zPoslizgiem = trejdy.slice(odKtorego).filter((t) => t.poslizg != null && t.cenaWypelnienia != null);
+if (!P.SUCHY && zPoslizgiem.length) {
   const p = zPoslizgiem.map((t) => Math.abs(t.poslizg)).sort((a, b) => a - b);
   const med = p[p.length >> 1];
-  log(`> POSLIZG: mediana ${(med * 100).toFixed(3)}% na strone, czyli ${(med * 2 * 100).toFixed(3)}% na runde`);
-  log(`  Z oplatami: ${((med * 2 + P.TAKER * 2) * 100).toFixed(3)}% — a liga zaklada 0,120%.`);
+  const pelny = med * 2 + P.TAKER * 2;
+  log(`> POSLIZG z ${zPoslizgiem.length} ${zPoslizgiem.length === 1 ? 'zlecenia' : 'zlecen'} na zywo: mediana ${(med * 100).toFixed(3)}% na strone`);
+  log(`  Pelny koszt rundy: ${(pelny * 100).toFixed(3)}% (poslizg ${(med * 2 * 100).toFixed(3)}% + oplaty ${(P.TAKER * 2 * 100).toFixed(3)}%)`);
+  log(`  Liga zaklada 0,120%. ${zPoslizgiem.length < 6 ? 'Za malo zlecen na wnioski — to na razie ciekawostka.'
+    : pelny > 0.0015 ? 'ZANIZAMY koszt w symulacjach.' : 'Zalozenie sie broni.'}`);
 } else if (P.SUCHY) {
   log('> tryb suchy: poslizg zawsze zerowy, bo udajemy wypelnienie po cenie widzianej.');
   log('  Prawdziwy pomiar zacznie sie dopiero po REALNY_SUCHY=0 i podlaczeniu klucza.');
