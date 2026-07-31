@@ -168,6 +168,41 @@ if (!P.SUCHY) {
     ex: new ExchangeClient({ transport, wallet: privateKeyToAccount(klucz) }),
     info: new InfoClient({ transport }),
   };
+
+}
+
+/**
+ * Sprawdzenie konta przed zlozeniem czegokolwiek. Wolane DOPIERO po wczytaniu
+ * stanu, bo porownuje pozycje na gieldzie z tym, co bot o sobie wie.
+ *
+ * Pytamy o ADRES GLOWNY, nie o agenta: agent tylko podpisuje i sam nie ma salda.
+ */
+async function sprawdzKonto(stan) {
+  try {
+    const konto = await gielda.info.clearinghouseState({ user: P.KONTO });
+    const wolne = Number(konto?.withdrawable ?? 0);
+    const calosc = Number(konto?.marginSummary?.accountValue ?? 0);
+    log(`> konto ${P.KONTO.slice(0, 6)}...${P.KONTO.slice(-4)}: wartosc ${usd(calosc)}, wolne ${usd(wolne)}`);
+    if (calosc <= 0) {
+      console.error('! Na koncie nie ma srodkow. Wplac USDC przez most na app.hyperliquid.xyz i sprobuj ponownie.');
+      process.exit(1);
+    }
+    if (calosc < P.START * 0.9) {
+      log(`  UWAGA: na koncie mniej niz zakladany start (${usd(P.START)}). Licze pozycje od tego, co jest.`);
+      P.START = calosc;
+    }
+    // Pozycje otwarte na gieldzie, o ktorych nasz stan nie wie, znaczylyby, ze
+    // handluje tu cos jeszcze. Lepiej stanac, niz nakladac sie na cudze zlecenia.
+    const naGieldzie = (konto?.assetPositions ?? []).filter((x) => Number(x?.position?.szi ?? 0) !== 0);
+    if (naGieldzie.length && !Object.keys(stan.pozycje).length) {
+      console.error(`! Na gieldzie wisi ${naGieldzie.length} pozycji, o ktorych bot nie wie: ${naGieldzie.map((x) => x.position.coin).join(', ')}`);
+      console.error('  Zamknij je recznie albo usun state/realny-state.json, zeby bot zaczal od zera.');
+      process.exit(1);
+    }
+  } catch (e) {
+    console.error(`! Nie moge odczytac konta (${e.message}). Sprawdz REALNY_KONTO — ma byc adresem 0x... twojego MetaMaska.`);
+    process.exit(1);
+  }
 }
 
 /**
@@ -204,6 +239,43 @@ if (!stan) {
   };
 }
 let trejdy = czytaj(F_TREJDY, []);
+
+// ── przelaczenie trybu ──────────────────────────────────────────────────────
+//
+// Pozycje z trybu suchego sa ZMYSLONE — na gieldzie ich nie ma. Gdyby bot
+// wszedl na zywo z takim stanem, probowalby je zamykac zleceniem reduceOnly,
+// gielda odmawialaby (nie ma czego redukowac), a bot utknalby w petli i nigdy
+// nie zrobil zadnego prawdziwego trejdu. Dlatego przy przejsciu na zywo
+// zaczynamy z czysta kartka.
+//
+// W druga strone (zywy -> suchy) NIE czyscimy nic automatycznie: jesli na
+// gieldzie wisza prawdziwe pozycje, wyzerowanie stanu sprawiloby, ze bot o nich
+// zapomni, a one zostana otwarte bez nadzoru. Wtedy wolimy sie zatrzymac.
+if (stan.suchy !== P.SUCHY) {
+  if (P.SUCHY) {
+    if (Object.keys(stan.pozycje).length) {
+      console.error('! Przelaczasz z ZYWEGO na SUCHY, ale sa otwarte pozycje na gieldzie.');
+      console.error('  Zamknij je recznie na app.hyperliquid.xyz albo wroc na REALNY_SUCHY=0.');
+      console.error('  Nie ruszam stanu — nie chce, zeby bot zapomnial o prawdziwych pozycjach.');
+      process.exit(1);
+    }
+    log('> przelaczam na tryb SUCHY, zaczynam pomiar od nowa');
+  } else {
+    log(`> PRZELACZAM NA TRYB ZYWY — zeruje stan (${Object.keys(stan.pozycje).length} zmyslonych pozycji z trybu suchego)`);
+  }
+  trejdy.push({ ts: nowISO(), typ: 'RESET', powod: `zmiana trybu: ${stan.suchy ? 'suchy' : 'zywy'} -> ${P.SUCHY ? 'suchy' : 'zywy'}` });
+  stan.cash = P.START;
+  stan.pozycje = {};
+  stan.zamkniete = 0;
+  stan.koniec = null;
+  stan.utworzony = nowISO();
+}
+// Ustawienia zapisujemy przy KAZDYM przebiegu, a nie tylko przy tworzeniu stanu.
+// Inaczej podniesienie limitu trejdow w .env nie byloby widoczne w pliku stanu
+// i apka pokazywalaby stara wartosc.
+stan.ustawienia = { lewar: P.LEWAR, miejsc: P.MIEJSC, alloc: P.ALLOC, maxTrejdow: P.MAX_TREJDOW };
+
+if (!P.SUCHY) await sprawdzKonto(stan);
 
 const gracze = stworzGraczy();
 const def = gracze[P.GRACZ];
