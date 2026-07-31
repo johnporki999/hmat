@@ -179,12 +179,31 @@ if (!P.SUCHY) {
  */
 async function sprawdzKonto(stan) {
   try {
-    const konto = await gielda.info.clearinghouseState({ user: P.KONTO });
-    const wolne = Number(konto?.withdrawable ?? 0);
-    const calosc = Number(konto?.marginSummary?.accountValue ?? 0);
-    log(`> konto ${P.KONTO.slice(0, 6)}...${P.KONTO.slice(-4)}: wartosc ${usd(calosc)}, wolne ${usd(wolne)}`);
+    // Hyperliquid ma dwa tryby konta i to zmienia, GDZIE leza pieniadze:
+    //   - klasyczny: saldo perpow siedzi w clearinghouseState
+    //   - zunifikowany: perpy i spot maja jedno wspolne saldo, a zrodlem prawdy
+    //     staje sie spotClearinghouseState; stan perpow przestaje byc miarodajny
+    // Pytanie tylko o perpy pokazywaloby przy koncie zunifikowanym $0.00 mimo
+    // pelnego portfela — i bot odmawialby handlu bez powodu. Dlatego czytamy oba.
+    const [perp, spot] = await Promise.all([
+      gielda.info.clearinghouseState({ user: P.KONTO }).catch(() => null),
+      gielda.info.spotClearinghouseState({ user: P.KONTO }).catch(() => null),
+    ]);
+    const perpWartosc = Number(perp?.marginSummary?.accountValue ?? 0);
+    const perpWolne = Number(perp?.withdrawable ?? 0);
+    const spotUsd = (spot?.balances ?? [])
+      .filter((b) => /^(USDC|USDT|USD)$/i.test(b.coin))
+      .reduce((s, b) => s + Number(b.total ?? 0), 0);
+
+    const zunifikowane = spotUsd > 0 && perpWartosc === 0;
+    const calosc = Math.max(perpWartosc, spotUsd);
+    const wolne = zunifikowane ? spotUsd : perpWolne;
+
+    log(`> konto ${P.KONTO.slice(0, 6)}...${P.KONTO.slice(-4)}: perpy ${usd(perpWartosc)}, spot ${usd(spotUsd)}`
+      + `${zunifikowane ? '  (konto zunifikowane — licze ze spotu)' : ''}`);
     if (calosc <= 0) {
-      console.error('! Na koncie nie ma srodkow. Wplac USDC przez most na app.hyperliquid.xyz i sprobuj ponownie.');
+      console.error('! Na koncie nie ma srodkow — ani na perpach, ani na spocie.');
+      console.error('  Wplac USDC przez most na app.hyperliquid.xyz i sprobuj ponownie.');
       process.exit(1);
     }
     if (calosc < P.START * 0.9) {
@@ -193,7 +212,7 @@ async function sprawdzKonto(stan) {
     }
     // Pozycje otwarte na gieldzie, o ktorych nasz stan nie wie, znaczylyby, ze
     // handluje tu cos jeszcze. Lepiej stanac, niz nakladac sie na cudze zlecenia.
-    const naGieldzie = (konto?.assetPositions ?? []).filter((x) => Number(x?.position?.szi ?? 0) !== 0);
+    const naGieldzie = (perp?.assetPositions ?? []).filter((x) => Number(x?.position?.szi ?? 0) !== 0);
     if (naGieldzie.length && !Object.keys(stan.pozycje).length) {
       console.error(`! Na gieldzie wisi ${naGieldzie.length} pozycji, o ktorych bot nie wie: ${naGieldzie.map((x) => x.position.coin).join(', ')}`);
       console.error('  Zamknij je recznie albo usun state/realny-state.json, zeby bot zaczal od zera.');
