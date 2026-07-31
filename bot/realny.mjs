@@ -158,6 +158,19 @@ function cenaHL(px, szDecimals) {
 }
 const wielkoscHL = (sz, szDecimals) => Number(sz.toFixed(szDecimals));
 
+/**
+ * Poslizg liczony jako KOSZT, ze znakiem zaleznym od kierunku.
+ *
+ * Sama roznica cen nic nie mowi, bo raz jest dla nas dobra, a raz zla:
+ *   kupujemy — wyzsza cena wypelnienia niz widziana to STRATA
+ *   sprzedajemy — wyzsza cena wypelnienia to ZYSK
+ * Liczenie tego przez wartosc bezwzgledna (tak bylo w pierwszej wersji)
+ * wpisywaloby korzystne poslizgi do kosztow i systematycznie je zawyzalo.
+ * Dodatni wynik = zaplacilismy wiecej, niz widzielismy. Ujemny = zarobilismy.
+ */
+const poslizgKosztu = (widziana, fill, kupujemy) =>
+  ((fill - widziana) / widziana) * (kupujemy ? 1 : -1);
+
 let gielda = null;
 if (!P.SUCHY) {
   const { ExchangeClient, InfoClient, HttpTransport } = await import('@nktkas/hyperliquid');
@@ -185,10 +198,33 @@ async function sprawdzKonto(stan) {
     //     staje sie spotClearinghouseState; stan perpow przestaje byc miarodajny
     // Pytanie tylko o perpy pokazywaloby przy koncie zunifikowanym $0.00 mimo
     // pelnego portfela — i bot odmawialby handlu bez powodu. Dlatego czytamy oba.
-    const [perp, spot] = await Promise.all([
+    const [perp, spot, oplaty] = await Promise.all([
       gielda.info.clearinghouseState({ user: P.KONTO }).catch(() => null),
       gielda.info.spotClearinghouseState({ user: P.KONTO }).catch(() => null),
+      gielda.info.userFees({ user: P.KONTO }).catch(() => null),
     ]);
+
+    // FAKTYCZNA stawka tego konta, a nie nasza stala. To nie jest kosmetyka:
+    // Hyperliquid prowadzi promocje (m.in. przez MetaMaska), w ktorych taker
+    // bywa wyzerowany. Gdybysmy liczyli po stalych 0,045%, zmierzylibysmy koszt
+    // promocyjny i wyciagneli wniosek, ze handel jest tanszy, niz jest naprawde.
+    // Pole `trial` mowi, czy taka promocja trwa i do kiedy.
+    if (oplaty?.userCrossRate != null) {
+      const realna = Number(oplaty.userCrossRate);
+      if (realna !== P.TAKER) {
+        log(`> stawka taker tego konta: ${(realna * 100).toFixed(4)}% (zakladalismy ${(P.TAKER * 100).toFixed(4)}%) — biore prawdziwa`);
+        P.TAKER = realna;
+      }
+      if (oplaty.trial) {
+        const doKiedy = oplaty.trial.endTime ?? oplaty.trial.expiry ?? oplaty.nextTrialAvailableTimestamp;
+        log(`  UWAGA: na koncie trwa PROMOCJA na oplaty${doKiedy ? ` do ${new Date(Number(doKiedy)).toISOString().slice(0, 16)}` : ''}.`);
+        log('  Zmierzony koszt bedzie zanizony wzgledem normalnych warunkow — trzeba to');
+        log('  odnotowac przy wnioskach, zeby nie przenosic go na symulacje.');
+      }
+      if (Number(oplaty.activeReferralDiscount) > 0) {
+        log(`  (aktywna znizka polecajaca ${(Number(oplaty.activeReferralDiscount) * 100).toFixed(1)}% — te sama uwaga)`);
+      }
+    }
     const perpWartosc = Number(perp?.marginSummary?.accountValue ?? 0);
     const perpWolne = Number(perp?.withdrawable ?? 0);
     const spotUsd = (spot?.balances ?? [])
@@ -368,7 +404,8 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
   trejdy.push({
     ts: nowISO(), sym, side: p.side, typ: 'CLOSE', powod,
     entryPrice: p.entryPrice, cenaWidziana: widziana, cenaWypelnienia: fill,
-    poslizg: (fill - widziana) / widziana,
+    // zamkniecie longa to sprzedaz, zamkniecie shorta to kupno
+    poslizg: poslizgKosztu(widziana, fill, p.side !== 'LONG'),
     margin: p.margin, notional: p.notional, oplata,
     pnlUsd: netto, R: netto / p.margin,
     trzymane_h: (Date.now() - Date.parse(p.entryTs)) / 3600000,
@@ -435,7 +472,7 @@ if (!stan.koniec) {
     };
     trejdy.push({
       ts: nowISO(), sym, side: syg.kier, typ: 'OPEN', powod: syg.powod,
-      cenaWidziana: widziana, cenaWypelnienia: fill, poslizg: (fill - widziana) / widziana,
+      cenaWidziana: widziana, cenaWypelnienia: fill, poslizg: poslizgKosztu(widziana, fill, long),
       margin, notional, oplata: notional * P.TAKER, warunki: { rsi: r.m.rsi, volPct: r.m.volPct, er: r.m.er },
     });
     log(`  OTWIERAM ${sym} ${syg.kier} @ ${fill} — ${syg.powod}`);
@@ -459,10 +496,14 @@ log(`> kapital ${usd(stan.kapital)} (start ${usd(P.START)}), pozycji ${Object.ke
 const odKtorego = trejdy.map((t) => t.typ).lastIndexOf('RESET') + 1;
 const zPoslizgiem = trejdy.slice(odKtorego).filter((t) => t.poslizg != null && t.cenaWypelnienia != null);
 if (!P.SUCHY && zPoslizgiem.length) {
-  const p = zPoslizgiem.map((t) => Math.abs(t.poslizg)).sort((a, b) => a - b);
+  // BEZ wartosci bezwzglednej: poslizg bywa dla nas korzystny i wtedy ma
+  // koszt obnizac, a nie podnosic. Mediana ze znakiem jest uczciwa miara.
+  const p = zPoslizgiem.map((t) => t.poslizg).sort((a, b) => a - b);
   const med = p[p.length >> 1];
+  const korzystnych = p.filter((x) => x < 0).length;
   const pelny = med * 2 + P.TAKER * 2;
-  log(`> POSLIZG z ${zPoslizgiem.length} ${zPoslizgiem.length === 1 ? 'zlecenia' : 'zlecen'} na zywo: mediana ${(med * 100).toFixed(3)}% na strone`);
+  log(`> POSLIZG z ${zPoslizgiem.length} ${zPoslizgiem.length === 1 ? 'zlecenia' : 'zlecen'} na zywo: mediana ${(med * 100).toFixed(3)}% na strone`
+    + ` (${korzystnych} z ${p.length} wyszlo na nasza korzysc)`);
   log(`  Pelny koszt rundy: ${(pelny * 100).toFixed(3)}% (poslizg ${(med * 2 * 100).toFixed(3)}% + oplaty ${(P.TAKER * 2 * 100).toFixed(3)}%)`);
   log(`  Liga zaklada 0,120%. ${zPoslizgiem.length < 6 ? 'Za malo zlecen na wnioski — to na razie ciekawostka.'
     : pelny > 0.0015 ? 'ZANIZAMY koszt w symulacjach.' : 'Zalozenie sie broni.'}`);
