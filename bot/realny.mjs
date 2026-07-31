@@ -89,7 +89,21 @@ const P = {
   MIN_ZLECENIE: num('REALNY_MIN_ZLECENIE', 10),   // Hyperliquid odrzuca ponizej 10 USD
   STOP_KAPITAL: num('REALNY_STOP_KAPITAL', 0.35), // ponizej 35% startu koniec eksperymentu
   TAKER: num('REALNY_TAKER', 0.00045),
+  // Adres konta glownego (jawny) i klucz agenta (tajny). Agent tylko PODPISUJE
+  // zlecenia; zapytania o stan konta ida na adres glowny — tak dziala API
+  // Hyperliquid. Agent z zalozenia nie moze niczego wyplacic, wiec jego wyciek
+  // oznacza zle trejdy, a nie utrate srodkow.
+  KONTO: env('REALNY_KONTO', ''),
+  AGENT_KEY: env('REALNY_AGENT_KEY', ''),
 };
+
+// Zawor bezpieczenstwa: bez kompletu danych nie ma mowy o trybie zywym, nawet
+// gdyby ktos przestawil sama flage. Lepiej wrocic do trybu suchego z glosnym
+// ostrzezeniem niz probowac handlowac polowa konfiguracji.
+if (!P.SUCHY && (!P.KONTO || !P.AGENT_KEY)) {
+  console.error('! REALNY_SUCHY=0, ale brakuje REALNY_KONTO albo REALNY_AGENT_KEY — wracam do trybu suchego.');
+  P.SUCHY = true;
+}
 
 // Aktywa ligi, ktore Hyperliquid ma. BONK figuruje tam jako kBONK (w tysiacach
 // sztuk) — cena jest 1000x wyzsza, ale procentowe ruchy identyczne, wiec dla
