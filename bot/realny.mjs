@@ -136,6 +136,64 @@ async function swiece(nazwa, ile = 400) {
 const czytaj = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 const pisz = (f, x) => { fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, JSON.stringify(x, null, 2)); };
 
+// ── skladanie zlecen (tylko tryb zywy) ──────────────────────────────────────
+//
+// Hyperliquid nie ma zlecen "po cenie rynkowej". Zamiast tego sklada sie
+// zlecenie z limitem przestrzelonym w strone wykonania i znacznikiem IOC
+// (wykonaj natychmiast, reszte anuluj). Efekt jest taki sam jak rynkowego,
+// ale MY ustawiamy, jak daleko wolno zjechac — i to jest nasz bezpiecznik
+// przed wejsciem w pusta ksiege.
+const POSLIZG_MAX = num('REALNY_POSLIZG_MAX', 0.01);   // 1% — dalej nie wchodzimy
+
+/**
+ * Zaokraglanie pod reguly Hyperliquid. Zle zaokraglona liczba nie powoduje
+ * zlego trejdu — powoduje ODRZUCENIE zlecenia, wiec cichy brak pomiaru.
+ * Ceny: najwyzej 5 cyfr znaczacych i najwyzej (6 - szDecimals) miejsc po przecinku.
+ * Wielkosci: dokladnie szDecimals miejsc.
+ */
+function cenaHL(px, szDecimals) {
+  const maxMiejsc = 6 - szDecimals;
+  const zZnaczacych = Number(px.toPrecision(5));
+  return Number(zZnaczacych.toFixed(Math.max(0, maxMiejsc)));
+}
+const wielkoscHL = (sz, szDecimals) => Number(sz.toFixed(szDecimals));
+
+let gielda = null;
+if (!P.SUCHY) {
+  const { ExchangeClient, InfoClient, HttpTransport } = await import('@nktkas/hyperliquid');
+  const { privateKeyToAccount } = await import('viem/accounts');
+  const klucz = P.AGENT_KEY.startsWith('0x') ? P.AGENT_KEY : `0x${P.AGENT_KEY}`;
+  const transport = new HttpTransport();
+  gielda = {
+    ex: new ExchangeClient({ transport, wallet: privateKeyToAccount(klucz) }),
+    info: new InfoClient({ transport }),
+  };
+}
+
+/**
+ * Zlecenie IOC. Zwraca cene, po ktorej NAPRAWDE weszlismy, albo null.
+ * Roznica miedzy `widziana` a zwrocona wartoscia to caly sens tego bota.
+ */
+async function zlec({ idx, szDecimals, kupno, wielkosc, widziana, redukuje }) {
+  const limit = cenaHL(widziana * (kupno ? 1 + POSLIZG_MAX : 1 - POSLIZG_MAX), szDecimals);
+  const sz = wielkoscHL(wielkosc, szDecimals);
+  if (sz <= 0) { log(`    zlecenie odrzucone lokalnie: wielkosc ${sz} po zaokragleniu`); return null; }
+  try {
+    const r = await gielda.ex.order({
+      orders: [{ a: idx, b: kupno, p: String(limit), s: String(sz), r: !!redukuje, t: { limit: { tif: 'Ioc' } } }],
+      grouping: 'na',
+    });
+    const st = r?.response?.data?.statuses?.[0];
+    if (st?.filled) return { fill: Number(st.filled.avgPx), ile: Number(st.filled.totalSz) };
+    if (st?.resting) { log('    zlecenie nie weszlo od reki (resting) — anuluje pomiar tego trejdu'); return null; }
+    log(`    gielda odmowila: ${JSON.stringify(st ?? r)}`);
+    return null;
+  } catch (e) {
+    log(`    blad skladania zlecenia: ${e.message}`);
+    return null;
+  }
+}
+
 // ── stan ────────────────────────────────────────────────────────────────────
 let stan = czytaj(F_STAN, null);
 if (!stan) {
@@ -157,15 +215,25 @@ log(`> gracz ${def.nazwa}, dzwignia ${P.LEWAR}x, ${P.MIEJSC} miejsca po ${(P.ALL
 if (stan.koniec) { log(`> eksperyment ZAKONCZONY (${stan.koniec}) — nic nie robie`); process.exit(0); }
 
 // ── ceny i metryki ──────────────────────────────────────────────────────────
+// Indeks rynku i liczba miejsc po przecinku — bez nich zlecenie zostanie
+// odrzucone. Bierzemy je z gieldy przy kazdym przebiegu, a nie z tablicy w
+// kodzie, bo lista rynkow Hyperliquid sie zmienia i zaszyta na sztywno
+// wskazywalaby kiedys na zupelnie inne aktywo.
+const meta = await poi({ type: 'meta' });
+const rynek = new Map(meta.universe.map((u, i) => [u.name.toUpperCase(), { idx: i, szDecimals: u.szDecimals, maxLeverage: u.maxLeverage }]));
+
 const rynki = {};
 for (const [sym, nazwa] of Object.entries(AKTYWA)) {
   try {
+    const info = rynek.get(nazwa.toUpperCase());
+    if (!info) { log(`  ${sym}: Hyperliquid nie ma juz rynku ${nazwa} — pomijam`); continue; }
+    if (info.maxLeverage < P.LEWAR) { log(`  ${sym}: maks. dzwignia ${info.maxLeverage}x < nasze ${P.LEWAR}x — pomijam`); continue; }
     const c = await swiece(nazwa);
     if (c.length < 230) { log(`  ${sym}: tylko ${c.length} swiec, pomijam`); continue; }
     const D = przygotujAktywo(c);
     const i = D.n - 1;
     const m = D.metryka(i);
-    if (m) rynki[sym] = { D, i, m, nazwa, cena: D.closes[i] };
+    if (m) rynki[sym] = { D, i, m, nazwa, cena: D.closes[i], ...info };
   } catch (e) { log(`  ${sym}: ${e.message}`); }
 }
 log(`> rynkow gotowych: ${Object.keys(rynki).length} z ${Object.keys(AKTYWA).length}`);
@@ -183,12 +251,22 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
   const powod = czyWyjsc(p, r.m.atr, px, Date.now());
   if (!powod) continue;
 
-  // W trybie suchym udajemy wypelnienie po cenie widzianej. Na zywo tutaj
-  // pojdzie prawdziwe zlecenie, a `fill` bedzie cena, ktora naprawde dostaniemy —
-  // i roznica miedzy `widziana` a `fill` jest calym sensem tego eksperymentu.
+  // W trybie suchym udajemy wypelnienie po cenie widzianej. Na zywo idzie
+  // prawdziwe zlecenie, a `fill` to cena, ktora naprawde dostalismy — roznica
+  // miedzy `widziana` a `fill` jest calym sensem tego eksperymentu.
   const widziana = px;
-  const fill = P.SUCHY ? px : null;   // TODO etap 2: zlecenie rynkowe, odczyt wypelnienia
-  if (fill == null) { log(`  ${sym}: tryb zywy niezaimplementowany — pomijam wyjscie`); continue; }
+  let fill = widziana;
+  if (!P.SUCHY) {
+    const w = await zlec({
+      idx: r.idx, szDecimals: r.szDecimals,
+      kupno: p.side !== 'LONG',        // zamkniecie longa to sprzedaz, i odwrotnie
+      wielkosc: p.sz, widziana, redukuje: true,
+    });
+    // Nieudanego zamkniecia NIE udajemy: pozycja zostaje otwarta i sprobujemy
+    // za piec minut. Zapisanie jej jako zamknietej rozjechaloby nam stan z gielda.
+    if (!w) { log(`  ${sym}: nie udalo sie zamknac — probuje w nastepnym przebiegu`); continue; }
+    fill = w.fill;
+  }
 
   const brutto = (p.side === 'LONG' ? fill / p.entryPrice - 1 : 1 - fill / p.entryPrice) * p.notional;
   const oplata = p.notional * P.TAKER;
@@ -234,16 +312,30 @@ if (!stan.koniec) {
     const notional = margin * P.LEWAR;
     if (notional < P.MIN_ZLECENIE) { log(`  ${sym}: pozycja ${usd(notional)} ponizej minimum ${usd(P.MIN_ZLECENIE)} — pomijam`); continue; }
 
-    const widziana = r.cena;
-    const fill = P.SUCHY ? widziana : null;
-    if (fill == null) { log(`  ${sym}: tryb zywy niezaimplementowany — pomijam wejscie`); continue; }
-
     const long = syg.kier === 'LONG';
+    const widziana = r.cena;
+    const sz = notional / widziana;          // wielkosc w sztukach aktywa
+    let fill = widziana, ileSztuk = sz;
+
+    if (!P.SUCHY) {
+      // Dzwignia jest ustawieniem KONTA na danym rynku, nie parametrem zlecenia.
+      // Ustawiamy ja przed kazdym wejsciem — to idempotentne i tanie, a chroni
+      // przed sytuacja, w ktorej Hyperliquid ma domyslnie inna niz nasze 3x
+      // i cala pozycja wychodzi w zupelnie innej skali.
+      try { await gielda.ex.updateLeverage({ asset: r.idx, isCross: true, leverage: P.LEWAR }); }
+      catch (e) { log(`  ${sym}: nie ustawilem dzwigni (${e.message}) — pomijam wejscie`); continue; }
+
+      const w = await zlec({ idx: r.idx, szDecimals: r.szDecimals, kupno: long, wielkosc: sz, widziana, redukuje: false });
+      if (!w) continue;
+      fill = w.fill; ileSztuk = w.ile;
+    }
+
     const stopA = def.stopAtr ?? CFG.STOP_ATR;
     stan.cash -= margin + notional * P.TAKER;
     stan.pozycje[sym] = {
       sym, side: syg.kier, entryPrice: fill, entryTs: nowISO(),
       margin, notional, leverage: P.LEWAR,
+      sz: ileSztuk,          // ile sztuk trzymamy — potrzebne, zeby zamknac dokladnie tyle
       stopPrice: long ? fill - stopA * r.m.atr : fill + stopA * r.m.atr,
       takeProfit: long ? fill + CFG.TAKE_PROFIT_ATR * r.m.atr : fill - CFG.TAKE_PROFIT_ATR * r.m.atr,
       atrAtEntry: r.m.atr, bestPrice: fill, trailArmed: false,
