@@ -397,17 +397,27 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
 
   const brutto = (p.side === 'LONG' ? fill / p.entryPrice - 1 : 1 - fill / p.entryPrice) * p.notional;
   const oplata = p.notional * P.TAKER;
-  const netto = brutto - oplata;
+  const netto = brutto - oplata;          // to, co wraca do gotowki przy zamknieciu
   stan.cash += p.margin + netto;
   stan.zamkniete += 1;
+
+  // R musi zawierac OBIE oplaty rundy, nie tylko wyjsciowa. Ta wejsciowa zeszla
+  // z gotowki przy otwarciu, wiec kapital jest poprawny — ale R sluzy do
+  // porownan z liga i backtestami, a tam liczy sie pelny koszt rundy.
+  //
+  // To dokladnie ten sam blad, ktory dzis rano znalazlem w liga.mjs, gdzie
+  // zawyzal kazde R o 0,180 pkt proc. Nie chce go tu powtorzyc.
+  const pelnyNetto = netto - p.notional * P.TAKER;
 
   trejdy.push({
     ts: nowISO(), sym, side: p.side, typ: 'CLOSE', powod,
     entryPrice: p.entryPrice, cenaWidziana: widziana, cenaWypelnienia: fill,
     // zamkniecie longa to sprzedaz, zamkniecie shorta to kupno
     poslizg: poslizgKosztu(widziana, fill, p.side !== 'LONG'),
-    margin: p.margin, notional: p.notional, oplata,
-    pnlUsd: netto, R: netto / p.margin,
+    margin: p.margin, notional: p.notional,
+    oplata, oplataRundy: 2 * p.notional * P.TAKER,
+    pnlUsd: netto,                      // sam moment zamkniecia, jak w lidze
+    R: pelnyNetto / p.margin,           // pelna runda z obiema oplatami — to porownuj z liga
     trzymane_h: (Date.now() - Date.parse(p.entryTs)) / 3600000,
   });
   log(`  ZAMYKAM ${sym} ${p.side} @ ${fill} — ${powod}, wynik ${usd(netto)} (${(netto / p.margin * 100).toFixed(2)}%)`);
