@@ -115,6 +115,7 @@ const AKTYWA = {
 
 const F_STAN = path.join(KAT, 'realny-state.json');
 const F_TREJDY = path.join(KAT, 'realny-trades.json');
+const F_EQUITY = path.join(KAT, 'realny-equity.json');
 const nowISO = () => new Date().toISOString();
 const usd = (x) => `$${Number(x).toFixed(2)}`;
 const log = (...a) => console.log(...a);
@@ -474,6 +475,9 @@ if (!stan.koniec) {
       sym, side: syg.kier, entryPrice: fill, entryTs: nowISO(),
       margin, notional, leverage: P.LEWAR,
       sz: ileSztuk,          // ile sztuk trzymamy — potrzebne, zeby zamknac dokladnie tyle
+      // Cena, przy ktorej gielda zamknie nas sama. Liczymy ja przy wejsciu i
+      // zapisujemy, zeby apka mogla pokazac, jak blisko krawedzi stoi pozycja.
+      liqPrice: long ? fill * (1 - 0.9 / P.LEWAR) : fill * (1 + 0.9 / P.LEWAR),
       stopPrice: long ? fill - stopA * r.m.atr : fill + stopA * r.m.atr,
       takeProfit: long ? fill + CFG.TAKE_PROFIT_ATR * r.m.atr : fill - CFG.TAKE_PROFIT_ATR * r.m.atr,
       atrAtEntry: r.m.atr, bestPrice: fill, trailArmed: false,
@@ -494,8 +498,40 @@ if (!stan.koniec) {
 stan.lastRun = nowISO();
 stan.kapital = kapital();
 stan.suchy = P.SUCHY;
+stan.start = P.START;
+stan.szczyt = Math.max(stan.szczyt ?? P.START, stan.kapital);
+// Ceny widziane w tym przebiegu — apka pokazuje po nich biezacy wynik pozycji.
+stan.ceny = Object.fromEntries(Object.entries(rynki).map(([s, r]) => [s, r.cena]));
+
+// Skan wszystkich rynkow: co bot widzial i dlaczego wszedl albo nie wszedl.
+// Liczymy go OSOBNO od petli wejsc, bo tamta konczy sie, gdy zabraknie miejsc —
+// a wtedy w apce nie byloby widac reszty rynkow i wygladaloby to na awarie.
+stan.skan = Object.entries(rynki).map(([sym, r]) => {
+  let syg = null;
+  try { syg = def.wejscie(sym, r.m, r.D.kawalek(r.i)); } catch { /* gracz moze nie umiec danego ksztaltu */ }
+  const zajete = !!stan.pozycje[sym];
+  return {
+    sym, price: r.cena,
+    side: syg?.kier ?? null,
+    rsi: r.m.rsi, volPct: r.m.volPct,
+    enter: !!syg && !zajete,
+    held: zajete ? stan.pozycje[sym].side : null,
+    reason: zajete ? 'juz trzymam te pozycje' : (syg?.powod ?? 'brak sygnalu'),
+  };
+});
 pisz(F_STAN, stan);
 pisz(F_TREJDY, trejdy.slice(-500));
+
+// Krzywa kapitalu — apka rysuje z niej wykres i liczy obsuniecia. Jeden punkt
+// na przebieg, przycinany do 4000, tak jak w lidze.
+let equity = czytaj(F_EQUITY, []);
+if (!Array.isArray(equity)) equity = [];
+equity.push({ ts: Date.now(), equityUsd: +stan.kapital.toFixed(4) });
+if (equity.length > 4000) {
+  const pol = Math.floor(equity.length / 2);
+  equity = [...equity.slice(0, pol).filter((_, i) => i % 2 === 0), ...equity.slice(pol)];
+}
+pisz(F_EQUITY, equity);
 
 log(`> kapital ${usd(stan.kapital)} (start ${usd(P.START)}), pozycji ${Object.keys(stan.pozycje).length}, trejdow ${stan.zamkniete}/${P.MAX_TREJDOW}`);
 
