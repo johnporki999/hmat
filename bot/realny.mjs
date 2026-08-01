@@ -340,7 +340,24 @@ if (!def) { console.error(`Nie znam gracza "${P.GRACZ}". Dostepni: ${Object.keys
 log(`=== HAJSOMAT REALNY ${nowISO()} | ${P.SUCHY ? 'SUCHY (nic nie kosztuje)' : '*** ZA PRAWDZIWE PIENIADZE ***'} ===`);
 log(`> gracz ${def.nazwa}, dzwignia ${P.LEWAR}x, ${P.MIEJSC} miejsca po ${(P.ALLOC * 100).toFixed(0)}%, limit ${P.MAX_TREJDOW} trejdow`);
 
-if (stan.koniec) { log(`> eksperyment ZAKONCZONY (${stan.koniec}) — nic nie robie`); process.exit(0); }
+// Koniec eksperymentu NIE jest wyrokiem dozywotnim. Powody, dla ktorych bot
+// staje, sa dwa i oba da sie cofnac: limit trejdow (podnosisz go w .env) oraz
+// prog kapitalu (wraca, gdy dolozysz srodkow). Trzymanie `koniec` na stale
+// znaczyloby, ze po podniesieniu limitu trzeba recznie grzebac w pliku stanu —
+// a to jest dokladnie ten rodzaj pulapki, w ktorej czlowiek szuka bledu w
+// kodzie zamiast w konfiguracji.
+if (stan.koniec) {
+  const kapNaStarcie = stan.cash + Object.values(stan.pozycje || {}).reduce((s, p) => s + p.margin, 0);
+  const jestLimit = stan.zamkniete >= P.MAX_TREJDOW;
+  const jestPodloga = kapNaStarcie < P.START * P.STOP_KAPITAL;
+  if (jestLimit || jestPodloga) {
+    log(`> eksperyment ZAKONCZONY (${stan.koniec}) — ${jestLimit ? `zrobil ${stan.zamkniete} z ${P.MAX_TREJDOW} trejdow` : 'kapital ponizej progu'}`);
+    log(`  Zeby wznowic: podnies REALNY_MAX_TREJDOW w deploy/.env${jestPodloga ? ' albo doloz srodkow' : ''}.`);
+    process.exit(0);
+  }
+  log(`> WZNAWIAM: limit podniesiony do ${P.MAX_TREJDOW}, a zrobione jest ${stan.zamkniete}`);
+  stan.koniec = null;
+}
 
 // ── ceny i metryki ──────────────────────────────────────────────────────────
 // Indeks rynku i liczba miejsc po przecinku — bez nich zlecenie zostanie
