@@ -259,11 +259,16 @@ async function sprawdzKonto(stan) {
     // 36, 37...), a rozjazd miedzy zapisanym startem a rzeczywistym saldem
     // psulby wszystkie procenty i wykres kapitalu — przy czym cicho, bo nic
     // by nie protestowalo.
-    const pierwszy = !stan.zamkniete && !Object.keys(stan.pozycje || {}).length;
+    // "Pierwszy" to albo swiezy stan, albo taki, ktory przejal dziennik po
+    // starym bocie i czeka na ustawienie kapitalu z prawdziwego konta.
+    const pierwszy = stan.doSynchronizacji
+      || (!stan.zamkniete && !Object.keys(stan.pozycje || {}).length);
     if (pierwszy && calosc > 0 && Math.abs(calosc - P.START) > 0.01) {
       log(`  start ustawiam z konta: ${usd(calosc)} (w .env bylo ${usd(P.START)})`);
       P.START = calosc;
       stan.cash = calosc;
+      stan.szczyt = calosc;
+      delete stan.doSynchronizacji;   // jednorazowo — potem kapitalem rzadzi juz handel
     } else if (calosc < P.START * 0.9) {
       log(`  UWAGA: na koncie ${usd(calosc)}, a bot liczy od ${usd(P.START)} — sprawdz, czy nic nie wyplyneło.`);
     }
@@ -318,12 +323,29 @@ async function zlec({ idx, szDecimals, kupno, wielkosc, widziana, redukuje }) {
 if (PREFIKS !== 'realny' && !fs.existsSync(F_STAN)) {
   const stary = czytaj(path.join(KAT, 'realny-state.json'), null);
   if (stary && stary.gracz === P.GRACZ) {
-    log(`> przejmuje historie sprzed podzialu (${stary.zamkniete} trejdow gracza ${stary.gracz})`);
-    pisz(F_STAN, { ...stary, przejeteZ: 'realny', przejeteKiedy: nowISO() });
-    for (const [zrodlo, cel] of [['realny-trades.json', F_TREJDY], ['realny-equity.json', F_EQUITY]]) {
-      const d = czytaj(path.join(KAT, zrodlo), null);
-      if (d) pisz(cel, d);
-    }
+    // Przejmujemy DZIENNIK TREJDOW, ale NIE kapital.
+    //
+    // Stary eksperyment chodzil na innym portfelu i skonczyl z 25,59 USD.
+    // Nowy bot stada ma wlasne konto z inna kwota. Przeniesienie salda
+    // sprawiloby, ze bot liczylby pozycje od liczby, ktorej na koncie nie ma,
+    // a krzywa kapitalu miala by skok w srodku — i nikt by nie wiedzial, skad.
+    //
+    // Trejdy zostaja, bo to najcenniejsze dane, jakie mamy. Kapital i krzywa
+    // zaczynaja od nowa, od tego, co naprawde jest na koncie.
+    log(`> przejmuje dziennik sprzed podzialu (${stary.zamkniete} trejdow gracza ${stary.gracz}), kapital liczę od nowa`);
+    pisz(F_STAN, {
+      ...stary,
+      cash: P.START, kapital: P.START, szczyt: P.START, start: P.START,
+      pozycje: {},                 // stare pozycje wisialy na innym koncie
+      koniec: null,
+      przejeteZ: 'realny', przejeteKiedy: nowISO(),
+      // Znacznik dla sprawdzKonto: przy pierwszym zywym przebiegu ustaw start
+      // z prawdziwego salda, mimo ze `zamkniete` jest juz niezerowe.
+      doSynchronizacji: true,
+    });
+    const d = czytaj(path.join(KAT, 'realny-trades.json'), null);
+    if (d) pisz(F_TREJDY, d);
+    // Krzywej kapitalu NIE przenosimy — opisuje inne konto i inne pieniadze.
   }
 }
 
