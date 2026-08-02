@@ -66,7 +66,28 @@ const P = {
   MALPA_SZANSA: envNum('LIGA_MALPA_SZANSA', 0.06), // na aktywo na przebieg
 };
 
-const GRACZE = stworzGraczy({ malpaSzansa: P.MALPA_SZANSA });
+// SKLAD LIGI. Puste = wszyscy, jak dotad.
+//
+// Bez tego kazdy nowy wariant strategii wchodzil do WSZYSTKICH lig naraz
+// i zaostrzal prog istotnosci wszystkim pozostalym — prog dzieli sie przez
+// liczbe porownywanych graczy, wiec dolozenie szesnastego utrudnia werdykt
+// pietnastu, ktorzy zbieraja dane od lipca. To jest realny koszt, placony
+// przez eksperyment, ktory juz trwa, za hipoteze, ktora dopiero startuje.
+//
+// Osobna liga z wlasnym skladem ma wlasne liczenie i nie kosztuje nikogo nic.
+const CHCE = env('LIGA_GRACZE', '').split(',').map((s) => s.trim()).filter(Boolean);
+const WSZYSCY = stworzGraczy({ malpaSzansa: P.MALPA_SZANSA });
+if (CHCE.length) {
+  const nieznani = CHCE.filter((c) => !WSZYSCY[c]);
+  if (nieznani.length) { console.error(`! LIGA_GRACZE: nie znam ${nieznani.join(', ')}`); process.exit(1); }
+  if (!CHCE.includes('malpa')) {
+    console.error('! LIGA_GRACZE bez malpy — nie byloby punktu odniesienia. Dopisz `malpa`.');
+    process.exit(1);
+  }
+}
+const GRACZE = CHCE.length
+  ? Object.fromEntries(CHCE.map((id) => [id, WSZYSCY[id]]))
+  : WSZYSCY;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');

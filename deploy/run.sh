@@ -71,7 +71,7 @@ GALAZ="${GIT_BRANCH:-main}"
 # dalo sie do niego wrocic jednym slowem, ale domyslnie juz nie chodzi.
 #
 # Zeby dorzucic spot:  run.sh trade perp liga ligab stado
-BOTY="${*:-perp liga ligab stado}"
+BOTY="${*:-perp liga ligab ligac stado}"
 
 # Uniwersum Ligi A — DOKLADNIE to, na czym liga gra od 27.07.2026 (odczytane
 # z zywego state/liga-state.json, pole lastRun.prices).
@@ -91,6 +91,27 @@ LIGAA_AKTYWA="SOL,JUP,JTO,PYTH,RAY,ORCA,RENDER,BONK,W,TNSR,DRIFT,KMNO,PENGU,BTC,
 # 451 z amerykanskiego IP, wiec to jedyne zrodlo swiec na tym serwerze).
 LIGAB_AKTYWA="1INCH,ALCX,ARB,ASTR,AVA,BCH,CELO,CTSI,EDU,FIDA,GALA,HFT,JST,LQTY,MASK,NEO,OGN,QNT,RLC,SAND,STORJ,SUPER,VET,YFI"
 
+# SKLAD Ligi A i B — PRZYPIETY, dokladnie tak jak uniwersum.
+#
+# Prog istotnosci dzieli sie przez liczbe porownywanych graczy, wiec dolozenie
+# jednego nowego utrudnia werdykt WSZYSTKIM pozostalym — a oni zbieraja dane
+# od lipca. Bez tej listy kazdy wariant dopisany do gracze.mjs wchodzilby do
+# trwajacego eksperymentu po cichu i zmienial jego warunki w polowie.
+#
+# Nowe pomysly ida do Ligi C, ktora ma wlasne liczenie i nie kosztuje nikogo nic.
+LIGAAB_GRACZE="trend,antytrend,luzny,smycz,cierpliwy,czujny,sjesta,sejsmograf,krawiec,kontra,kontraN,sito5,sitoOstre,panika,panikaLuzna,wybicie,malpa,byk"
+
+# LIGA C — poletko doswiadczalne.
+#
+# Te same aktywa co Liga A, zeby porownanie bylo bezposrednie, ale wlasny,
+# maly sklad: oryginal, wariant i malpa. Przy trzech graczach prog Bonferroniego
+# jest lagodny, wiec drobna roznica ma szanse sie ujawnic — a w Lidze A przy
+# szesnastu utonelaby.
+#
+# Tu ladują hipotezy, ktore dopiero sprawdzamy. Gdy ktoras wygra przekonujaco,
+# wtedy — i dopiero wtedy — warto rozwazyc dopisanie jej do Ligi A.
+LIGAC_GRACZE="smycz,smyczFiltr,malpa"
+
 # Zabierz to, co przyszlo z zewnatrz (np. zmiany kodu wypchniete z komputera)
 git fetch origin "$GALAZ" --quiet 2>>"$LOG" || log "fetch nieudany"
 git merge --ff-only "origin/$GALAZ" --quiet 2>>"$LOG" || log "nie moge przewinac galezi (lokalne zmiany?)"
@@ -102,11 +123,14 @@ for bot in $BOTY; do
     trade) PLIK="trade.mjs" ;;
     perp)  PLIK="perpbot.mjs" ;;
     liga)  PLIK="liga.mjs"
-           USTAW="LIGA_ASSETS=$LIGAA_AKTYWA" ;;
+           USTAW="LIGA_ASSETS=$LIGAA_AKTYWA LIGA_GRACZE=$LIGAAB_GRACZE" ;;
+    # Liga C — poletko doswiadczalne, wlasny prefiks stanu i wlasny maly sklad.
+    ligac) PLIK="liga.mjs"
+           USTAW="LIGA_PREFIX=liga-c LIGA_ASSETS=$LIGAA_AKTYWA LIGA_GRACZE=$LIGAC_GRACZE" ;;
     # Ta sama liga.mjs, inna konfiguracja — bez drugiej kopii mechaniki,
     # ktora po miesiacu rozjechalaby sie z pierwsza.
     ligab) PLIK="liga.mjs"
-           USTAW="LIGA_PREFIX=liga-b LIGA_ASSETS=$LIGAB_AKTYWA LIGA_MAX_POZYCJI=10 LIGA_ALLOC_PCT=0.08" ;;
+           USTAW="LIGA_PREFIX=liga-b LIGA_ASSETS=$LIGAB_AKTYWA LIGA_GRACZE=$LIGAAB_GRACZE LIGA_MAX_POZYCJI=10 LIGA_ALLOC_PCT=0.08" ;;
     realny) PLIK="realny.mjs" ;;
     # STADO — kilka botow na PRAWDZIWYCH pieniadzach, kazdy na WLASNYM koncie
     # Hyperliquid. Osobne konta, a nie subkonta, bo te wymagaja 100 tys. USD
