@@ -36,10 +36,11 @@
  * URUCHOMIENIE (tryb suchy, nic nie kosztuje, nie potrzebuje klucza):
  *   node bot/realny.mjs
  */
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CFG, ema, rsi, atr, efficiencyRatio } from './strategy.mjs';
+import { CFG, ema, rsi, atr, efficiencyRatio, warunki } from './strategy.mjs';
 import { stworzGraczy, czyWyjsc } from './gracze.mjs';
 
 /**
@@ -127,6 +128,13 @@ const PREFIKS = env('REALNY_PREFIKS', 'realny');
 const F_STAN = path.join(KAT, `${PREFIKS}-state.json`);
 const F_TREJDY = path.join(KAT, `${PREFIKS}-trades.json`);
 const F_EQUITY = path.join(KAT, `${PREFIKS}-equity.json`);
+// Archiwum starych trejdow. Do werdyktu o zyskownosci trzeba okolo 714 rund;
+// przy tempie Smyczy (13 rund na dobe) to blisko dwa miesiace, czyli ~1400
+// wpisow. Ucinanie dziennika do 500 zabieraloby probke DOKLADNIE wtedy, gdy
+// zaczyna cos znaczyc — i robiloby to po cichu. Ogon idzie wiec do pliku
+// dopisywanego jednym `append`: git dokleja przyrost zamiast przepisywac calosc,
+// a apka pobiera tylko goracy plik.
+const F_ARCHIWUM = path.join(KAT, `${PREFIKS}-archiwum.jsonl`);
 const nowISO = () => new Date().toISOString();
 const usd = (x) => `$${Number(x).toFixed(2)}`;
 const log = (...a) => console.log(...a);
@@ -166,6 +174,35 @@ const pisz = (f, x) => {
   fs.renameSync(tmp, f);
 };
 
+/**
+ * Zaokraglenie do szesciu cyfr znaczacych.
+ *
+ * `rsi: 53.431936661493566` to trzydziesci jeden bajtow na liczbe, ktora ma sens
+ * do piatej cyfry — a kazdy taki bajt rosnie w historii gita na zawsze. Szesc
+ * cyfr znaczacych, a nie miejsc po przecinku, bo ten sam zapis obsluguje cene
+ * SOL (73,2870) i cene BONKa (0,00000291400).
+ *
+ * NIE UZYWAC DO KSIEGOWOSCI. Tu sluzy wylacznie do ZAPISU do dziennika; kapital,
+ * gotowka i marze licza sie dalej z pelna precyzja.
+ */
+const sig = (x, n = 6) => (Number.isFinite(x) ? +Number(x).toPrecision(n) : (x ?? null));
+
+/**
+ * Zapis listy po JEDNYM WPISIE NA LINIE.
+ *
+ * `JSON.stringify(x, null, 2)` rozbija kazdy wpis na kilkanascie linii, przez co
+ * git widzi zmiane jednej liczby jako zmiane calego bloku. Jeden wpis w jednej
+ * linii sprawia, ze przyrost w commicie to dopisane wiersze, a nie przepisany
+ * plik — przy commicie co piec minut to jest roznica rzedu wielkosci.
+ * Wynik jest nadal poprawnym JSON-em, wiec apka nic nie zauwazy.
+ */
+const piszWiersze = (f, lista) => {
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  const tmp = `${f}.tmp`;
+  fs.writeFileSync(tmp, `[\n${lista.map((x) => JSON.stringify(x)).join(',\n')}\n]\n`);
+  fs.renameSync(tmp, f);
+};
+
 // ── skladanie zlecen (tylko tryb zywy) ──────────────────────────────────────
 //
 // Hyperliquid nie ma zlecen "po cenie rynkowej". Zamiast tego sklada sie
@@ -200,6 +237,51 @@ const wielkoscHL = (sz, szDecimals) => Number(sz.toFixed(szDecimals));
  */
 const poslizgKosztu = (widziana, fill, kupujemy) =>
   ((fill - widziana) / widziana) * (kupujemy ? 1 : -1);
+
+/**
+ * Wszystko, co pozycja wie o SWOIM WEJSCIU, przeniesione na wiersz zamkniecia.
+ *
+ * Dzis te dane gina razem z pozycja przy `delete stan.pozycje[sym]`. Skutek jest
+ * taki, ze warunki wejscia leza na wpisie OPEN, wynik na wpisie CLOSE — i nie ma
+ * niczego, co by je laczylo. Czyli nie da sie zadac ANI JEDNEGO pytania, po ktore
+ * ten dziennik powstaje: czy przegrane trejdy wchodzily przy innym RSI niz
+ * wygrane, czy stop byl ustawiany za blisko, czy smycz w ogole zdazyla sie uzbroic.
+ *
+ * Nazwy pol sa CELOWO takie same jak w lidze (`warunki`, `powodWejscia`).
+ * App.js juz tlumaczy wpisy tego bota na ksztalt ligi i czeka dokladnie na te
+ * nazwy — dzieki temu karta "Co dzialalo" zapala sie dla botow na prawdziwych
+ * pieniadzach bez zmiany jednej linijki w apce.
+ */
+const dziennikWejscia = (p) => ({
+  kod: p.kod ?? null,
+  powodWejscia: p.powodWejscia ?? null,
+  warunki: p.warunkiWejscia ?? null,
+  kontrakt: {
+    // ATR z chwili wejscia — jedyna liczba z metryki, ktorej NIE da sie potem
+    // odtworzyc ze swiec. Liczy sie z gorki i dolka swiecy, ktora w chwili
+    // decyzji byla dopiero w polowie formowania. A ATR jest mianownikiem stopa,
+    // celu i kazdego porownania BONKa z BTC — blad tutaj przesuwa je wszystkie naraz.
+    atr: sig(p.atrAtEntry),
+    // Mnozniki, nie ceny. Ceny wyliczy arytmetyka (fill +- stopAtr * atr), a te
+    // liczby dodatkowo pokazuja, ze ktos przestroil ustawienia w polowie eksperymentu.
+    stopAtr: p.stopAtr ?? null,
+    celAtr: p.celAtr ?? null,
+    smyczAtr: p.bezSmyczy ? null : (p.trailAtr ?? null),
+    score: p.score ?? null,
+  },
+  przebieg: {
+    // Najlepsza cena, jaka bot ZOBACZYL — liczona i tak na potrzeby smyczy,
+    // nigdy niezapisywana. Prawdziwy szczyt policzymy pozniej z knotow swiec
+    // i bedzie dokladniejszy; ta liczba jest tu po to, zeby te dwie dalo sie od
+    // siebie odjac. Roznica miedzy nimi to ślepa plama bota miedzy przebiegami.
+    szczyt: sig(p.bestPrice),
+    // Czy smycz zdazyla sie uzbroic. Tego nie odtworzy nic, bo zalezy od tego,
+    // w ktorych momentach bot akurat patrzyl. U Smyczy, ktorego caly sens to
+    // trailing, bez tego nie da sie policzyc, ile zamkniec w ogole go uzylo.
+    smycz: !!p.trailArmed,
+  },
+  ...(p.czesciowe ? { czesciowe: sig(p.czesciowe, 3) } : {}),
+});
 
 let gielda = null;
 if (!P.SUCHY) {
@@ -416,7 +498,7 @@ if (PREFIKS !== 'realny' && !fs.existsSync(F_STAN)) {
       doSynchronizacji: true,
     });
     const d = czytaj(path.join(KAT, 'realny-trades.json'), null);
-    if (d) pisz(F_TREJDY, d);
+    if (d) piszWiersze(F_TREJDY, d);
     // Krzywej kapitalu NIE przenosimy — opisuje inne konto i inne pieniadze.
   }
 }
@@ -473,7 +555,10 @@ if (stan.start != null && stan.startZrodlo !== 'konto' && Number.isFinite(stan.k
   // Dziennik jest przycinany do 500 wpisow. Gdyby dosiegnal limitu, poczatek
   // historii bylby juz obciety i odtworzenie daloby liczbe z sufitu — wtedy
   // lepiej nie ruszac nic i powiedziec o tym glosno.
-  const kompletny = dziennik.length < 500;
+  // Pytanie brzmi "czy poczatek historii nie zostal ucięty". Od kiedy nadmiar
+  // idzie do archiwum zamiast do kosza, odpowiedz jest prosta: dopoki archiwum
+  // nie powstalo, dziennik jest kompletny.
+  const kompletny = !fs.existsSync(F_ARCHIWUM);
   const maDane = po.some((t) => t.typ === 'CLOSE') || po.some((t) => t.typ === 'OPEN');
   if (kompletny && maDane) {
     const zysk = po.filter((t) => t.typ === 'CLOSE').reduce((sm, t) => sm + (t.pnlUsd || 0), 0);
@@ -548,6 +633,46 @@ if (!P.SUCHY) await sprawdzKonto(stan);
 const gracze = stworzGraczy();
 const def = gracze[P.GRACZ];
 if (!def) { console.error(`Nie znam gracza "${P.GRACZ}". Dostepni: ${Object.keys(gracze).join(', ')}`); process.exit(1); }
+
+// ── ODCISK WERSJI ───────────────────────────────────────────────────────────
+//
+// Dziennik jest CELOWO niekompletny — srednie, nachylenie trendu i RSI swiecy
+// wczesniej policzymy pozniej jeszcze raz ze swiec. Ale zeby policzyc je TAK
+// SAMO, trzeba wiedziec, jaki kod i jakie progi obowiazywaly w tamtej chwili.
+// A progi przychodza z deploy/.env, ktorego w repozytorium NIE MA.
+//
+// Numer commita sie do tego nie nadaje: bot commituje stan co piec minut, wiec
+// zmienia sie MIEDZY DWOMA TREJDAMI tego samego przebiegu. Identyfikuje moment
+// zapisu, a nie wersje strategii. Liczymy wiec skrot z ustawien ORAZ z dwoch
+// plikow, ktore naprawde decyduja o wejsciu — wtedy zmiana progu i zmiana kodu
+// sa jednakowo widoczne.
+//
+// Bez tego pola probka z miesiaca jest mieszanka wersji, a wnioski z niej
+// opisuja historie naszych poprawek, a nie zachowanie rynku.
+const ODCISK = [
+  `gracz=${P.GRACZ}`, 'swieca=15m',
+  `ema=${CFG.EMA_FAST}/${CFG.EMA_SLOW}/${CFG.EMA_TREND}`,
+  `rsi=${CFG.RSI_LEN}`, `atr=${CFG.ATR_LEN}`, `er=${CFG.ER_LEN}`,
+  `stop=${def.stopAtr ?? CFG.STOP_ATR}`, `tp=${CFG.TAKE_PROFIT_ATR}`,
+  `trail=${def.trailAtr ?? CFG.TRAIL_ATR}`, `arm=${CFG.TRAIL_ARM_ATR}`,
+  `minScore=${CFG.MIN_SCORE}`, `erMin=${CFG.ER_MIN}`, `kosztX=${CFG.COST_EDGE_MULT}`,
+  `maxHold=${CFG.MAX_HOLD_HOURS}`,
+  `lewar=${P.LEWAR}`, `alloc=${P.ALLOC}`, `miejsc=${P.MIEJSC}`, `taker=${P.TAKER}`,
+  `rynki=${Object.keys(AKTYWA).join('+')}`,
+].join(' ');
+const KOD = (() => {
+  const h = crypto.createHash('sha1').update(ODCISK);
+  for (const f of ['strategy.mjs', 'gracze.mjs']) {
+    try { h.update(fs.readFileSync(path.join(__dirname, f))); } catch { /* trudno, to tylko etykieta */ }
+  }
+  return h.digest('hex').slice(0, 6);
+})();
+// Do pliku leci WYLACZNIE gdy odcisk sie zmienil — kilkaset bajtow na zmiane
+// ustawien, a nie na kazdy trejd.
+if ([...trejdy].reverse().find((t) => t.typ === 'WERSJA')?.kod !== KOD) {
+  trejdy.push({ ts: nowISO(), typ: 'WERSJA', kod: KOD, odcisk: ODCISK });
+  log(`> wersja bota: ${KOD}`);
+}
 
 log(`=== HAJSOMAT REALNY ${nowISO()} | ${P.SUCHY ? 'SUCHY (nic nie kosztuje)' : '*** ZA PRAWDZIWE PIENIADZE ***'} ===`);
 log(`> gracz ${def.nazwa}, dzwignia ${P.LEWAR}x, ${P.MIEJSC} miejsca po ${(P.ALLOC * 100).toFixed(0)}%, ${P.MAX_TREJDOW > 0 ? `limit ${P.MAX_TREJDOW} trejdow` : "bez limitu trejdow"}`);
@@ -652,18 +777,23 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
     const netto = zlikwidowany ? -p.margin : brutto - p.notional * P.TAKER;
     stan.cash += zlikwidowany ? 0 : p.margin + netto;
     stan.zamkniete += 1;
+    // To sa NAJCIEKAWSZE trejdy w calym zbiorze — likwidacja albo zniknieciе pozycji
+    // pozycji z gieldy — a dotad wychodzily z dziennika najubozsze ze wszystkich.
     trejdy.push({
       ts: nowISO(), sym, side: p.side, typ: 'CLOSE',
       powod: zlikwidowany ? 'LIKWIDACJA' : 'ZNIKNELA_Z_GIELDY',
-      entryPrice: p.entryPrice, cenaWidziana: px, cenaWypelnienia: px,
+      entryTs: p.entryTs,
+      entryPrice: sig(p.entryPrice), cenaWidziana: sig(px), cenaWypelnienia: sig(px),
       poslizg: null,        // tego wyjscia nie mierzylismy — nie ma czego porownac
+      poslizgWe: sig(p.poslizgWejscia),
       szacowane: true,      // NIE liczyc tego trejdu do pomiaru kosztow rundy
-      margin: p.margin, notional: p.notional,
-      oplata: zlikwidowany ? 0 : p.notional * P.TAKER,
-      oplataRundy: p.notional * P.TAKER * (zlikwidowany ? 1 : 2),
-      pnlUsd: netto,
-      R: zlikwidowany ? -1 : (netto - p.notional * P.TAKER) / p.margin,
-      trzymane_h: (Date.now() - Date.parse(p.entryTs)) / 3600000,
+      margin: sig(p.margin), notional: sig(p.notional),
+      oplata: sig(zlikwidowany ? 0 : p.notional * P.TAKER),
+      oplataRundy: sig(p.notional * P.TAKER * (zlikwidowany ? 1 : 2)),
+      pnlUsd: sig(netto),
+      R: zlikwidowany ? -1 : sig((netto - p.notional * P.TAKER) / p.margin),
+      trzymane_h: sig((Date.now() - Date.parse(p.entryTs)) / 3600000),
+      ...dziennikWejscia(p),
     });
     log(`  ! ${sym} ${p.side}: gielda juz jej nie ma — ${zlikwidowany ? 'likwidacja' : 'zamknieta poza botem'}, ksieguje szacunkowo ${usd(netto)}`);
     log('    (cena wyjscia to szacunek; gotowke wyrowna samonaprawa, gdy bot bedzie plaski)');
@@ -711,6 +841,9 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
       p.sz -= w.ile;
       p.notional *= 1 - czesc;
       p.margin *= 1 - czesc;
+      // Znacznik dla dziennika: bez niego `poslizg` na koncowym wpisie dotyczy
+      // resztki, a nikt sie nie domysli, dlaczego akurat ten pomiar odstaje.
+      p.czesciowe = (p.czesciowe ?? 1) * czesc;
       continue;
     }
     fill = w.fill;
@@ -732,14 +865,19 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
 
   trejdy.push({
     ts: nowISO(), sym, side: p.side, typ: 'CLOSE', powod,
-    entryPrice: p.entryPrice, cenaWidziana: widziana, cenaWypelnienia: fill,
+    entryTs: p.entryTs,        // klucz do wiersza OPEN i kotwica okna swiec
+    entryPrice: sig(p.entryPrice), cenaWidziana: sig(widziana), cenaWypelnienia: sig(fill),
     // zamkniecie longa to sprzedaz, zamkniecie shorta to kupno
-    poslizg: poslizgKosztu(widziana, fill, p.side !== 'LONG'),
-    margin: p.margin, notional: p.notional,
-    oplata, oplataRundy: 2 * p.notional * P.TAKER,
-    pnlUsd: netto,                      // sam moment zamkniecia, jak w lidze
-    R: pelnyNetto / p.margin,           // pelna runda z obiema oplatami — to porownuj z liga
-    trzymane_h: (Date.now() - Date.parse(p.entryTs)) / 3600000,
+    poslizg: sig(poslizgKosztu(widziana, fill, p.side !== 'LONG')),
+    // Poslizg wejscia przeniesiony tutaj. Wiersz OPEN wypada z ogona pierwszy,
+    // a jednostka kosztu jest CALA RUNDA — nie polowa.
+    poslizgWe: sig(p.poslizgWejscia),
+    margin: sig(p.margin), notional: sig(p.notional),
+    oplata: sig(oplata), oplataRundy: sig(2 * p.notional * P.TAKER),
+    pnlUsd: sig(netto),                      // sam moment zamkniecia, jak w lidze
+    R: sig(pelnyNetto / p.margin),           // pelna runda z obiema oplatami — to porownuj z liga
+    trzymane_h: sig((Date.now() - Date.parse(p.entryTs)) / 3600000),
+    ...dziennikWejscia(p),
   });
   log(`  ZAMYKAM ${sym} ${p.side} @ ${fill} — ${powod}, wynik ${usd(netto)} (${(netto / p.margin * 100).toFixed(2)}%)`);
   delete stan.pozycje[sym];
@@ -747,7 +885,7 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
   // sprawdzenie "pozycja zniknela z gieldy" wyzej i tak by to posprzatalo, ale
   // po cenie SZACOWANEJ — a tu mamy prawdziwa cene wypelnienia, czyli dokladnie
   // ten pomiar, dla ktorego ten bot powstal. Szkoda go tracic.
-  if (!P.SUCHY) { stan.kapital = kapital(); pisz(F_STAN, stan); pisz(F_TREJDY, trejdy); }
+  if (!P.SUCHY) { stan.kapital = kapital(); pisz(F_STAN, stan); piszWiersze(F_TREJDY, trejdy); }
 }
 
 // ── koniec eksperymentu? ────────────────────────────────────────────────────
@@ -814,9 +952,16 @@ if (!stan.koniec) {
     }
 
     const stopA = def.stopAtr ?? CFG.STOP_ATR;
+    const poslizgWe = poslizgKosztu(widziana, fill, long);
+    // JEDEN znacznik czasu dla pozycji i dla wpisu w dzienniku.
+    //
+    // Wczesniej byly to dwa osobne wywolania nowISO() — jedno tutaj, drugie
+    // ponizej. Potrafily rozjechac sie o milisekunde i po cichu zerwac jedyne
+    // polaczenie miedzy warunkami wejscia a wynikiem trejdu.
+    const teraz = nowISO();
     stan.cash -= margin + notional * P.TAKER;
     stan.pozycje[sym] = {
-      sym, side: syg.kier, entryPrice: fill, entryTs: nowISO(),
+      sym, side: syg.kier, entryPrice: fill, entryTs: teraz,
       margin, notional, leverage: P.LEWAR,
       sz: ileSztuk,          // ile sztuk trzymamy — potrzebne, zeby zamknac dokladnie tyle
       // Cena, przy ktorej gielda zamknie nas sama. Liczymy ja przy wejsciu i
@@ -827,11 +972,30 @@ if (!stan.koniec) {
       atrAtEntry: r.m.atr, bestPrice: fill, trailArmed: false,
       trailAtr: def.trailAtr ?? CFG.TRAIL_ATR, bezSmyczy: !!def.bezSmyczy,
       minGodzin: def.minGodzin ?? 0, stopZawsze: !!def.stopZawsze,
+      // ── to, co ma dojechac do wiersza zamkniecia ────────────────────────────
+      //
+      // Pozycja jest JEDYNYM miejscem, w ktorym bot cokolwiek pamieta miedzy
+      // przebiegami crona. Wszystko, czego tu nie polozymy, przestanie istniec
+      // w chwili `delete stan.pozycje[sym]` — a wtedy zostanie sam wynik, bez
+      // zadnego sladu, dlaczego bot w to wszedl.
+      //
+      // Przy okazji: apka pobiera plik stanu i tak, wiec dla pozycji jeszcze
+      // OTWARTEJ warunki wejscia widac wlasnie stad. Dlatego mozemy je zdjac
+      // z wiersza OPEN i nie placic za nie dwa razy.
+      kod: KOD,
+      powodWejscia: syg.powod,
+      warunkiWejscia: warunki(r.m),
+      score: syg.score ?? null,     // sygnal go zwraca, a dotad byl wyrzucany
+      poslizgWejscia: poslizgWe,
+      stopAtr: stopA, celAtr: CFG.TAKE_PROFIT_ATR,
     };
     trejdy.push({
-      ts: nowISO(), sym, side: syg.kier, typ: 'OPEN', powod: syg.powod,
-      cenaWidziana: widziana, cenaWypelnienia: fill, poslizg: poslizgKosztu(widziana, fill, long),
-      margin, notional, oplata: notional * P.TAKER, warunki: { rsi: r.m.rsi, volPct: r.m.volPct, er: r.m.er },
+      ts: teraz, sym, side: syg.kier, typ: 'OPEN', powod: syg.powod,
+      cenaWidziana: sig(widziana), cenaWypelnienia: sig(fill), poslizg: sig(poslizgWe),
+      margin: sig(margin), notional: sig(notional), oplata: sig(notional * P.TAKER),
+      // `warunki` zdjete stad celowo — pelny komplet jedzie na wierszu CLOSE,
+      // a dla pozycji otwartej apka ma go w pliku stanu. Zero powtorzen.
+      ...(ileSztuk < sz * 0.999 ? { czesc: sig(ileSztuk / sz, 3) } : {}),
     });
     log(`  OTWIERAM ${sym} ${syg.kier} @ ${fill} — ${syg.powod}`);
 
@@ -848,7 +1012,7 @@ if (!stan.koniec) {
     if (!P.SUCHY) {
       stan.kapital = kapital();
       pisz(F_STAN, stan);
-      pisz(F_TREJDY, trejdy);
+      piszWiersze(F_TREJDY, trejdy);
     }
     otwarte++;
   }
@@ -893,7 +1057,23 @@ stan.skan = Object.entries(rynki).map(([sym, r]) => {
   };
 });
 pisz(F_STAN, stan);
-pisz(F_TREJDY, trejdy.slice(-500));
+// ── PRZYCINANIE: NIC NIE KASUJEMY ──────────────────────────────────────────
+//
+// Do werdyktu o zyskownosci trzeba okolo 714 rund. Przy tempie Smyczy (13 rund
+// na dobe) to prawie dwa miesiace i ~1400 wpisow — a stary limit 500 ucinal
+// probke DOKLADNIE zanim zaczela cokolwiek znaczyc. I robil to po cichu.
+//
+// Ogon idzie wiec do archiwum dopisywanego jednym `append`, a nie do kosza:
+// git dokleja przyrost zamiast przepisywac plik, apka pobiera tylko goracy
+// ogon, a badania maja pelna historie.
+const OGON = num('REALNY_OGON', 400);
+if (trejdy.length > OGON) {
+  const doArchiwum = trejdy.slice(0, trejdy.length - OGON);
+  fs.appendFileSync(F_ARCHIWUM, `${doArchiwum.map((x) => JSON.stringify(x)).join('\n')}\n`);
+  log(`> do archiwum poszlo ${doArchiwum.length} starszych wpisow`);
+  trejdy = trejdy.slice(-OGON);
+}
+piszWiersze(F_TREJDY, trejdy);
 
 // Krzywa kapitalu — apka rysuje z niej wykres i liczy obsuniecia. Jeden punkt
 // na przebieg, przycinany do 4000, tak jak w lidze.
