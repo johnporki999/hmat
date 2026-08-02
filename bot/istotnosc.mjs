@@ -46,6 +46,88 @@ export function zKwantyl(p) {
   return (lo + hi) / 2;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// ROZKŁAD t — bo przy małej próbce rozkład normalny za łatwo krzyczy „istotne”
+//
+// Ten plik od początku obiecywał w nagłówku test t Welcha, ale p liczył wprost
+// z dystrybuanty normalnej. Przy 300 trejdach różnica jest kosmetyczna i dlatego
+// samotest jej nie łapał — puszczał wyłącznie N=300. Przy 20–35 trejdach, czyli
+// dokładnie tam, gdzie dziś stoją Sejsmograf, Sjesta, Sito ostre i Cierpliwy,
+// fałszywy alarm robi się 2–5 razy częstszy, niż zakładamy progiem.
+//
+// Rozkład normalny zakłada, że znamy prawdziwą zmienność. My jej nie znamy —
+// szacujemy ją z tej samej garstki trejdów, z której liczymy średnią. Rozkład t
+// bierze tę dodatkową niepewność pod uwagę: ma grubsze ogony, więc żeby ogłosić
+// przewagę, każe zobaczyć wyraźniejszą różnicę.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** log Γ(x) — Lanczos. Potrzebne tylko jako składnik funkcji beta poniżej. */
+function logGamma(x) {
+  const g = [76.18009172947146, -86.50532032941677, 24.01409824083091,
+    -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+  let y = x;
+  let tmp = x + 5.5;
+  tmp -= (x + 0.5) * Math.log(tmp);
+  let ser = 1.000000000190015;
+  for (let j = 0; j < 6; j++) ser += g[j] / ++y;
+  return -tmp + Math.log((2.5066282746310005 * ser) / x);
+}
+
+/** Ułamek łańcuchowy do funkcji beta (Numerical Recipes, betacf). */
+function betaUlamek(a, b, x) {
+  const MAL = 1e-300, EPS = 3e-16;
+  const qab = a + b, qap = a + 1, qam = a - 1;
+  let c = 1;
+  let d = 1 - (qab * x) / qap;
+  if (Math.abs(d) < MAL) d = MAL;
+  d = 1 / d;
+  let h = d;
+  for (let m = 1; m <= 300; m++) {
+    const m2 = 2 * m;
+    let aa = (m * (b - m) * x) / ((qam + m2) * (a + m2));
+    d = 1 + aa * d; if (Math.abs(d) < MAL) d = MAL;
+    c = 1 + aa / c; if (Math.abs(c) < MAL) c = MAL;
+    d = 1 / d; h *= d * c;
+    aa = (-(a + m) * (qab + m) * x) / ((a + m2) * (qap + m2));
+    d = 1 + aa * d; if (Math.abs(d) < MAL) d = MAL;
+    c = 1 + aa / c; if (Math.abs(c) < MAL) c = MAL;
+    d = 1 / d;
+    const del = d * c;
+    h *= del;
+    if (Math.abs(del - 1) < EPS) break;
+  }
+  return h;
+}
+
+/** Znormalizowana niepełna funkcja beta I_x(a,b) — z niej bierzemy ogon rozkładu t. */
+function betaNiepelna(a, b, x) {
+  if (x <= 0) return 0;
+  if (x >= 1) return 1;
+  const bt = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b)
+    + a * Math.log(x) + b * Math.log(1 - x));
+  return x < (a + 1) / (a + b + 2)
+    ? (bt * betaUlamek(a, b, x)) / a
+    : 1 - (bt * betaUlamek(b, a, 1 - x)) / b;
+}
+
+/** Dwustronne p dla statystyki t przy `df` stopniach swobody. */
+export function tOgon(t, df) {
+  if (!(df > 0) || !Number.isFinite(t)) return 1;
+  return betaNiepelna(df / 2, 0.5, df / (df + t * t));
+}
+
+/**
+ * Stopnie swobody Welcha–Satterthwaite'a.
+ * Im bardziej rozjeżdżają się zmienności i liczebności obu stron, tym mniej
+ * stopni swobody — czyli tym ostrożniejszy werdykt.
+ */
+export function dfWelcha(wA, nA, wM, nM) {
+  const a = wA / nA, m = wM / nM;
+  const licznik = (a + m) ** 2;
+  const mianownik = a ** 2 / (nA - 1) + m ** 2 / (nM - 1);
+  return mianownik > 0 ? licznik / mianownik : 0;
+}
+
 /** Średnia i wariancja z sum. Wariancja null, gdy próbka za mała. */
 export function opis(st) {
   const n = st?.trejdy || 0;
@@ -85,7 +167,7 @@ export function istotnosc(gracze, defs, idMalpy, porownan) {
         id, nazwa: defs[id].nazwa,
         n: A.n, srednia: A.srednia, nMalpy: M.n, sredniaMalpy: M.srednia,
         roznica: A.srednia - M.srednia,
-        d: null, t: null, p: null,
+        d: null, t: null, p: null, df: null,
         nPotrzebne: ileTrzeba(0), postep: 0, werdykt: 'malo',
       };
 
@@ -96,7 +178,11 @@ export function istotnosc(gracze, defs, idMalpy, porownan) {
 
       const se = Math.sqrt(A.wariancja / A.n + M.wariancja / M.n);
       out.t = se > 0 ? out.roznica / se : 0;
-      out.p = 2 * (1 - phi(Math.abs(out.t)));
+      // p z rozkladu t, a nie z normalnego — patrz komentarz przy tOgon.
+      // Przy n rzedu setek te dwa daja praktycznie to samo; przy n = 20-35
+      // rozklad normalny oglaszalby przewage kilka razy za czesto.
+      out.df = dfWelcha(A.wariancja, A.n, M.wariancja, M.n);
+      out.p = tOgon(out.t, out.df);
 
       const sdWspolne = Math.sqrt((A.wariancja + M.wariancja) / 2);
       out.d = sdWspolne > 0 ? Math.abs(out.roznica) / sdWspolne : 0;
@@ -143,6 +229,19 @@ if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}` ||
   sprawdz('phi(-2,576) = 0,005', Math.abs(phi(-2.576) - 0.005) < 1e-4, phi(-2.576).toFixed(6));
   sprawdz('zKwantyl(0,975) = 1,96', Math.abs(zKwantyl(0.975) - 1.959964) < 1e-4, zKwantyl(0.975).toFixed(6));
   sprawdz('zKwantyl(0,8) = 0,8416', Math.abs(zKwantyl(0.8) - 0.841621) < 1e-4, zKwantyl(0.8).toFixed(6));
+
+  // Rozkład t — wartości wprost z tablic. Bez tego nie mamy prawa twierdzić,
+  // że liczymy Welcha, a nagłówek tego pliku obiecywał to, zanim kod zaczął robić.
+  sprawdz('tOgon(0; 5) = 1', Math.abs(tOgon(0, 5) - 1) < 1e-9, tOgon(0, 5).toFixed(6));
+  sprawdz('tOgon(2,228; 10) = 0,05', Math.abs(tOgon(2.228, 10) - 0.05) < 1e-3, tOgon(2.228, 10).toFixed(6));
+  sprawdz('tOgon(2,086; 20) = 0,05', Math.abs(tOgon(2.086, 20) - 0.05) < 1e-3, tOgon(2.086, 20).toFixed(6));
+  sprawdz('tOgon(2,704; 40) = 0,01', Math.abs(tOgon(2.704, 40) - 0.01) < 1e-3, tOgon(2.704, 40).toFixed(6));
+  sprawdz('przy ogromnym df t schodzi się z normalnym',
+    Math.abs(tOgon(1.959964, 1e7) - 0.05) < 1e-4, tOgon(1.959964, 1e7).toFixed(6));
+  // I sedno sprawy: przy małej próbce t MUSI dawać większe p niż normalny.
+  sprawdz('przy df=20 t jest ostrożniejszy od normalnego',
+    tOgon(2.5, 20) > 2 * (1 - phi(2.5)),
+    `t: ${tOgon(2.5, 20).toFixed(4)} wobec normalnego ${(2 * (1 - phi(2.5))).toFixed(4)}`);
 
   // ── 2. Średnia i wariancja z sum zgadzają się z liczeniem wprost ──
   console.log('\n2. Średnia i wariancja liczone z sum, nie z tablicy');
@@ -198,6 +297,28 @@ if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}` ||
   }
   sprawdz('bez poprawki alarmów jest wyraźnie więcej', bezPoprawki / POWT > odsetekLig * 1.8,
     `${((bezPoprawki / POWT) * 100).toFixed(2)}% wobec ${(odsetekLig * 100).toFixed(2)}%`);
+
+  // ── 3b. To samo, ale przy MAŁEJ próbce — dziura, przez którą błąd przeszedł ──
+  //
+  // Powyższy test puszczał wyłącznie N=300. Przy tylu trejdach rozkład normalny
+  // i t dają praktycznie to samo, więc test nie mógł wykryć, że liczymy nie tym
+  // rozkładem, co trzeba. Tymczasem w prawdziwej lidze połowa graczy ma po
+  // 20–35 trejdów, bo rzadko wchodzą — i to właśnie oni dostawali werdykty
+  // z zaniżonym p. Narzędzie do wykrywania złudzeń musi być sprawdzane tam,
+  // gdzie najłatwiej o złudzenie.
+  console.log('\n3b. Fałszywe alarmy przy MAŁEJ próbce (n=22 wobec małpy n=309)');
+  let maleFalszywe = 0;
+  for (let i = 0; i < POWT; i++) {
+    const g = {
+      a: zbierz(22, 0, SD), b: zbierz(28, 0, SD), c: zbierz(33, 0, SD), d: zbierz(36, 0, SD),
+      malpa: zbierz(309, 0, SD),
+    };
+    const w = istotnosc(g, DEFS, 'malpa', 4);
+    maleFalszywe += w.filter((x) => x.werdykt === 'bije' || x.werdykt === 'gorzej').length;
+  }
+  const odsetekMale = maleFalszywe / (POWT * 4);
+  sprawdz('fałszywie istotny wiersz ≤ 2% (próg to 1,25%)', odsetekMale <= 0.02,
+    `${(odsetekMale * 100).toFixed(2)}%`);
 
   // ── 4. I odwrotnie: czy wykrywamy przewagę, która JEST ──
   console.log('\n4. Wykrywalność — 500 lig, w których gracz A ma prawdziwą przewagę 0,2 SD');

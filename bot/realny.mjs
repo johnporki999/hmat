@@ -131,6 +131,14 @@ const nowISO = () => new Date().toISOString();
 const usd = (x) => `$${Number(x).toFixed(2)}`;
 const log = (...a) => console.log(...a);
 
+// PRAWDA O POZYCJACH JEST NA GIELDZIE, a nie w naszym pliku stanu. Wypelnia to
+// sprawdzKonto przy kazdym ZYWYM przebiegu; w trybie suchym zostaje `null`, bo
+// tam pozycje sa zmyslone i gielda z zalozenia o nich nie wie.
+//
+// `null` znaczy "nie wiemy" i nie wolno go mylic z "gielda nic nie trzyma" —
+// dlatego kazde uzycie zaczyna sie od sprawdzenia, czy w ogole mamy odczyt.
+let pozycjeGieldy = null;
+
 async function poi(body) {
   const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   if (!r.ok) throw new Error(`Hyperliquid HTTP ${r.status}`);
@@ -146,7 +154,17 @@ async function swiece(nazwa, ile = 400) {
 }
 
 const czytaj = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
-const pisz = (f, x) => { fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, JSON.stringify(x, null, 2)); };
+// Zapis przez plik tymczasowy i podmiane nazwy. Bez tego przerwanie procesu
+// w trakcie writeFileSync zostawia PLIK STANU URWANY W POLOWIE — a stad juz
+// tylko krok do bota, ktory przy nastepnym przebiegu nie wie o swoich
+// prawdziwych pozycjach. `renameSync` w obrebie jednego katalogu jest
+// niepodzielne: albo jest stary plik, albo caly nowy, nigdy polowa.
+const pisz = (f, x) => {
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  const tmp = `${f}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(x, null, 2));
+  fs.renameSync(tmp, f);
+};
 
 // ── skladanie zlecen (tylko tryb zywy) ──────────────────────────────────────
 //
@@ -189,11 +207,29 @@ if (!P.SUCHY) {
   const { privateKeyToAccount } = await import('viem/accounts');
   const klucz = P.AGENT_KEY.startsWith('0x') ? P.AGENT_KEY : `0x${P.AGENT_KEY}`;
   const transport = new HttpTransport();
+
+  // Wczytanie klucza MUSI byc w bezpieczniku, i to nie dla porzadku.
+  //
+  // Gdy klucz jest zly (literowka, spacja, ucięty znak), viem rzuca wyjatkiem,
+  // a jego komunikaty walidacji potrafia zawierac wartosc, ktora nie przeszla.
+  // Bez tego opakowania taki wyjatek poleci prosto do logs/hajsomat.log —
+  // czyli KLUCZ PRYWATNY wyladowalby w pliku tekstowym na dysku serwera.
+  //
+  // Dlatego lapiemy wszystko i wypisujemy WYLACZNIE dlugosc i pierwsze znaki.
+  let portfel;
+  try {
+    portfel = privateKeyToAccount(klucz);
+  } catch {
+    console.error('! Nie moge wczytac klucza agenta. Sprawdz REALNY_AGENT_KEY w deploy/.env.');
+    console.error(`  Powinien miec 66 znakow z prefiksem 0x; ten ma ${klucz.length} i zaczyna sie od "${klucz.slice(0, 4)}".`);
+    console.error('  Tresci bledu nie wypisuje celowo — moglaby zawierac sam klucz.');
+    process.exit(1);
+  }
+
   gielda = {
-    ex: new ExchangeClient({ transport, wallet: privateKeyToAccount(klucz) }),
+    ex: new ExchangeClient({ transport, wallet: portfel }),
     info: new InfoClient({ transport }),
   };
-
 }
 
 /**
@@ -300,6 +336,14 @@ async function sprawdzKonto(stan) {
     // Pozycje otwarte na gieldzie, o ktorych nasz stan nie wie, znaczylyby, ze
     // handluje tu cos jeszcze. Lepiej stanac, niz nakladac sie na cudze zlecenia.
     const naGieldzie = (perp?.assetPositions ?? []).filter((x) => Number(x?.position?.szi ?? 0) !== 0);
+
+    // Zapamietujemy, co gielda NAPRAWDE trzyma — petla wyjsc porowna to ze swoim
+    // stanem. Nie kosztuje ani jednego dodatkowego zapytania: odczyt konta i tak
+    // juz mamy. Klucze to nazwy Hyperliquid (kBONK, a nie BONK) — tlumaczy je AKTYWA.
+    pozycjeGieldy = Object.fromEntries(
+      naGieldzie.map((x) => [String(x.position.coin).toUpperCase(), Math.abs(Number(x.position.szi))]),
+    );
+
     if (naGieldzie.length && !Object.keys(stan.pozycje).length) {
       console.error(`! Na gieldzie wisi ${naGieldzie.length} pozycji, o ktorych bot nie wie: ${naGieldzie.map((x) => x.position.coin).join(', ')}`);
       console.error('  Zamknij je recznie albo usun state/realny-state.json, zeby bot zaczal od zera.');
@@ -459,26 +503,95 @@ const meta = await poi({ type: 'meta' });
 const rynek = new Map(meta.universe.map((u, i) => [u.name.toUpperCase(), { idx: i, szDecimals: u.szDecimals, maxLeverage: u.maxLeverage }]));
 
 const rynki = {};
+// Aktywo, w ktorym MAMY otwarta pozycje, ma inne wymagania niz aktywo, w ktore
+// dopiero chcemy wejsc. Stop i trailing sa u nas WIRTUALNE — na gieldzie nie
+// wisi zadne zlecenie zabezpieczajace, wiec pilnuje ich wylacznie petla wyjsc.
+// Jesli rynek wypadnie z tej listy, petla pomija go cicho i lewarowana pozycja
+// zostaje bez zadnej ochrony az do likwidacji.
+const trzymane = new Set(Object.keys(stan.pozycje || {}));
 for (const [sym, nazwa] of Object.entries(AKTYWA)) {
   try {
     const info = rynek.get(nazwa.toUpperCase());
     if (!info) { log(`  ${sym}: Hyperliquid nie ma juz rynku ${nazwa} — pomijam`); continue; }
-    if (info.maxLeverage < P.LEWAR) { log(`  ${sym}: maks. dzwignia ${info.maxLeverage}x < nasze ${P.LEWAR}x — pomijam`); continue; }
+    // Dzwignia decyduje o tym, czy wolno WEJSC — nie o tym, czy wolno pilnowac
+    // tego, co juz mamy. Hyperliquid rutynowo obniza limity na altach, a TNSR
+    // stoi dzis dokladnie na naszych 3x, wiec to nie jest przypadek teoretyczny.
+    const zaMalaDzwignia = info.maxLeverage < P.LEWAR;
+    if (zaMalaDzwignia && !trzymane.has(sym)) {
+      log(`  ${sym}: maks. dzwignia ${info.maxLeverage}x < nasze ${P.LEWAR}x — pomijam`); continue;
+    }
+    if (zaMalaDzwignia) log(`  ${sym}: dzwignia spadla do ${info.maxLeverage}x — nie wchodze, ale pilnuje otwartej pozycji`);
     const c = await swiece(nazwa);
     if (c.length < 230) { log(`  ${sym}: tylko ${c.length} swiec, pomijam`); continue; }
     const D = przygotujAktywo(c);
     const i = D.n - 1;
     const m = D.metryka(i);
-    if (m) rynki[sym] = { D, i, m, nazwa, cena: D.closes[i], ...info };
+    if (m) rynki[sym] = { D, i, m, nazwa, cena: D.closes[i], ...info, tylkoWyjscie: zaMalaDzwignia };
   } catch (e) { log(`  ${sym}: ${e.message}`); }
 }
 log(`> rynkow gotowych: ${Object.keys(rynki).length} z ${Object.keys(AKTYWA).length}`);
+
+// Otwarta pozycja BEZ danych rynkowych to pozycja bez nadzoru: w tym przebiegu
+// nikt nie sprawdzi jej stopa. Petla wyjsc i tak ja pominie, wiec niech to
+// przynajmniej nie bedzie ciche — jedno nieudane zapytanie o swiece nie moze
+// wygladac tak samo jak zdrowy przebieg.
+for (const sym of trzymane) {
+  if (!rynki[sym]) console.error(`! ${sym}: mam otwarta pozycje, ale brak danych rynkowych — w tym przebiegu NIE sprawdze jej stopa ani trailingu`);
+}
 
 const kapital = () => stan.cash + Object.values(stan.pozycje).reduce((s, p) => s + p.margin, 0);
 
 // ── wyjscia ─────────────────────────────────────────────────────────────────
 for (const [sym, p] of Object.entries(stan.pozycje)) {
   const r = rynki[sym];
+
+  // ── POZYCJA MOGLA ZNIKNAC BEZ NASZEGO UDZIALU ──────────────────────────────
+  //
+  // Likwidacja, ADL, reczne zamkniecie w app.hyperliquid.xyz albo zlecenie,
+  // ktore weszlo, ale odpowiedz przepadla po drodze. Bez tego sprawdzenia bot
+  // probowalby zamykac zleceniem reduceOnly cos, czego nie ma: gielda odmawia,
+  // nizej leci `continue` — i tak co piec minut, bez konca. Miejsce byloby
+  // zajete NA ZAWSZE (przy dwoch miejscach to od razu polowa mocy bota),
+  // a kapital() liczylby marze, ktorej na koncie juz nie ma, wiec kazda kolejna
+  // pozycja bralaby rozmiar od zawyzonej kwoty.
+  //
+  // Samonaprawa z sprawdzKonto tego NIE zlapie: ma warunek "gdy bot jest
+  // plaski", a plaski nigdy nie bedzie, skoro trzyma ducha.
+  //
+  // Margines 3 minut na wypadek, gdyby swiezo otwarta pozycja nie zdazyla sie
+  // jeszcze pojawic w odczycie konta.
+  const nazwaHL = (AKTYWA[sym] ?? sym).toUpperCase();
+  const swieza = Date.now() - Date.parse(p.entryTs) < 3 * 60000;
+  if (pozycjeGieldy && !swieza && !pozycjeGieldy[nazwaHL]) {
+    // Cena wyjscia jest tu ZGADYWANA i mowimy o tym wprost. Jesli rynek zaszedl
+    // za prog likwidacji, zakladamy likwidacje (cala marza przepada); jesli nie
+    // — ktos zamknal pozycje mniej wiecej po biezacej cenie.
+    const px = r?.cena ?? p.entryPrice;
+    const zlikwidowany = p.liqPrice != null
+      && (p.side === 'LONG' ? px <= p.liqPrice : px >= p.liqPrice);
+    const brutto = (p.side === 'LONG' ? px / p.entryPrice - 1 : 1 - px / p.entryPrice) * p.notional;
+    const netto = zlikwidowany ? -p.margin : brutto - p.notional * P.TAKER;
+    stan.cash += zlikwidowany ? 0 : p.margin + netto;
+    stan.zamkniete += 1;
+    trejdy.push({
+      ts: nowISO(), sym, side: p.side, typ: 'CLOSE',
+      powod: zlikwidowany ? 'LIKWIDACJA' : 'ZNIKNELA_Z_GIELDY',
+      entryPrice: p.entryPrice, cenaWidziana: px, cenaWypelnienia: px,
+      poslizg: null,        // tego wyjscia nie mierzylismy — nie ma czego porownac
+      szacowane: true,      // NIE liczyc tego trejdu do pomiaru kosztow rundy
+      margin: p.margin, notional: p.notional,
+      oplata: zlikwidowany ? 0 : p.notional * P.TAKER,
+      oplataRundy: p.notional * P.TAKER * (zlikwidowany ? 1 : 2),
+      pnlUsd: netto,
+      R: zlikwidowany ? -1 : (netto - p.notional * P.TAKER) / p.margin,
+      trzymane_h: (Date.now() - Date.parse(p.entryTs)) / 3600000,
+    });
+    log(`  ! ${sym} ${p.side}: gielda juz jej nie ma — ${zlikwidowany ? 'likwidacja' : 'zamknieta poza botem'}, ksieguje szacunkowo ${usd(netto)}`);
+    log('    (cena wyjscia to szacunek; gotowke wyrowna samonaprawa, gdy bot bedzie plaski)');
+    delete stan.pozycje[sym];
+    continue;
+  }
+
   if (!r) continue;
   const px = r.cena;
   p.bestPrice = p.side === 'LONG' ? Math.max(p.bestPrice, px) : Math.min(p.bestPrice, px);
@@ -501,6 +614,26 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
     // Nieudanego zamkniecia NIE udajemy: pozycja zostaje otwarta i sprobujemy
     // za piec minut. Zapisanie jej jako zamknietej rozjechaloby nam stan z gielda.
     if (!w) { log(`  ${sym}: nie udalo sie zamknac — probuje w nastepnym przebiegu`); continue; }
+
+    // CZESCIOWE WYPELNIENIE. IOC bierze tylko to, co stoi po naszej cenie —
+    // reszta zlecenia przepada, ale POZYCJA NA GIELDZIE ZOSTAJE. Skasowanie jej
+    // ze stanu w calosci zostawiloby resztke otwarta bez nadzoru, a kontrola
+    // z sprawdzKonto tego nie zlapie (wymaga, zeby bot byl plaski).
+    //
+    // Ksiegujemy wiec tylko to, co naprawde poszlo, i wracamy po reszte za piec
+    // minut. Skutek uboczny: zapis trejdu obejmie dopiero domkniecie, wiec przy
+    // czesciowym wyjsciu zmierzony poslizg dotyczy resztki. Wolimy to od
+    // porzucenia pozycji, o ktorej bot zapomnial.
+    if (w.ile > 0 && w.ile < p.sz * 0.999) {
+      const czesc = w.ile / p.sz;
+      const bruttoC = (p.side === 'LONG' ? w.fill / p.entryPrice - 1 : 1 - w.fill / p.entryPrice) * p.notional * czesc;
+      log(`  ${sym}: zamknieta tylko czesc (${(czesc * 100).toFixed(0)}%) — reszta zostaje, domykam w nastepnym przebiegu`);
+      stan.cash += p.margin * czesc + bruttoC - p.notional * czesc * P.TAKER;
+      p.sz -= w.ile;
+      p.notional *= 1 - czesc;
+      p.margin *= 1 - czesc;
+      continue;
+    }
     fill = w.fill;
   }
 
@@ -531,6 +664,11 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
   });
   log(`  ZAMYKAM ${sym} ${p.side} @ ${fill} — ${powod}, wynik ${usd(netto)} (${(netto / p.margin * 100).toFixed(2)}%)`);
   delete stan.pozycje[sym];
+  // Tak samo jak przy wejsciu: utrwalamy od razu. Gdyby proces zginal tutaj,
+  // sprawdzenie "pozycja zniknela z gieldy" wyzej i tak by to posprzatalo, ale
+  // po cenie SZACOWANEJ — a tu mamy prawdziwa cene wypelnienia, czyli dokladnie
+  // ten pomiar, dla ktorego ten bot powstal. Szkoda go tracic.
+  if (!P.SUCHY) { stan.kapital = kapital(); pisz(F_STAN, stan); pisz(F_TREJDY, trejdy); }
 }
 
 // ── koniec eksperymentu? ────────────────────────────────────────────────────
@@ -550,13 +688,22 @@ if (!stan.koniec) {
     if (otwarte >= wolne) break;
     if (stan.pozycje[sym]) continue;
     if (P.MAX_TREJDOW > 0 && stan.zamkniete + Object.keys(stan.pozycje).length >= P.MAX_TREJDOW) break;
+    // Rynek trzymany tylko po to, zeby pilnowac otwartej pozycji — dzwignia
+    // gieldy spadla ponizej naszej, wiec wejscie wyszloby w innej skali.
+    if (r.tylkoWyjscie) continue;
 
-    const syg = def.wejscie(sym, r.m, r.D.kawalek(r.i));
+    // To samo `try` co przy skanie nizej: gracz moze nie umiec danego ksztaltu
+    // danych. Bez niego wyjatek zabijalby proces w srodku petli wejsc — juz PO
+    // tym, jak wczesniejsze zlecenie sie wypelnilo, ale PRZED zapisem stanu.
+    // Prawdziwa pozycja zostawalaby wtedy poza ksiegami bota.
+    let syg = null;
+    try { syg = def.wejscie(sym, r.m, r.D.kawalek(r.i)); }
+    catch (e) { log(`  ${sym}: gracz nie policzyl sygnalu (${e.message}) — pomijam`); continue; }
     if (!syg) continue;
 
     const kap = kapital();
-    const margin = Math.min(stan.cash, kap * P.ALLOC);
-    const notional = margin * P.LEWAR;
+    let margin = Math.min(stan.cash, kap * P.ALLOC);
+    let notional = margin * P.LEWAR;
     if (notional < P.MIN_ZLECENIE) { log(`  ${sym}: pozycja ${usd(notional)} ponizej minimum ${usd(P.MIN_ZLECENIE)} — pomijam`); continue; }
 
     const long = syg.kier === 'LONG';
@@ -575,6 +722,16 @@ if (!stan.koniec) {
       const w = await zlec({ idx: r.idx, szDecimals: r.szDecimals, kupno: long, wielkosc: sz, widziana, redukuje: false });
       if (!w) continue;
       fill = w.fill; ileSztuk = w.ile;
+
+      // Gielda mogla dac MNIEJ sztuk, niz chcielismy — IOC bierze tylko to, co
+      // stoi po naszej cenie. Ksiegujemy wtedy mniejsza pozycje, bo inaczej bot
+      // blokowalby marze, ktorej realnie nie wystawil, i liczylby wynik od
+      // nominalu, ktorego nie ma na gieldzie.
+      if (ileSztuk > 0 && ileSztuk < sz * 0.999) {
+        const czesc = ileSztuk / sz;
+        log(`    weszlo tylko ${(czesc * 100).toFixed(0)}% zlecenia — ksieguje mniejsza pozycje`);
+        margin *= czesc; notional *= czesc;
+      }
     }
 
     const stopA = def.stopAtr ?? CFG.STOP_ATR;
@@ -598,6 +755,22 @@ if (!stan.koniec) {
       margin, notional, oplata: notional * P.TAKER, warunki: { rsi: r.m.rsi, volPct: r.m.volPct, er: r.m.er },
     });
     log(`  OTWIERAM ${sym} ${syg.kier} @ ${fill} — ${syg.powod}`);
+
+    // ZAPIS NATYCHMIAST PO WYPELNIENIU, a nie dopiero na koncu przebiegu.
+    //
+    // Miedzy zlozeniem zlecenia a koncowym pisz(F_STAN) jest jeszcze reszta tej
+    // petli i caly skan rynkow. Cokolwiek ubije proces po drodze — wyjatek,
+    // restart serwera, timeout sieci — zostawiloby PRAWDZIWA pozycje na gieldzie
+    // poza ksiegami bota. Przy nastepnym przebiegu sprawdzKonto albo zabije bota
+    // (proces exit 1), albo, jesli akurat trzyma inna pozycje, w ogole tego nie
+    // zauwazy i sierota zostanie na gieldzie bez nadzoru.
+    //
+    // Zapis jest tani (jeden maly plik), a wykonuje sie tylko po realnym wejsciu.
+    if (!P.SUCHY) {
+      stan.kapital = kapital();
+      pisz(F_STAN, stan);
+      pisz(F_TREJDY, trejdy);
+    }
     otwarte++;
   }
 }

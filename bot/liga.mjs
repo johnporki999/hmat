@@ -164,11 +164,38 @@ let equity = P.RESET ? [] : readJSON(F_EQUITY, []);
 if (P.RESET) log('> reset ligi');
 
 // dane rynkowe raz dla wszystkich graczy
-// Liga A gra na aktywach bota (CFG.ASSETS). Liga B dostaje wlasna liste
-// przez LIGA_ASSETS — bez tego dzielilyby uniwersum i nie bylo by czego porownywac.
+// Kazda liga dostaje wlasna liste przez LIGA_ASSETS (ustawia ja run.sh) — bez
+// tego dzielilyby uniwersum i nie byloby czego porownywac.
 const listaAktywow = env('LIGA_ASSETS', '');
 const aktywa = (listaAktywow ? listaAktywow.split(',').map((s) => s.trim()) : CFG.ASSETS)
   .filter((s) => UNIVERSE[s]);
+
+// ── ZAMEK NA BOISKO ─────────────────────────────────────────────────────────
+//
+// Uniwersum ligi to BOISKO, na ktorym gra osiemnastu graczy. Zmiana go w
+// polowie eksperymentu uniewaznia wszystkie porownania miedzy nimi — czesc
+// wynikow pochodzilaby z jednego zestawu monet, czesc z innego, a my nie
+// mielibysmy jak tego rozdzielic po fakcie.
+//
+// Zamek jest tu, bo liga A brala liste z CFG.ASSETS, czyli ze zmiennej ASSETS
+// wspoldzielonej z botem perp. Wystarczylo podkrecic bota perp w deploy/.env,
+// zeby po cichu przestawic boisko lidze. Teraz run.sh podaje obu ligom liste
+// wprost, a ten zamek pilnuje, ze nikt jej nie ruszy niepostrzezenie.
+const odciskUniwersum = [...aktywa].sort().join(',');
+if (!stan.uniwersum) {
+  stan.uniwersum = odciskUniwersum;
+} else if (stan.uniwersum !== odciskUniwersum && env('LIGA_ZMIEN_UNIWERSUM', '') !== '1') {
+  console.error('! UNIWERSUM LIGI SIE ZMIENILO — zatrzymuje sie, zeby nie zepsuc eksperymentu.');
+  console.error(`  bylo: ${stan.uniwersum}`);
+  console.error(`  jest: ${odciskUniwersum}`);
+  console.error('  Jesli ta zmiana jest ZAMIERZONA, uruchom raz z LIGA_ZMIEN_UNIWERSUM=1 —');
+  console.error('  ale pamietaj, ze porownania miedzy graczami zaczna sie wtedy liczyc od nowa.');
+  process.exit(1);
+} else if (stan.uniwersum !== odciskUniwersum) {
+  log(`> UNIWERSUM ZMIENIONE SWIADOMIE: ${stan.uniwersum} -> ${odciskUniwersum}`);
+  stan.uniwersum = odciskUniwersum;
+  stan.uniwersumZmienione = nowISO();
+}
 const rynek = {};
 for (const sym of aktywa) {
   const c = await swiece(sym, CFG.CANDLE_MINUTES);
@@ -185,9 +212,14 @@ log(`> zeskanowano ${Object.keys(rynek).length} aktywów`);
 
 // ── sejsmograf: czy w ostatniej dobie rynkiem tąpnęło ────────────────────────
 //
-// BTC sluzy tu WYLACZNIE jako czujnik i NIE wchodzi do uniwersum ligi — dodanie
-// go jako aktywa do handlu zmieniloby boisko wszystkim graczom w polowie
-// eksperymentu i uniewaznilo porownania, ktore zbieramy od lipca.
+// UWAGA: ten komentarz obiecywal kiedys, ze BTC jest tu WYLACZNIE czujnikiem
+// i nie wchodzi do uniwersum ligi. To bylo nieprawda i wprowadzalo w blad —
+// liga A handluje BTC i ETH od pierwszego przebiegu, bo brala liste z CFG.ASSETS.
+// Zostawiamy to tak, jak jest: usuniecie ich TERAZ byloby wlasnie ta zmiana
+// boiska w polowie eksperymentu, przed ktora ostrzegal stary komentarz.
+//
+// Czujnik i uniwersum to wiec dwie role tego samego aktywa: ponizej BTC sluzy
+// za miare paniki na rynku, a rownoczesnie gracze moga nim handlowac.
 //
 // Regula (bot/cache/MOTANIE-WNIOSKI.md): jesli w ciagu ostatnich 24h byla
 // chwila, w ktorej dobowy ruch BTC przekroczyl prog, gracz-sejsmograf nie

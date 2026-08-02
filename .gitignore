@@ -61,6 +61,9 @@ yarn-error.*
 /logs/
 # plik blokady tworzony przez deploy/run.sh
 .hajsomat.lock
+# pliki tymczasowe zapisu stanu (bot pisze do .tmp i podmienia nazwe) — gdyby
+# proces zginal miedzy zapisem a podmiana, `git add state` nie ma ich zabierac
+/state/*.tmp
 wallet.json
 wallet-*.json
 *.secret

@@ -377,7 +377,12 @@ export function zmianaRynku(wejscie, wyjscie) {
  * ctx.leader to metryki SOL (lidera rynku) — potrzebne tylko przy LEADER_FILTER.
  */
 export function entrySignal(sym, m, cfg = CFG, ctx = {}) {
-  const costPct = cfg.EST_COST_PCT * (UNIVERSE[sym].costMul || 1);
+  // `?.` a nie `.` — laboratorium puszcza te funkcje na 127 monetach, a UNIVERSE
+  // ma ich 39. Bez oslony leci TypeError i pada CALY przebieg, przez co KAT 3
+  // (bias przetrwania) nigdy nie ruszyl dla rodziny Trendu — czyli takze dla
+  // Smyczy, ktory wydaje prawdziwe pieniadze. 1.7 to nasz najwyzszy mnoznik
+  // (PENGU), wiec dla monety spoza tabeli zakladamy najgorszy znany spread.
+  const costPct = cfg.EST_COST_PCT * (UNIVERSE[sym]?.costMul ?? 1.7);
   const good = [];
   let score = 0;
 
@@ -460,7 +465,9 @@ export function entrySignal(sym, m, cfg = CFG, ctx = {}) {
  * Do wyrownania przy najblizszym resecie ligi.
  */
 export function shortSignal(sym, m, cfg = CFG, dodatkowyKoszt = 0) {
-  const costPct = cfg.EST_COST_PCT * (UNIVERSE[sym].costMul || 1) + dodatkowyKoszt;
+  // Jak wyzej: moneta spoza UNIVERSE dostaje najwyzszy znany mnoznik zamiast
+  // wywalac proces. Zaniżenie kosztu byloby gorsze niz zawyzenie.
+  const costPct = cfg.EST_COST_PCT * (UNIVERSE[sym]?.costMul ?? 1.7) + dodatkowyKoszt;
   const good = [];
   let score = 0;
 

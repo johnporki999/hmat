@@ -73,6 +73,20 @@ GALAZ="${GIT_BRANCH:-main}"
 # Zeby dorzucic spot:  run.sh trade perp liga ligab stado
 BOTY="${*:-perp liga ligab stado}"
 
+# Uniwersum Ligi A — DOKLADNIE to, na czym liga gra od 27.07.2026 (odczytane
+# z zywego state/liga-state.json, pole lastRun.prices).
+#
+# Wczesniej ta lista NIE byla tu podana i liga brala ja z CFG.ASSETS, czyli ze
+# zmiennej ASSETS w deploy/.env — tej samej, ktora konfiguruje bota perp.
+# Znaczylo to, ze dolozenie albo usuniecie jednej monety przy strojeniu perpa
+# po cichu zmienialoby BOISKO osiemnastu graczom w polowie eksperymentu
+# i uniewazniloby wszystkie porownania miedzy nimi. Teraz boisko jest zapisane
+# tutaj, a liga.mjs dodatkowo odmawia startu, gdy sie rozjedzie.
+#
+# BTC i ETH SA w tej liscie celowo — liga handluje nimi od pierwszego przebiegu.
+# Usuniecie ich teraz byloby wlasnie ta zmiana boiska, ktorej unikamy.
+LIGAA_AKTYWA="SOL,JUP,JTO,PYTH,RAY,ORCA,RENDER,BONK,W,TNSR,DRIFT,KMNO,PENGU,BTC,ETH"
+
 # Uniwersum Ligi B — 24 alty, wszystkie notowane przez Krakena (Binance oddaje
 # 451 z amerykanskiego IP, wiec to jedyne zrodlo swiec na tym serwerze).
 LIGAB_AKTYWA="1INCH,ALCX,ARB,ASTR,AVA,BCH,CELO,CTSI,EDU,FIDA,GALA,HFT,JST,LQTY,MASK,NEO,OGN,QNT,RLC,SAND,STORJ,SUPER,VET,YFI"
@@ -87,7 +101,8 @@ for bot in $BOTY; do
   case "$bot" in
     trade) PLIK="trade.mjs" ;;
     perp)  PLIK="perpbot.mjs" ;;
-    liga)  PLIK="liga.mjs" ;;
+    liga)  PLIK="liga.mjs"
+           USTAW="LIGA_ASSETS=$LIGAA_AKTYWA" ;;
     # Ta sama liga.mjs, inna konfiguracja — bez drugiej kopii mechaniki,
     # ktora po miesiacu rozjechalaby sie z pierwsza.
     ligab) PLIK="liga.mjs"

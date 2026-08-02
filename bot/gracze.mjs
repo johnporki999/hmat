@@ -312,6 +312,13 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
   //   nie dziala na BTC i ETH — dziala na altach, czyli tam, gdzie rynek
   //   jest za maly dla duzych graczy (zgodnie z teoria projektu)
   //
+  // ALE UWAGA — to zastrzezenie dotyczy tylko BADANIA. W lidze Sito 5 handluje
+  // BTC i ETH, bo one SA w uniwersum ligi (patrz deploy/run.sh, LIGAA_AKTYWA)
+  // i nie ma tu mechanizmu, ktory wylaczalby pojedynczemu graczowi wybrane
+  // aktywa. Czesc jego wyniku pochodzi wiec z rynkow, na ktorych — wedlug
+  // wlasnej pre-rejestracji — dzialac nie powinien. Przy czytaniu tabeli
+  // trzeba o tym pamietac: to nie jest czysty test tej hipotezy.
+  //
   // Po ludzku: kupuj mocne wyprzedanie, ale tylko gdy spadek jest prosty
   // i jednokierunkowy, a nie pila. To ta sama rodzina co Kontra (ktora ma
   // najpewniejsza alfe ponad malpe na zywo) plus filtr prostoty ruchu —
