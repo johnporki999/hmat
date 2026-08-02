@@ -85,7 +85,10 @@ const P = {
   LEWAR: num('REALNY_LEWAR', 3),
   MIEJSC: num('REALNY_MIEJSC', 2),
   ALLOC: num('REALNY_ALLOC', 0.40),
-  MAX_TREJDOW: num('REALNY_MAX_TREJDOW', 20),
+  // 0 = bez limitu. Limit mial sens przy pomiarze kosztu, gdzie chodzilo
+  // o dwadziescia rund i koniec. Przy stadzie botow, ktore maja po prostu
+  // grac, limit tylko by je uciszal w przypadkowym momencie.
+  MAX_TREJDOW: num('REALNY_MAX_TREJDOW', 0),
   MIN_ZLECENIE: num('REALNY_MIN_ZLECENIE', 10),   // Hyperliquid odrzuca ponizej 10 USD
   STOP_KAPITAL: num('REALNY_STOP_KAPITAL', 0.35), // ponizej 35% startu koniec eksperymentu
   TAKER: num('REALNY_TAKER', 0.00045),
@@ -113,9 +116,17 @@ const AKTYWA = {
   BONK: 'kBONK', BTC: 'BTC', ETH: 'ETH', W: 'W', TNSR: 'TNSR', PENGU: 'PENGU',
 };
 
-const F_STAN = path.join(KAT, 'realny-state.json');
-const F_TREJDY = path.join(KAT, 'realny-trades.json');
-const F_EQUITY = path.join(KAT, 'realny-equity.json');
+// Prefiks pozwala uruchomic ten sam plik dla KILKU botow naraz, kazdy na
+// wlasnym koncie Hyperliquid i z wlasnym stanem — tak samo jak liga.mjs
+// obsluguje Lige A i B. Bez tego trzeba by kopiowac cala logike handlu, a
+// dwie kopie po miesiacu zawsze sie rozjezdzaja.
+//
+// Osobne konta, a nie subkonta, bo subkonta na Hyperliquid wymagaja 100 tys.
+// dolarow obrotu. Trzy zwykle portfele daja to samo rozdzielenie pozycji.
+const PREFIKS = env('REALNY_PREFIKS', 'realny');
+const F_STAN = path.join(KAT, `${PREFIKS}-state.json`);
+const F_TREJDY = path.join(KAT, `${PREFIKS}-trades.json`);
+const F_EQUITY = path.join(KAT, `${PREFIKS}-equity.json`);
 const nowISO = () => new Date().toISOString();
 const usd = (x) => `$${Number(x).toFixed(2)}`;
 const log = (...a) => console.log(...a);
@@ -243,9 +254,18 @@ async function sprawdzKonto(stan) {
       console.error('  Wplac USDC przez most na app.hyperliquid.xyz i sprobuj ponownie.');
       process.exit(1);
     }
-    if (calosc < P.START * 0.9) {
-      log(`  UWAGA: na koncie mniej niz zakladany start (${usd(P.START)}). Licze pozycje od tego, co jest.`);
+    // Na PIERWSZYM przebiegu bierzemy start wprost z konta, zamiast wierzyc
+    // liczbie wpisanej recznie w .env. Kazdy portfel ma troche inna kwote (35,
+    // 36, 37...), a rozjazd miedzy zapisanym startem a rzeczywistym saldem
+    // psulby wszystkie procenty i wykres kapitalu — przy czym cicho, bo nic
+    // by nie protestowalo.
+    const pierwszy = !stan.zamkniete && !Object.keys(stan.pozycje || {}).length;
+    if (pierwszy && calosc > 0 && Math.abs(calosc - P.START) > 0.01) {
+      log(`  start ustawiam z konta: ${usd(calosc)} (w .env bylo ${usd(P.START)})`);
       P.START = calosc;
+      stan.cash = calosc;
+    } else if (calosc < P.START * 0.9) {
+      log(`  UWAGA: na koncie ${usd(calosc)}, a bot liczy od ${usd(P.START)} — sprawdz, czy nic nie wyplyneło.`);
     }
     // Pozycje otwarte na gieldzie, o ktorych nasz stan nie wie, znaczylyby, ze
     // handluje tu cos jeszcze. Lepiej stanac, niz nakladac sie na cudze zlecenia.
@@ -282,6 +302,28 @@ async function zlec({ idx, szDecimals, kupno, wielkosc, widziana, redukuje }) {
   } catch (e) {
     log(`    blad skladania zlecenia: ${e.message}`);
     return null;
+  }
+}
+
+// ── przejecie historii sprzed podzialu na stado ──────────────────────────────
+//
+// Do 01.08.2026 chodzil JEDEN bot realny (Smycz) i pisal do `realny-*.json`.
+// Gdy rozdzielamy sie na kilka botow, kazdy dostaje wlasny prefiks — ale te
+// 20 prawdziwych trejdow to najcenniejsze dane, jakie mamy, i szkoda ich
+// zaczynac od zera. Jesli nowy plik jeszcze nie istnieje, a stary jest i nalezy
+// do TEGO SAMEGO gracza, przejmujemy go razem z krzywa kapitalu i dziennikiem.
+//
+// Warunek "ten sam gracz" jest istotny: bez niego Sito 5 odziedziczyloby
+// historie Smyczy i mielibysmy w statystykach cudze trejdy.
+if (PREFIKS !== 'realny' && !fs.existsSync(F_STAN)) {
+  const stary = czytaj(path.join(KAT, 'realny-state.json'), null);
+  if (stary && stary.gracz === P.GRACZ) {
+    log(`> przejmuje historie sprzed podzialu (${stary.zamkniete} trejdow gracza ${stary.gracz})`);
+    pisz(F_STAN, { ...stary, przejeteZ: 'realny', przejeteKiedy: nowISO() });
+    for (const [zrodlo, cel] of [['realny-trades.json', F_TREJDY], ['realny-equity.json', F_EQUITY]]) {
+      const d = czytaj(path.join(KAT, zrodlo), null);
+      if (d) pisz(cel, d);
+    }
   }
 }
 
@@ -338,7 +380,7 @@ const def = gracze[P.GRACZ];
 if (!def) { console.error(`Nie znam gracza "${P.GRACZ}". Dostepni: ${Object.keys(gracze).join(', ')}`); process.exit(1); }
 
 log(`=== HAJSOMAT REALNY ${nowISO()} | ${P.SUCHY ? 'SUCHY (nic nie kosztuje)' : '*** ZA PRAWDZIWE PIENIADZE ***'} ===`);
-log(`> gracz ${def.nazwa}, dzwignia ${P.LEWAR}x, ${P.MIEJSC} miejsca po ${(P.ALLOC * 100).toFixed(0)}%, limit ${P.MAX_TREJDOW} trejdow`);
+log(`> gracz ${def.nazwa}, dzwignia ${P.LEWAR}x, ${P.MIEJSC} miejsca po ${(P.ALLOC * 100).toFixed(0)}%, ${P.MAX_TREJDOW > 0 ? `limit ${P.MAX_TREJDOW} trejdow` : "bez limitu trejdow"}`);
 
 // Koniec eksperymentu NIE jest wyrokiem dozywotnim. Powody, dla ktorych bot
 // staje, sa dwa i oba da sie cofnac: limit trejdow (podnosisz go w .env) oraz
@@ -348,14 +390,16 @@ log(`> gracz ${def.nazwa}, dzwignia ${P.LEWAR}x, ${P.MIEJSC} miejsca po ${(P.ALL
 // kodzie zamiast w konfiguracji.
 if (stan.koniec) {
   const kapNaStarcie = stan.cash + Object.values(stan.pozycje || {}).reduce((s, p) => s + p.margin, 0);
-  const jestLimit = stan.zamkniete >= P.MAX_TREJDOW;
+  // MAX_TREJDOW = 0 znaczy "bez limitu". Bez tego warunku `zamkniete >= 0`
+  // bylby zawsze prawdziwy i bot zamilkalby natychmiast po starcie.
+  const jestLimit = P.MAX_TREJDOW > 0 && stan.zamkniete >= P.MAX_TREJDOW;
   const jestPodloga = kapNaStarcie < P.START * P.STOP_KAPITAL;
   if (jestLimit || jestPodloga) {
     log(`> eksperyment ZAKONCZONY (${stan.koniec}) — ${jestLimit ? `zrobil ${stan.zamkniete} z ${P.MAX_TREJDOW} trejdow` : 'kapital ponizej progu'}`);
     log(`  Zeby wznowic: podnies REALNY_MAX_TREJDOW w deploy/.env${jestPodloga ? ' albo doloz srodkow' : ''}.`);
     process.exit(0);
   }
-  log(`> WZNAWIAM: limit podniesiony do ${P.MAX_TREJDOW}, a zrobione jest ${stan.zamkniete}`);
+  log(`> WZNAWIAM: ${P.MAX_TREJDOW > 0 ? `limit podniesiony do ${P.MAX_TREJDOW}` : 'limit zdjety'}, zrobione ${stan.zamkniete}`);
   stan.koniec = null;
 }
 
@@ -443,7 +487,7 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
 }
 
 // ── koniec eksperymentu? ────────────────────────────────────────────────────
-if (stan.zamkniete >= P.MAX_TREJDOW) {
+if (P.MAX_TREJDOW > 0 && stan.zamkniete >= P.MAX_TREJDOW) {
   stan.koniec = nowISO();
   log(`> OSIAGNIETO LIMIT ${P.MAX_TREJDOW} TREJDOW — koniec eksperymentu, nie otwieram nic wiecej`);
 } else if (kapital() < P.START * P.STOP_KAPITAL) {
@@ -458,7 +502,7 @@ if (!stan.koniec) {
   for (const [sym, r] of Object.entries(rynki)) {
     if (otwarte >= wolne) break;
     if (stan.pozycje[sym]) continue;
-    if (stan.zamkniete + Object.keys(stan.pozycje).length >= P.MAX_TREJDOW) break;
+    if (P.MAX_TREJDOW > 0 && stan.zamkniete + Object.keys(stan.pozycje).length >= P.MAX_TREJDOW) break;
 
     const syg = def.wejscie(sym, r.m, r.D.kawalek(r.i));
     if (!syg) continue;
@@ -550,7 +594,38 @@ if (equity.length > 4000) {
 }
 pisz(F_EQUITY, equity);
 
-log(`> kapital ${usd(stan.kapital)} (start ${usd(P.START)}), pozycji ${Object.keys(stan.pozycje).length}, trejdow ${stan.zamkniete}/${P.MAX_TREJDOW}`);
+// ── spis stada ───────────────────────────────────────────────────────────────
+//
+// Wspolny plik, do ktorego kazdy bot dopisuje swoja wizytowke. Bez niego apka
+// musialaby zgadywac, ktore boty zyja — czyli strzelac osiemnastoma zapytaniami
+// po nazwach wszystkich graczy i patrzec, ktore nie zwroca bledu.
+//
+// Zapis jest bezpieczny, bo run.sh uruchamia boty PO KOLEI w jednym procesie,
+// wiec dwa nie pisza naraz. Gdyby to sie kiedys zmienilo, trzeba tu dolozyc
+// blokade — inaczej ostatni zapis skasuje wpisy pozostalych.
+if (PREFIKS !== 'realny') {
+  const F_SPIS = path.join(KAT, 'stado.json');
+  const spis = czytaj(F_SPIS, {});
+  const zam = trejdy.filter((t) => t.typ === 'CLOSE');
+  const R = zam.map((t) => t.R).filter((x) => x != null);
+  spis[P.GRACZ] = {
+    gracz: P.GRACZ,
+    prefiks: PREFIKS,
+    nazwa: def.nazwa,
+    suchy: P.SUCHY,
+    start: P.START,
+    kapital: stan.kapital,
+    zamkniete: stan.zamkniete,
+    pozycji: Object.keys(stan.pozycje).length,
+    sredR: R.length ? R.reduce((s, x) => s + x, 0) / R.length : null,
+    wygrane: zam.length ? zam.filter((t) => t.pnlUsd > 0).length / zam.length : null,
+    lastRun: stan.lastRun,
+    koniec: stan.koniec ?? null,
+  };
+  pisz(F_SPIS, spis);
+}
+
+log(`> kapital ${usd(stan.kapital)} (start ${usd(P.START)}), pozycji ${Object.keys(stan.pozycje).length}, trejdow ${stan.zamkniete}${P.MAX_TREJDOW > 0 ? `/${P.MAX_TREJDOW}` : ""}`);
 
 // ── podsumowanie poslizgu — to, po co ten bot istnieje ──────────────────────
 // Liczymy WYLACZNIE trejdy po ostatnim przelaczeniu na tryb zywy. Te sprzed

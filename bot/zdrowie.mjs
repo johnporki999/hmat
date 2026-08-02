@@ -46,7 +46,27 @@ if (!stan) {
   const ost = Date.parse(stan.lastRun?.ts || 0);
   const wiek = teraz - ost;
   if (!ost) ALARM('stan nie ma znacznika ostatniego przebiegu');
-  else if (wiek > 2 * H) ALARM(`ostatni przebieg ${godz(wiek)} temu — cron stoi (ma chodzic co 5 minut)`);
+  else if (wiek > 2 * H) {
+    // Zanim oskarzymy serwer — sprawdzmy, czy to nie MY mamy stara kopie.
+    //
+    // Kontrola czyta pliki z katalogu, w ktorym stoi. Uruchomiona lokalnie bez
+    // wczesniejszego `git pull` widzi stan sprzed godzin i krzyczy "cron stoi",
+    // choc serwer chodzi bez zarzutu. Zdarzylo sie to 01.08.2026 i kosztowalo
+    // dziesiec minut szukania awarii, ktorej nie bylo.
+    let zaSerwerem = false;
+    try {
+      const { execSync } = await import('node:child_process');
+      const opcje = { cwd: path.join(__dirname, '..'), stdio: ['ignore', 'pipe', 'ignore'], timeout: 15000 };
+      execSync('git fetch origin --quiet', opcje);
+      const ile = execSync('git rev-list --count HEAD..@{u}', opcje).toString().trim();
+      zaSerwerem = Number(ile) > 0;
+      if (zaSerwerem) {
+        UWAGA(`stan sprzed ${godz(wiek)}, ale Twoja kopia jest ${ile} commitow za serwerem`);
+        UWAGA('   -> zrob `git pull` i uruchom ponownie; serwer najpewniej dziala');
+      }
+    } catch { /* brak gita albo brak sieci — lecimy dalej z alarmem */ }
+    if (!zaSerwerem) ALARM(`ostatni przebieg ${godz(wiek)} temu — cron stoi (ma chodzic co 5 minut)`);
+  }
   else if (wiek > 30 * 60000) UWAGA(`ostatni przebieg ${godz(wiek)} temu — dluzej niz zwykle`);
   else OK(`ostatni przebieg ${(wiek / 60000).toFixed(0)} min temu`);
   const dni = (teraz - Date.parse(stan.createdAt)) / DOBA;
