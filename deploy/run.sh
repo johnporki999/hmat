@@ -54,11 +54,16 @@ GALAZ="${GIT_BRANCH:-main}"
 # Laczne zaangazowanie kapitalu jest w obu takie samo (80%), rozni je
 # wylacznie ROZPROSZENIE. Dzieki temu roznica miedzy nimi mierzy jedna rzecz.
 #
-# Od 31.07.2026 chodzi tez `realny` — bot na Hyperliquid, ktory ma zmierzyc,
-# ile NAPRAWDE kosztuje wejscie i wyjscie. Domyslnie w trybie suchym
-# (REALNY_SUCHY nieustawione = 1), a tryb zywy nie jest jeszcze napisany —
-# wiec dzis nie ma mozliwosci, zeby wydal choc grosz. Zeby to zmienilo sie
-# swiadomie, a nie przypadkiem, wlaczenie wymaga REALNY_SUCHY=0 w deploy/.env
+# Od 02.08.2026 chodzi `stado` — kilka botow na Hyperliquid, kazdy na wlasnym
+# koncie. Tryb zywy JEST napisany i dziala, wiec jedyne, co dzieli te boty od
+# wydawania prawdziwych pieniedzy, to jedna zmienna:
+#
+#   REALNY_SUCHY=1 (albo brak)  — nic nie skladaja, tylko licza sygnaly
+#   REALNY_SUCHY=0              — handluja naprawde
+#
+# Ta zmienna NIE jest nadpisywana przez petle stada; pochodzi wylacznie
+# z deploy/.env, zeby przejscie na zywo bylo swiadoma decyzja czlowieka,
+# a nie skutkiem ubocznym zmiany w skrypcie.
 # ORAZ dopisania obslugi podpisywania zlecen w bot/realny.mjs.
 #
 # Od 02.08.2026 `realny` ustepuje miejsca `stado` — kilku botom na prawdziwych
