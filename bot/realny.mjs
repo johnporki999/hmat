@@ -269,8 +269,29 @@ async function sprawdzKonto(stan) {
       stan.cash = calosc;
       stan.szczyt = calosc;
       delete stan.doSynchronizacji;   // jednorazowo — potem kapitalem rzadzi juz handel
-    } else if (calosc < P.START * 0.9) {
-      log(`  UWAGA: na koncie ${usd(calosc)}, a bot liczy od ${usd(P.START)} — sprawdz, czy nic nie wyplyneło.`);
+    } else {
+      // SAMONAPRAWA rozjazdu z rzeczywistoscia.
+      //
+      // Wewnetrzna ksiegowosc bota moze odplynac od prawdy na kilka sposobow:
+      // dolozysz srodkow, wyplacisz, zagrasz czyms recznie, albo — jak tutaj —
+      // bot przejmie saldo po innym koncie. Kazdy z nich sprawia, ze pozycje sa
+      // liczone od kwoty, ktorej nie ma, i to CICHO.
+      //
+      // Poprawiamy tylko, gdy bot jest PLASKI (zero otwartych pozycji). Przy
+      // otwartych porownanie nie ma sensu: wartosc konta zawiera wtedy
+      // niezrealizowany wynik i zablokowana marze, wiec roznica nie musi
+      // oznaczac zadnego bledu.
+      const trzyma = Object.keys(stan.pozycje || {}).length;
+      const moje = stan.cash + Object.values(stan.pozycje || {}).reduce((s, p) => s + p.margin, 0);
+      const rozjazd = moje > 0 ? Math.abs(calosc - moje) / moje : 0;
+      if (!trzyma && rozjazd > 0.1) {
+        log(`  ROZJAZD: bot liczy ${usd(moje)}, a na koncie jest ${usd(calosc)} (${(rozjazd * 100).toFixed(0)}%) — ustawiam wedlug konta`);
+        stan.cash = calosc;
+        stan.szczyt = Math.max(stan.szczyt ?? 0, calosc);
+        P.START = calosc;
+      } else if (rozjazd > 0.1) {
+        log(`  uwaga: bot liczy ${usd(moje)}, konto ma ${usd(calosc)} — wyrownam, gdy zamknie ${trzyma} ${trzyma === 1 ? 'pozycje' : 'pozycji'}`);
+      }
     }
     // Pozycje otwarte na gieldzie, o ktorych nasz stan nie wie, znaczylyby, ze
     // handluje tu cos jeszcze. Lepiej stanac, niz nakladac sie na cudze zlecenia.
