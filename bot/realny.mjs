@@ -266,6 +266,7 @@ async function sprawdzKonto(stan) {
     if (pierwszy && calosc > 0 && Math.abs(calosc - P.START) > 0.01) {
       log(`  start ustawiam z konta: ${usd(calosc)} (w .env bylo ${usd(P.START)})`);
       P.START = calosc;
+      stan.start = calosc;            // to jest jedyny moment, w ktorym start wolno zmienic
       stan.cash = calosc;
       stan.szczyt = calosc;
       delete stan.doSynchronizacji;   // jednorazowo — potem kapitalem rzadzi juz handel
@@ -288,7 +289,10 @@ async function sprawdzKonto(stan) {
         log(`  ROZJAZD: bot liczy ${usd(moje)}, a na koncie jest ${usd(calosc)} (${(rozjazd * 100).toFixed(0)}%) — ustawiam wedlug konta`);
         stan.cash = calosc;
         stan.szczyt = Math.max(stan.szczyt ?? 0, calosc);
+        // Start tez, inaczej procenty liczylyby sie od kwoty, ktorej bot nigdy
+        // nie mial — a to jest dokladnie ten blad, ktory naprawiamy.
         P.START = calosc;
+        stan.start = calosc;
       } else if (rozjazd > 0.1) {
         log(`  uwaga: bot liczy ${usd(moje)}, konto ma ${usd(calosc)} — wyrownam, gdy zamknie ${trzyma} ${trzyma === 1 ? 'pozycje' : 'pozycji'}`);
       }
@@ -602,8 +606,17 @@ if (!stan.koniec) {
 stan.lastRun = nowISO();
 stan.kapital = kapital();
 stan.suchy = P.SUCHY;
-stan.start = P.START;
-stan.szczyt = Math.max(stan.szczyt ?? P.START, stan.kapital);
+// Start zapisujemy RAZ — przy zalozeniu stanu albo przy synchronizacji z kontem.
+//
+// Wczesniej ta linijka nadpisywala go przy KAZDYM przebiegu wartoscia z .env,
+// co dawalo fałszywe procenty: Smycz zaczal realnie od 25,59 (przejete po
+// poprzednim bocie), a `start` pokazywal 37 z domyslnej konfiguracji — i wynik
+// wygladal na -31%, choc bot byl praktycznie na zero.
+//
+// `start` ma znaczyc "od ilu ten bot NAPRAWDE zaczal", a nie "co dzis stoi
+// w pliku ustawien". Zmienic go moze tylko synchronizacja z prawdziwym saldem.
+if (stan.start == null) stan.start = P.START;
+stan.szczyt = Math.max(stan.szczyt ?? stan.start, stan.kapital);
 // Ceny widziane w tym przebiegu — apka pokazuje po nich biezacy wynik pozycji.
 stan.ceny = Object.fromEntries(Object.entries(rynki).map(([s, r]) => [s, r.cena]));
 
