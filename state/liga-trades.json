@@ -1,76 +1,5 @@
 [
   {
-    "id": "1785495916631-sito5-BTC",
-    "ts": "2026-07-31T11:05:16.633Z",
-    "gracz": "sito5",
-    "sym": "BTC",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 63927.5,
-    "entryPrice": 63600,
-    "margin": 104.6869114353076,
-    "notional": 314.0607343059228,
-    "leverage": 3,
-    "pnlUsd": 1.4243817411666615,
-    "pnlPct": 0.013606111037547167,
-    "holdMs": 3600210,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "prosty zjazd (ER 0.36), RSI 22.3 — kupuję",
-    "warunki": {
-      "rsi": 22.3,
-      "rsiPrev": 23.7,
-      "ext": -3.16,
-      "nadTrendem": -0.0106,
-      "fastNadSlow": -0.0045,
-      "volPct": 0.0016,
-      "er": 0.356,
-      "slope": -0.00087
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00513,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 3.21,
-    "mae": 0,
-    "rynek": {
-      "SOL": 0.00354,
-      "BTC": 0.00515,
-      "ETH": 0.00399
-    }
-  },
-  {
-    "id": "1785496216155-kontra-DRIFT-o",
-    "ts": "2026-07-31T11:10:16.157Z",
-    "gracz": "kontra",
-    "sym": "DRIFT",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.0119,
-    "margin": 95.75898505593493,
-    "notional": 287.2769551678048,
-    "leverage": 3,
-    "liqPrice": 0.015470000000000001,
-    "pnlUsd": null,
-    "reason": "RSI 71.1 — euforia, sprzedaję",
-    "warunki": {
-      "rsi": 71.1,
-      "rsiPrev": 37.1,
-      "ext": 5.12,
-      "nadTrendem": 0.0306,
-      "fastNadSlow": 0.0044,
-      "volPct": 0.0023,
-      "er": 0.2,
-      "slope": 0.00213
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00723,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1785496216155-kontraN-DRIFT-o",
     "ts": "2026-07-31T11:10:16.157Z",
     "gracz": "kontraN",
@@ -53869,6 +53798,78 @@
       "SOL": 0.00221,
       "BTC": 0.0002,
       "ETH": 0.00044
+    }
+  },
+  {
+    "id": "1785635116184-czujny-PYTH",
+    "ts": "2026-08-02T01:45:16.185Z",
+    "gracz": "czujny",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.03932,
+    "entryPrice": 0.03946,
+    "margin": 89.98722841036027,
+    "notional": 269.9616852310808,
+    "leverage": 3,
+    "pnlUsd": 0.7763817867235319,
+    "pnlPct": 0.008627688622468415,
+    "R": 0.0068276886224684155,
+    "holdMs": 43200459,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 54.7, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 54.7,
+      "rsiPrev": 61.5,
+      "ext": 0.78,
+      "nadTrendem": -0.013,
+      "fastNadSlow": -0.0033,
+      "volPct": 0.0025,
+      "er": 0.271,
+      "slope": -0.00144
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00794,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "mfe": 9.6,
+    "mae": 1.53,
+    "rynek": {
+      "SOL": -0.00466,
+      "BTC": -0.00143,
+      "ETH": -0.00629
+    }
+  },
+  {
+    "id": "1785635116184-czujny-BONK-o",
+    "ts": "2026-08-02T01:45:16.186Z",
+    "gracz": "czujny",
+    "sym": "BONK",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.000002893,
+    "margin": 87.58117804463728,
+    "notional": 262.74353413391185,
+    "leverage": 3,
+    "liqPrice": 0.0000020251,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, RSI 59.4, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 59.4,
+      "rsiPrev": 59.4,
+      "ext": 1.17,
+      "nadTrendem": 0.0032,
+      "fastNadSlow": 0.0036,
+      "volPct": 0.0065,
+      "er": 0.061,
+      "slope": -0.00008
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0207,
+      "koszt": 0.0012,
+      "score": 8
     }
   }
 ]
