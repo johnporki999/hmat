@@ -429,7 +429,9 @@ for (const [id, def] of Object.entries(GRACZE)) {
       // wiersz co wynik. Inaczej mielibysmy osobno "dlaczego" i osobno "co z tego wyszlo",
       // a zeby czegokolwiek sie nauczyc, trzeba miec jedno obok drugiego.
       powodWejscia: powod,
-      warunkiWejscia: warunki(r.m),
+      // Ostatnia swieca to ta, na ktorej zapadla decyzja — dorzuca do dziennika
+      // jej ksztalt, czyli JAK cena doszla do tego stanu, a nie tylko jaki on jest.
+      warunkiWejscia: warunki(r.m, r.c[r.c.length - 1], long),
       // Obietnica zlozona przed wynikiem: ile ruchu gracz spodziewa sie zlapac
       // i ile ma za to zaplacic. Wraca na wpisie o zamknieciu, obok rezultatu.
       prognoza: prognozaWejscia(r.m, 2 * P.OPEN_FEE, sygnal.score ?? null),

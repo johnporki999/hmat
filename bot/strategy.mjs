@@ -306,9 +306,9 @@ export function analyze(candles, cfg = CFG) {
  * na wpis o ZAMKNIECIU — bo dopiero tam jest wynik, a warunek bez wyniku i wynik
  * bez warunku sa oba bezuzyteczne.
  */
-export function warunki(m) {
+export function warunki(m, swieca = null, long = true) {
   const z = (x, n) => (Number.isFinite(x) ? +x.toFixed(n) : null);
-  return {
+  const out = {
     rsi: z(m.rsi, 1),                                              // wykupienie / wyprzedanie
     rsiPrev: z(m.rsiPrev, 1),                                      // czy RSI rosl czy spadal
     ext: m.atr ? z((m.price - m.emaFast) / m.atr, 2) : null,       // ile ATR nad srednia szybka
@@ -318,6 +318,31 @@ export function warunki(m) {
     er: z(m.er, 3),                                                // ile ruchu bylo w jedna strone
     slope: z(m.trendSlope, 5),                                     // nachylenie trendu
   };
+
+  // ── KSZTALT SWIECY DECYZJI ─────────────────────────────────────────────────
+  //
+  // Osiem liczb wyzej opisuje STAN rynku. Te dwie opisuja, JAK cena do niego
+  // doszla — i to jest jedyny wymiar, ktorego dziennik dotad w ogole nie widzial.
+  //
+  // Badanie na 2,1 mln zasymulowanych trejdow (laboratorium, kat 9) pokazalo, ze
+  // najgorsze wejscia to te przy MALYM knocie po naszej stronie i zamknieciu
+  // swiecy na jej ekstremum — czyli gdy wchodzimy na skraju ruchu, ktoremu nikt
+  // sie nie przeciwstawil. Efekt jest maly (okolo 0,03 ATR, przy koszcie rundy
+  // rzedu 0,13 ATR) i — co wazne — WIDAC GO TAK SAMO U MALPY wchodzacej losowo,
+  // wiec nie jest wlasnoscia zadnej naszej strategii, tylko samego rynku.
+  //
+  // Zapisujemy je wlasnie po to, zeby dalo sie to sprawdzic na PRAWDZIWYCH
+  // trejdach, zamiast wierzyc symulacji. Dwie liczby, okolo 24 bajty.
+  if (swieca) {
+    const zakres = swieca.h - swieca.l;
+    if (zakres > 0) {
+      const gora = swieca.h - Math.max(swieca.o, swieca.c);
+      const dol = Math.min(swieca.o, swieca.c) - swieca.l;
+      out.knotZa = z((long ? dol : gora) / zakres, 3);
+      out.zamkniecie = z((long ? swieca.c - swieca.l : swieca.h - swieca.c) / zakres, 3);
+    }
+  }
+  return out;
 }
 
 /**

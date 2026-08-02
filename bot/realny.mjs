@@ -984,7 +984,9 @@ if (!stan.koniec) {
       // z wiersza OPEN i nie placic za nie dwa razy.
       kod: KOD,
       powodWejscia: syg.powod,
-      warunkiWejscia: warunki(r.m),
+      // Swieca decyzji (r.i), a nie ostatnia dostepna — to ona byla na ekranie,
+      // gdy gracz powiedzial "wchodz".
+      warunkiWejscia: warunki(r.m, r.D.c[r.i], long),
       score: syg.score ?? null,     // sygnal go zwraca, a dotad byl wyrzucany
       poslizgWejscia: poslizgWe,
       stopAtr: stopA, celAtr: CFG.TAKE_PROFIT_ATR,

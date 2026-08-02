@@ -39,6 +39,34 @@ export const sygnalTrendu = (sym, m, c) => {
 };
 
 /**
+ * Ksztalt swiecy decyzji, znormalizowany do kierunku trejdu.
+ *
+ * Te same dwie liczby, ktore liczy laboratorium (kat 9, NAZWY_CECH). Sa tu
+ * przepisane CELOWO, tak samo jak przygotujAktywo w realny.mjs: laboratorium
+ * siedzi w bot/laboratorium.mjs, ktory na serwerze jest, ale importowanie
+ * narzedzia badawczego do sciezki decyzyjnej bota bylo by zaproszeniem do tego,
+ * zeby zmiana w badaniu po cichu zmienila zachowanie handlu.
+ *
+ *   knotZa     — knot po NASZEJ stronie, jako czesc zakresu swiecy.
+ *                Duzy = rynek probowal isc przeciw nam i zostal odrzucony.
+ *   zamkniecie — gdzie swieca zamknela sie w swoim zakresie, liczac od naszej
+ *                strony. 1 = zamkniecie na naszym koncu, 0 = na przeciwnym.
+ *
+ * Zwraca null, gdy swieca nie ma zakresu (zdarza sie na martwych rynkach).
+ */
+export function ksztaltSwiecy(swieca, long) {
+  if (!swieca) return null;
+  const zakres = swieca.h - swieca.l;
+  if (!(zakres > 0)) return null;
+  const gora = swieca.h - Math.max(swieca.o, swieca.c);
+  const dol = Math.min(swieca.o, swieca.c) - swieca.l;
+  return {
+    knotZa: (long ? dol : gora) / zakres,
+    zamkniecie: (long ? swieca.c - swieca.l : swieca.h - swieca.c) / zakres,
+  };
+}
+
+/**
  * Prognoza gracza w chwili wejscia — LICZBY zapisane PRZED wynikiem.
  *
  * Kazdy gracz ligi ma te same wyjscia, wiec kazdy skladajac pozycje "obiecuje"
@@ -127,6 +155,47 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     opis: 'te same wejscia co Trend, ale trailing 0,5 ATR zamiast 2,0',
     wejscie: sygnalTrendu,
     trailAtr: 0.5,
+  },
+
+  // Smycz z JEDNYM dodatkowym warunkiem: nie wchodzi, gdy swieca decyzji ma
+  // maly knot po naszej stronie ORAZ zamknela sie daleko od naszego konca.
+  //
+  // Skad progi: laboratorium, kat 9, 1,19 mln zasymulowanych trejdow Smyczy na
+  // 127 monetach. Progi to MEDIANY obu cech policzone WYLACZNIE na probce
+  // uczacej (2017-2024); probka testowa (2024-2026) sluzyla tylko do sprawdzenia.
+  //
+  // CZEGO SIE SPODZIEWAC — i to trzeba powiedziec wprost, zeby za pol roku nikt
+  // nie liczyl na cuda. Na probce testowej filtr dal:
+  //
+  //   +0,08 pkt proc. wygranych, +0,004 pkt proc. sredniego wyniku
+  //   +0,0023 ATR w jednostkach ryzyka, przy koszcie rundy okolo 0,13 ATR
+  //
+  // Czyli efekt jest PRAWDZIWY — przeszedl wszystkie trzy kontrole, ktore zabily
+  // wczesniejszy filtr zmiennosci (odsetek wygranych i wynik rosna razem, poprawa
+  // widac takze w jednostkach ryzyka, i nie znika po obcieciu ogona) — ale odzyskuje
+  // niecale 2% tego, co placimy gieldzie. Na uczacej bylo +0,057 pkt proc., czyli
+  // rozpad o 93%.
+  //
+  // Po co wiec w ogole ten gracz: zeby sprawdzic to na trejdach, ktore sie jeszcze
+  // NIE WYDARZYLY. Symulacja moze sie mylic na sto sposobow, a liga tylko na jeden.
+  // Efekt jest tak maly, ze werdykt zajmie bardzo dlugo — i to tez jest wynik.
+  //
+  // Uwaga na interpretacje: ten sam wzor widac u MALPY wchodzacej losowo, wiec nie
+  // jest to slabosc akurat naszego sygnalu, tylko wlasnosc rynku. Wchodzenie na
+  // skraju swiecy, ktorej nikt sie nie przeciwstawil, jest odrobine gorsze zawsze.
+  smyczFiltr: {
+    nazwa: 'Smycz czysta',
+    opis: 'Smycz, ale nie wchodzi na skraju swiecy bez odrzucenia',
+    trailAtr: 0.5,
+    wejscie: (sym, m, c) => {
+      const syg = sygnalTrendu(sym, m, c);
+      if (!syg) return null;
+      const k = ksztaltSwiecy(c?.[c.length - 1], syg.kier === 'LONG');
+      // Brak ksztaltu (swieca bez zakresu) = nie blokujemy. Filtr ma odrzucac
+      // konkretny uklad, a nie wszystko, czego nie umie policzyc.
+      if (k && k.knotZa <= 0.1451 && k.zamkniecie > 0.1923) return null;
+      return syg;
+    },
   },
 
   // Te same wejscia co Trend, te same wyjscia — tylko nie wolno mu zamknac pozycji
