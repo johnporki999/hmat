@@ -396,7 +396,8 @@ if (PREFIKS !== 'realny' && !fs.existsSync(F_STAN)) {
   if (stary && stary.gracz === P.GRACZ) {
     // Przejmujemy DZIENNIK TREJDOW, ale NIE kapital.
     //
-    // Stary eksperyment chodzil na innym portfelu i skonczyl z 25,59 USD.
+    // Stary eksperyment chodzil na innym portfelu i skonczyl z 25,59 USD
+    // (zaczynal od 25,00 — te dwie liczby latwo pomylic, a to nie to samo).
     // Nowy bot stada ma wlasne konto z inna kwota. Przeniesienie salda
     // sprawiloby, ze bot liczylby pozycje od liczby, ktorej na koncie nie ma,
     // a krzywa kapitalu miala by skok w srodku — i nikt by nie wiedzial, skad.
@@ -439,38 +440,61 @@ let trejdy = czytaj(F_TREJDY, []);
 // `start` znaczy "od ilu ten bot NAPRAWDE zaczal" i od tej jednej liczby liczy
 // sie kazdy procent w apce. Da sie ja zepsuc na jeden sposob: wpisac do
 // deploy/.env kwote inna niz ta, ktora naprawde lezala na koncie. Tak wlasnie
-// bylo — Smycz mial w pliku 37 USD przy prawdziwych 25,08, wiec apka pokazywala
-// -31,85% zamiast +0,5%. Bot nie stracil ani centa; klamala podstawa.
+// bylo — Smycz mial w pliku 37 USD przy prawdziwych 25,00, wiec apka pokazywala
+// -31,85% zamiast +0,86%. Bot nie stracil ani centa; klamala podstawa.
 //
-// Bot ma jednak WLASNY, niezalezny zapis tego, ile mial na poczatku: pierwszy
-// punkt swojej krzywej kapitalu. Powstaje na koncu pierwszego przebiegu, wiec
-// jest juz po oplatach za ewentualne pierwsze wejscia — te doliczamy z powrotem
-// z dziennika. Krzywa jest zapisem tego, co sie WYDARZYLO, a `.env` tylko tego,
-// co ktos wpisal; przy sprzecznosci wierzymy wydarzeniom.
+// ODTWARZAMY START Z KSIAG, a nie z krzywej kapitalu.
 //
-// Poprawiamy TYLKO wtedy, gdy `start` pochodzi z ustawien. Gdy ustawila go
-// synchronizacja z prawdziwym kontem (startZrodlo === 'konto'), zostawiamy go
+// Kusi, zeby wziac pierwszy punkt wlasnej krzywej — ale to pulapka. Krzywa
+// zaczyna sie wtedy, gdy DOPISALISMY JEJ ZAPISYWANIE, a nie wtedy, gdy bot
+// ruszyl. U Smyczy te dwie chwile dzieli czternascie godzin handlu, wiec
+// pierwszy punkt jest juz po trzech wejsciach i jednym zamknieciu.
+//
+// Ksiegi takiej dziury nie maja. Kapital zmienia sie DOKLADNIE na dwa sposoby:
+//
+//   otwarcie  →  kapital maleje o oplate wejsciowa
+//   zamkniecie → kapital rosnie o wynik trejdu (pnlUsd)
+//
+// Czyli:  start = kapital_teraz − Σ(pnlUsd zamkniec) + Σ(oplat otwarc)
+//
+// Sprawdzone na obu botach co do szostego miejsca po przecinku: Smycz wychodzi
+// 25,0000 rowno, Trend 35,6000 rowno. Zadnych zaokraglen, zadnego szacowania.
+//
+// Poprawiamy TYLKO wtedy, gdy `start` nie zostal potwierdzony saldem konta.
+// Gdy ustawila go synchronizacja (startZrodlo === 'konto'), zostawiamy go
 // w spokoju: wplata albo wyplata w trakcie eksperymentu to swiadoma zmiana
 // podstawy, a nie blad do naprawienia.
-if (stan.start != null && stan.startZrodlo !== 'konto') {
-  const krzywa = czytaj(F_EQUITY, []);
-  const pierwszy = Array.isArray(krzywa) ? krzywa[0] : null;
-  if (pierwszy && Number.isFinite(pierwszy.equityUsd) && pierwszy.equityUsd > 0 && Number.isFinite(pierwszy.ts)) {
-    const oplatyPierwszego = (Array.isArray(trejdy) ? trejdy : [])
-      .filter((t) => t.typ === 'OPEN' && Math.abs(Date.parse(t.ts) - pierwszy.ts) < 3 * 60000)
-      .reduce((s, t) => s + (t.oplata || 0), 0);
-    const zKrzywej = pierwszy.equityUsd + oplatyPierwszego;
-    if (Math.abs(stan.start - zKrzywej) / zKrzywej > 0.02) {
-      log(`> START BYL ZLY: w pliku ${usd(stan.start)}, a wlasna krzywa mowi ${usd(zKrzywej)} — poprawiam`);
+if (stan.start != null && stan.startZrodlo !== 'konto' && Number.isFinite(stan.kapital)) {
+  const dziennik = Array.isArray(trejdy) ? trejdy : [];
+  // Liczymy od ostatniego RESET-u — tam bot zaczal nowe zycie (np. przejscie
+  // z trybu suchego na zywy) i wczesniejsze wpisy opisuja zmyslone pieniadze.
+  const odResetu = dziennik.map((t) => t.typ).lastIndexOf('RESET') + 1;
+  const po = dziennik.slice(odResetu);
+  // Dziennik jest przycinany do 500 wpisow. Gdyby dosiegnal limitu, poczatek
+  // historii bylby juz obciety i odtworzenie daloby liczbe z sufitu — wtedy
+  // lepiej nie ruszac nic i powiedziec o tym glosno.
+  const kompletny = dziennik.length < 500;
+  const maDane = po.some((t) => t.typ === 'CLOSE') || po.some((t) => t.typ === 'OPEN');
+  if (kompletny && maDane) {
+    const zysk = po.filter((t) => t.typ === 'CLOSE').reduce((sm, t) => sm + (t.pnlUsd || 0), 0);
+    const oplaty = po.filter((t) => t.typ === 'OPEN').reduce((sm, t) => sm + (t.oplata || 0), 0);
+    const zKsiag = stan.kapital - zysk + oplaty;
+    if (zKsiag > 0 && Math.abs(stan.start - zKsiag) / zKsiag > 0.02) {
+      log(`> START BYL ZLY: w pliku ${usd(stan.start)}, a ksiegi mowia ${usd(zKsiag)} — poprawiam`);
+      log(`  (kapital ${usd(stan.kapital)} − zysk ${usd(zysk)} + oplaty wejsciowe ${usd(oplaty)})`);
       log('  Od tej kwoty licza sie wszystkie procenty w apce, wiec dotad pokazywala zly wynik.');
-      stan.start = +zKrzywej.toFixed(4);
-      stan.startZrodlo = 'krzywa';
+      stan.start = +zKsiag.toFixed(4);
+      stan.startZrodlo = 'ksiegi';
       stan.startPoprawiony = nowISO();
       P.START = stan.start;
       // Szczyt byl zawyzony ta sama kwota, a od niego liczy sie obsuniecie.
       // Bierzemy najwyzszy punkt, jaki bot NAPRAWDE mial.
-      stan.szczyt = Math.max(stan.start, ...krzywa.map((x) => x.equityUsd).filter(Number.isFinite));
+      const krzywa = czytaj(F_EQUITY, []);
+      const punkty = (Array.isArray(krzywa) ? krzywa : []).map((x) => x.equityUsd).filter(Number.isFinite);
+      stan.szczyt = Math.max(stan.start, stan.kapital, ...punkty);
     }
+  } else if (!kompletny) {
+    log('  uwaga: dziennik siegnal limitu 500 wpisow — nie moge sprawdzic, czy `start` jest prawdziwy');
   }
 }
 
@@ -836,13 +860,17 @@ stan.kapital = kapital();
 stan.suchy = P.SUCHY;
 // Start zapisujemy RAZ — przy zalozeniu stanu albo przy synchronizacji z kontem.
 //
-// Wczesniej ta linijka nadpisywala go przy KAZDYM przebiegu wartoscia z .env,
-// co dawalo fałszywe procenty: Smycz zaczal realnie od 25,59 (przejete po
-// poprzednim bocie), a `start` pokazywal 37 z domyslnej konfiguracji — i wynik
-// wygladal na -31%, choc bot byl praktycznie na zero.
+// Wczesniej ta linijka nadpisywala go przy KAZDYM przebiegu wartoscia z .env
+// i kasowala to, co chwile wczesniej ustawil sprawdzKonto z prawdziwego salda.
+// Widac to jak na dloni w historii Trenda: przebieg o 08:10 zapisal start 35,60
+// (odczytane z konta), a przebieg o 08:15 nadpisal go na 37 z ustawien.
+//
+// Skutek: Smycz zaczal realnie od 25,00 USD, a `start` pokazywal 37 — i wynik
+// wygladal na -31,85%, choc bot byl na +0,86%.
 //
 // `start` ma znaczyc "od ilu ten bot NAPRAWDE zaczal", a nie "co dzis stoi
-// w pliku ustawien". Zmienic go moze tylko synchronizacja z prawdziwym saldem.
+// w pliku ustawien". Zmienic go moze tylko synchronizacja z prawdziwym saldem
+// albo odtworzenie z ksiag wyzej.
 if (stan.start == null) stan.start = P.START;
 stan.szczyt = Math.max(stan.szczyt ?? stan.start, stan.kapital);
 // Ceny widziane w tym przebiegu — apka pokazuje po nich biezacy wynik pozycji.
