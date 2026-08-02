@@ -303,6 +303,7 @@ async function sprawdzKonto(stan) {
       log(`  start ustawiam z konta: ${usd(calosc)} (w .env bylo ${usd(P.START)})`);
       P.START = calosc;
       stan.start = calosc;            // to jest jedyny moment, w ktorym start wolno zmienic
+      stan.startZrodlo = 'konto';     // potwierdzone saldem — zaden pozniejszy mechanizm tego nie rusza
       stan.cash = calosc;
       stan.szczyt = calosc;
       delete stan.doSynchronizacji;   // jednorazowo — potem kapitalem rzadzi juz handel
@@ -329,6 +330,7 @@ async function sprawdzKonto(stan) {
         // nie mial — a to jest dokladnie ten blad, ktory naprawiamy.
         P.START = calosc;
         stan.start = calosc;
+        stan.startZrodlo = 'konto';   // jak wyzej — saldo bije kazde inne zrodlo
       } else if (rozjazd > 0.1) {
         log(`  uwaga: bot liczy ${usd(moje)}, konto ma ${usd(calosc)} — wyrownam, gdy zamknie ${trzyma} ${trzyma === 1 ? 'pozycje' : 'pozycji'}`);
       }
@@ -424,10 +426,63 @@ if (!stan) {
   stan = {
     wersja: 1, utworzony: nowISO(), gracz: P.GRACZ, suchy: P.SUCHY,
     cash: P.START, pozycje: {}, zamkniete: 0, koniec: null,
+    // Skad wzielismy kwote startowa. 'ustawienia' znaczy "z .env, jeszcze nie
+    // potwierdzone kontem" — i tylko taka wolno pozniej poprawiac.
+    startZrodlo: 'ustawienia',
     ustawienia: { lewar: P.LEWAR, miejsc: P.MIEJSC, alloc: P.ALLOC, maxTrejdow: P.MAX_TREJDOW },
   };
 }
 let trejdy = czytaj(F_TREJDY, []);
+
+// ── CZY `start` MOWI PRAWDE? ────────────────────────────────────────────────
+//
+// `start` znaczy "od ilu ten bot NAPRAWDE zaczal" i od tej jednej liczby liczy
+// sie kazdy procent w apce. Da sie ja zepsuc na jeden sposob: wpisac do
+// deploy/.env kwote inna niz ta, ktora naprawde lezala na koncie. Tak wlasnie
+// bylo — Smycz mial w pliku 37 USD przy prawdziwych 25,08, wiec apka pokazywala
+// -31,85% zamiast +0,5%. Bot nie stracil ani centa; klamala podstawa.
+//
+// Bot ma jednak WLASNY, niezalezny zapis tego, ile mial na poczatku: pierwszy
+// punkt swojej krzywej kapitalu. Powstaje na koncu pierwszego przebiegu, wiec
+// jest juz po oplatach za ewentualne pierwsze wejscia — te doliczamy z powrotem
+// z dziennika. Krzywa jest zapisem tego, co sie WYDARZYLO, a `.env` tylko tego,
+// co ktos wpisal; przy sprzecznosci wierzymy wydarzeniom.
+//
+// Poprawiamy TYLKO wtedy, gdy `start` pochodzi z ustawien. Gdy ustawila go
+// synchronizacja z prawdziwym kontem (startZrodlo === 'konto'), zostawiamy go
+// w spokoju: wplata albo wyplata w trakcie eksperymentu to swiadoma zmiana
+// podstawy, a nie blad do naprawienia.
+if (stan.start != null && stan.startZrodlo !== 'konto') {
+  const krzywa = czytaj(F_EQUITY, []);
+  const pierwszy = Array.isArray(krzywa) ? krzywa[0] : null;
+  if (pierwszy && Number.isFinite(pierwszy.equityUsd) && pierwszy.equityUsd > 0 && Number.isFinite(pierwszy.ts)) {
+    const oplatyPierwszego = (Array.isArray(trejdy) ? trejdy : [])
+      .filter((t) => t.typ === 'OPEN' && Math.abs(Date.parse(t.ts) - pierwszy.ts) < 3 * 60000)
+      .reduce((s, t) => s + (t.oplata || 0), 0);
+    const zKrzywej = pierwszy.equityUsd + oplatyPierwszego;
+    if (Math.abs(stan.start - zKrzywej) / zKrzywej > 0.02) {
+      log(`> START BYL ZLY: w pliku ${usd(stan.start)}, a wlasna krzywa mowi ${usd(zKrzywej)} — poprawiam`);
+      log('  Od tej kwoty licza sie wszystkie procenty w apce, wiec dotad pokazywala zly wynik.');
+      stan.start = +zKrzywej.toFixed(4);
+      stan.startZrodlo = 'krzywa';
+      stan.startPoprawiony = nowISO();
+      P.START = stan.start;
+      // Szczyt byl zawyzony ta sama kwota, a od niego liczy sie obsuniecie.
+      // Bierzemy najwyzszy punkt, jaki bot NAPRAWDE mial.
+      stan.szczyt = Math.max(stan.start, ...krzywa.map((x) => x.equityUsd).filter(Number.isFinite));
+    }
+  }
+}
+
+// REALNY_START_USD z .env jest tylko ROZRUCHEM dla bota, ktory nie ma jeszcze
+// historii. Gdy stan juz wie, od ilu bot zaczal, to on rzadzi — inaczej kwota
+// z ustawien wracalaby tylnymi drzwiami przy kazdym przebiegu.
+//
+// Nie jest to kosmetyka: od P.START licza sie prog przerwania eksperymentu
+// (STOP_KAPITAL), porownanie z saldem konta w sprawdzKonto i kwota, od ktorej
+// bot zaczyna po zmianie trybu. Wszystkie trzy braly dotad liczbe z pliku
+// ustawien, nawet gdy stan mial lepsza.
+if (stan.start != null) P.START = stan.start;
 
 // ── przelaczenie trybu ──────────────────────────────────────────────────────
 //
