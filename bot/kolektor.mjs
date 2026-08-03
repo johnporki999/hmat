@@ -15,6 +15,11 @@
  *       wiec to jest to, co robia prawdziwi ludzie,
  *     - liczba kupujacych, sprzedajacych i handlujacych netto.
  *
+ *   Z Hyperliquid (jak gleboka jest ksiega, czyli ile NAPRAWDE kosztuje wejscie):
+ *     - spread wzgledny,
+ *     - koszt pelnej rundy dla 100 i 1000 USD, liczony przez PRZEJSCIE ksiegi,
+ *     - glebokosc w USD po obu stronach w granicach 10 punktow bazowych.
+ *
  *   Z Binance (co robia inni gracze na kontraktach):
  *     - otwarte pozycje, czyli ile pieniedzy siedzi w rynku,
  *     - jaka czesc najlepszych traderow gra na wzrost, a jaka na spadek,
@@ -75,6 +80,120 @@ const r = (v, m = 6) => (typeof v === 'number' && isFinite(v) ? Number(v.toFixed
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Dane z lancucha: posiadacze, plynnosc, przeplywy organiczne. */
+/**
+ * KSIEGA ZLECEN Z HYPERLIQUID — zaczete 03.08.2026.
+ *
+ * Po co: filtr oplacalnosci bota liczy koszt z tabeli `costMul` wpisanej RECZNIE
+ * (SOL 1,0, JUP 1,3, PENGU 1,7). To zgadywanie, i do tego zle: pomiar na 20
+ * prawdziwych rundach pokazal, ze RENDER kosztuje 2,5x tyle co SOL. Glebokosc
+ * ksiegi pozwala koszt ZMIERZYC zamiast zgadywac — osobno dla kazdego rynku
+ * i kazdej chwili.
+ *
+ * To nie jest hipoteza sygnalowa. To naprawa przyrzadu, ktorym mierzymy
+ * wszystko inne. Gdyby przy okazji okazalo sie, ze glebokosc cos przewiduje,
+ * bedzie to wymagalo wlasnej pre-rejestracji jak kazda inna hipoteza.
+ *
+ * Dlaczego TERAZ: ksiegi zlecen nie da sie pobrac wstecz. Nikt nie publikuje
+ * archiwum glebokosci sprzed roku. Kazdy dzien zwloki to dzien doklejony do
+ * przyszlej odpowiedzi — dokladnie ta sama arytmetyka, ktora uzasadnila caly
+ * ten kolektor w lipcu.
+ */
+
+// Nazwy rynkow Hyperliquid. Skopiowane z realny.mjs CELOWO, nie zaimportowane:
+// tamten plik ma `await` na najwyzszym poziomie i po zaimportowaniu zaczalby
+// HANDLOWAC. Ta sama zasada, dla ktorej `przygotujAktywo` jest tam przepisane
+// zamiast wziete z laboratorium.
+//
+// kBONK to 1000x BONK, ale wszystkie ponizsze miary sa WZGLEDNE (ulamek ceny
+// srodkowej), wiec skala sie skraca i nie trzeba jej korygowac.
+const AKTYWA_HL = {
+  SOL: 'SOL', JUP: 'JUP', JTO: 'JTO', PYTH: 'PYTH', RENDER: 'RENDER',
+  BONK: 'kBONK', BTC: 'BTC', ETH: 'ETH', W: 'W', TNSR: 'TNSR', PENGU: 'PENGU',
+};
+const HL_API = 'https://api.hyperliquid.xyz/info';
+
+async function poiHL(body, timeoutMs = 8000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const r = await fetch(HL_API, {
+      signal: ctrl.signal,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    return r.ok ? await r.json() : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+/**
+ * Ile naprawde kosztuje przejscie przez ksiege danym nominalem.
+ *
+ * Chodzimy po poziomach i wazymy odchylenie od ceny srodkowej wielkoscia, ktora
+ * z danego poziomu bierzemy. To jest poslizg, ktory NAPRAWDE zaplacimy — a nie
+ * sam spread, ktory opisuje wylacznie pierwszy poziom i przy wiekszym zleceniu
+ * klamie tym bardziej, im cienszy rynek.
+ *
+ * `null` gdy ksiega jest za plytka, zeby zlecenie w ogole wypelnic. To jest
+ * informacja, nie brak danych — i nie wolno jej zapisac jako zera.
+ */
+function przezKsiege(poziomy, nominalUsd, mid, kupno) {
+  let zostalo = nominalUsd, koszt = 0;
+  for (const p of poziomy) {
+    const px = +p.px, sz = +p.sz;
+    if (!(px > 0 && sz > 0)) continue;
+    const bierzemy = Math.min(zostalo, px * sz);
+    koszt += bierzemy * (kupno ? px / mid - 1 : 1 - px / mid);
+    zostalo -= bierzemy;
+    if (zostalo <= 1e-9) break;
+  }
+  return zostalo > 1e-9 ? null : koszt / nominalUsd;
+}
+
+/** Glebokosc w USD po jednej stronie, w granicach `bps` od srodka. */
+function glebokosc(poziomy, mid, bps, kupno) {
+  let suma = 0;
+  for (const p of poziomy) {
+    const px = +p.px, sz = +p.sz;
+    if (!(px > 0 && sz > 0)) continue;
+    const odchyl = kupno ? px / mid - 1 : 1 - px / mid;
+    if (odchyl > bps / 10000) break;
+    suma += px * sz;
+  }
+  return suma;
+}
+
+async function zKsiegi(sym) {
+  const nazwa = AKTYWA_HL[sym];
+  if (!nazwa) return {};
+  const j = await poiHL({ type: 'l2Book', coin: nazwa });
+  const bidy = j?.levels?.[0], aski = j?.levels?.[1];
+  if (!bidy?.length || !aski?.length) return {};
+  const bid = +bidy[0].px, ask = +aski[0].px;
+  if (!(bid > 0 && ask > bid)) return {};
+  const mid = (bid + ask) / 2;
+  const r = (x, n) => (Number.isFinite(x) ? +x.toFixed(n) : null);
+
+  // Runda = kupno + sprzedaz. Liczymy dla dwoch nominalow, bo interesuje nas
+  // nie punkt, tylko KRZYWA: jak szybko ksiega sie konczy.
+  const runda = (nominal) => {
+    const kup = przezKsiege(aski, nominal, mid, true);
+    const sprzedaj = przezKsiege(bidy, nominal, mid, false);
+    return kup == null || sprzedaj == null ? null : kup + sprzedaj;
+  };
+  return {
+    k_sp: r((ask - bid) / mid, 6),
+    k_100: r(runda(100), 6),
+    k_1k: r(runda(1000), 6),
+    k_gb: r(glebokosc(bidy, mid, 10, false), 0),
+    k_ga: r(glebokosc(aski, mid, 10, true), 0),
+  };
+}
+
 async function zJupitera(sym) {
   const mint = UNIVERSE[sym]?.mint;
   if (!mint) return {};
@@ -286,13 +405,15 @@ const teraz = Date.now();
 const wiersze = [];
 let zJup = 0;
 let zBin = 0;
+let zKsi = 0;
 
 for (const sym of aktywa) {
-  const [j, b, rt] = await Promise.all([zJupitera(sym), zBinance(sym), kosztRundy(sym)]);
+  const [j, b, rt, k] = await Promise.all([zJupitera(sym), zBinance(sym), kosztRundy(sym), zKsiegi(sym)]);
   if (Object.keys(j).length) zJup += 1;
   if (Object.keys(b).length) zBin += 1;
-  if (!Object.keys(j).length && !Object.keys(b).length && rt == null) continue;
-  wiersze.push(JSON.stringify({ t: teraz, sym, ...j, ...b, ...(rt != null ? { rt } : {}) }));
+  if (Object.keys(k).length) zKsi += 1;
+  if (!Object.keys(j).length && !Object.keys(b).length && !Object.keys(k).length && rt == null) continue;
+  wiersze.push(JSON.stringify({ t: teraz, sym, ...j, ...b, ...k, ...(rt != null ? { rt } : {}) }));
   // Nowa bramka api.jup.ag bez klucza pozwala na 30 zapytan na minute, a robimy
   // 3 na aktywo (wyszukiwarka + dwa kwotowania kosztu rundy). Dwie i pol sekundy
   // przerwy miedzy aktywami trzyma nas bezpiecznie pod limitem — kolektor i tak
@@ -326,7 +447,7 @@ info.odstepMin = ODSTEP_MIN;
 fs.writeFileSync(F_INFO, JSON.stringify(info, null, 2) + '\n', 'utf8');
 
 log(
-  `> kolektor: zapisano ${wiersze.length} wierszy (Jupiter ${zJup}, Binance ${zBin}) ` +
+  `> kolektor: zapisano ${wiersze.length} wierszy (Jupiter ${zJup}, Binance ${zBin}, ksiega ${zKsi}) ` +
     `— lacznie ${info.wierszy} wierszy przez ${info.dni} dni`
 );
 
