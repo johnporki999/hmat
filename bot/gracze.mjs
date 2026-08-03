@@ -577,6 +577,45 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     wejscie: () => (los() < malpaSzansa ? { kier: 'LONG', powod: 'rzut monetą — żadnego powodu' } : null),
   },
 
+  // ── NAIWNI: mocniejsza hipoteza zerowa niz malpa ────────────────────────────
+  //
+  // Malpa losowa jest SLABA kontrola dla Paniki. Panika kupuje wyprzedanie, wiec
+  // porownywanie jej z losowym wejsciem mowi tylko tyle, ze kupowanie po spadku
+  // bije kupowanie w losowej chwili. To za malo.
+  //
+  // Wlasciwe pytanie brzmi: czy cala maszyneria (RSI <= 28, ATR >= 2%, ER) daje
+  // COKOLWIEK ponad najprostsza regule powrotu do sredniej — "cena spadla o X%,
+  // kupuj". Jesli Panika tego nie bije, jej warunki sa dekoracja.
+  //
+  // Drabina zamrozona z gory: 5%, 10%, 20% spadku w 16 swiecach (4 godziny).
+  // Trzy wartosci, jeden wymiar, zadnej siatki.
+  //
+  // TO SA GRACZE WYLACZNIE DO LABORATORIUM. Sklady lig sa przypiete w
+  // deploy/run.sh, wiec nie maja jak tam trafic — i nie maja tam trafic.
+  ...(() => {
+    const naiwny = (prog) => ({
+      nazwa: `Naiwny ${Math.round(prog * 100)}%`,
+      opis: `kupuje po spadku o ${Math.round(prog * 100)}% w 4 h — bez RSI, bez ATR, bez ER`,
+      wejscie: (sym, m, c) => {
+        if (!c || c.length < 17) return null;
+        const teraz = c[c.length - 1].c, wczesniej = c[c.length - 17].c;
+        if (!(wczesniej > 0) || !(teraz > 0)) return null;
+        const zmiana = teraz / wczesniej - 1;
+        return zmiana <= -prog
+          ? { kier: 'LONG', powod: `spadek ${(-zmiana * 100).toFixed(1)}% w 4 h — kupuję bez pytania` }
+          : null;
+      },
+    });
+    // Test rozstrzygajacy: czy wartosc siedzi w WEJSCIU czy w WYJSCIU.
+    // Naiwna regula wejscia + wyjscia Paniki luznej (stop 3,5 ATR, bez smyczy).
+    // Jesli to dogoni Panike luzna, maszyneria wejscia jest dekoracja.
+    const luzny = { stopAtr: 3.5, bezSmyczy: true };
+    return {
+      naiwny5: naiwny(0.05), naiwny10: naiwny(0.10), naiwny20: naiwny(0.20),
+      naiwny10Luzny: { ...naiwny(0.10), ...luzny, nazwa: 'Naiwny 10% luźny' },
+    };
+  })(),
+
   byk: {
     nazwa: 'Byk',
     opis: 'kupuje SOL i nigdy nie sprzedaje',
