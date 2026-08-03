@@ -558,6 +558,25 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     },
   },
 
+  // Małpa TYLKO DŁUGA — punkt odniesienia dla graczy, którzy nie skracają.
+  //
+  // Nie jest gotowa do ligi i NIE MA JEJ w składzie żadnej z nich (składy są
+  // przypięte w deploy/run.sh). Istnieje wyłącznie dla laboratorium, i to
+  // z konkretnego powodu, który raz już nas kosztował wynik:
+  //
+  // Zwykła małpa 50/50 ma ZEROWĄ ekspozycję na dryf rynku. Gdy porównuje się
+  // z nią gracza grającego wyłącznie długo, ten dostaje premię za sam wzrost
+  // i wygląda na lepszego, choć nic nie wnosi. Na akcjach ta premia wyniosła
+  // +0,87 pp i wywróciła cały wniosek (bot/cache/GIELDA-WNIOSKI.md, błąd nr 2).
+  //
+  // Panika, Sito 5, Sito ostre i Wybicie-long grają tylko w górę. Każde
+  // porównanie ich z małpą MUSI używać tej wersji.
+  malpaDluga: {
+    nazwa: 'Małpa długa',
+    opis: 'rzuca monetą, ale wyłącznie w górę — odniesienie dla graczy tylko-długich',
+    wejscie: () => (los() < malpaSzansa ? { kier: 'LONG', powod: 'rzut monetą — żadnego powodu' } : null),
+  },
+
   byk: {
     nazwa: 'Byk',
     opis: 'kupuje SOL i nigdy nie sprzedaje',
