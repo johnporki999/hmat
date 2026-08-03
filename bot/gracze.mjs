@@ -534,6 +534,44 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     bezSmyczy: true,
   },
 
+  /**
+   * PANIKA OSTRA — Panika plus jedyny filtr wejścia, który przeżył wszystkie
+   * progi tego projektu (H15, Aneks 18 w HIPOTEZY.md, 03.08.2026).
+   *
+   * Warunek: cena musi stać co najmniej 2,66 ATR PONIŻEJ średniej szybkiej.
+   * To nie jest nowa oś ani egzotyczny kształt świecy — to jest „panikuj
+   * mocniej". I właśnie dlatego jest wiarygodne: gdyby zwycięzcą okazał się
+   * knot górny albo luka, podejrzewałbym przekopanie danych.
+   *
+   * CZEGO DOKŁADNIE DOWIÓDŁ POMIAR (kąt 8 na 127 monetach):
+   *   - poza próbką +0,053 ATR i +2,04 pkt proc. wygranych,
+   *   - po obcięciu R na +20% nadal +0,386 pp, więc to nie jest sam ogon,
+   *   - poprzeczka z cech CZYSTO LOSOWYCH |t| = 2,09, a `ext` ma 6,31,
+   *   - obie rozłączne połowy monet: +0,053 i +0,048 ATR.
+   *
+   * CZEGO NIE DOWIÓDŁ: efekt istnieje TYLKO przy ciasnym wyjściu. Przy stopie
+   * 3,5 bez smyczy zostaje +0,0008 ATR i pod obcięciem zmienia znak. Dlatego
+   * ten gracz dziedziczy wyjścia Paniki (stop 1,6 ATR, smycz 2,0) i nie wolno
+   * ich tu „poprawić" — bez nich filtr nie ma czego pilnować.
+   *
+   * Paniki NIE dotykamy: jest pre-rejestrowana w Aneksie 5, a zmiana reguł
+   * w trakcie unieważniłaby eksperyment. Ci dwaj grają obok siebie w Lidze C.
+   */
+  panikaOstra: {
+    nazwa: 'Panika ostra',
+    opis: 'jak Panika, ale wchodzi tylko gdy cena jest ≥2,66 ATR pod średnią szybką',
+    wejscie: (sym, m) => {
+      if (!(m.volPct >= 0.02 && m.rsi <= 28)) return null;
+      if (!(m.atr > 0)) return null;
+      const ext = (m.price - m.emaFast) / m.atr;
+      if (!(ext <= -2.66)) return null;
+      return {
+        kier: 'LONG',
+        powod: `panika ostra: ${(m.volPct * 100).toFixed(1)}% ATR, RSI ${m.rsi.toFixed(1)}, ${ext.toFixed(2)} ATR pod średnią — kupuję`,
+      };
+    },
+  },
+
   wybicie: {
     nazwa: 'Wybicie',
     opis: 'wchodzi na sile, gdy cena łamie zakres z 20 świec',

@@ -110,7 +110,16 @@ LIGAAB_GRACZE="trend,antytrend,luzny,smycz,cierpliwy,czujny,sjesta,sejsmograf,kr
 #
 # Tu ladują hipotezy, ktore dopiero sprawdzamy. Gdy ktoras wygra przekonujaco,
 # wtedy — i dopiero wtedy — warto rozwazyc dopisanie jej do Ligi A.
-LIGAC_GRACZE="smycz,smyczFiltr,malpa"
+LIGAC_GRACZE="smycz,smyczFiltr,malpa,panika,panikaOstra"
+
+# STADO WYGASZANE — boty na prawdziwych pieniadzach, ktore maja dokonczyc
+# otwarte pozycje i przestac wchodzic w nowe. Decyzja z 03.08.2026: zostaje
+# sam Sito 5.
+#
+# Lista jest TUTAJ, a nie w deploy/.env, bo wygaszenie bota to zmiana, ktora
+# ma byc widoczna w historii repozytorium razem z powodem — inaczej za miesiac
+# nikt nie odtworzy, kiedy i dlaczego Smycz przestal grac.
+STADO_WYGASZANE="smycz trend"
 
 # Zabierz to, co przyszlo z zewnatrz (np. zmiany kodu wypchniete z komputera)
 git fetch origin "$GALAZ" --quiet 2>>"$LOG" || log "fetch nieudany"
@@ -154,6 +163,38 @@ for bot in $BOTY; do
         eval "KONTO=\${KONTO_$DUZE:-}"
         eval "AGENT=\${AGENT_$DUZE:-}"
         eval "START=\${START_$DUZE:-}"
+        # ── WYGASZANIE ────────────────────────────────────────────────────
+        #
+        # Bot z tej listy ma DOKONCZYC to, co ma otwarte, i nie wchodzic
+        # w nic nowego. NIE wolno go po prostu usunac ze STADO: stop, take
+        # profit i smycz sa u nas WIRTUALNE — na gieldzie nie wisi zadne
+        # zlecenie zabezpieczajace, wiec bot, ktory przestaje sie uruchamiac,
+        # zostawia lewarowana pozycje bez ochrony az do likwidacji.
+        #
+        # REALNY_MAX_TREJDOW tez nie zadziala jako stala liczba. Po ustawieniu
+        # `koniec` realny.mjs przy nastepnym przebiegu robi process.exit(0)
+        # PRZED petla wyjsc — czyli dokladnie ten sam problem.
+        #
+        # Dziala natomiast limit liczony CO PRZEBIEG jako `zamkniete + otwarte`:
+        #   - wejscia sa blokowane zawsze (zamkniete + otwarte >= limit),
+        #   - `koniec` zapada dopiero wtedy, gdy otwartych jest zero,
+        #     bo tylko wtedy zamkniete >= limit.
+        # Bot pilnuje wiec swojej pozycji do konca, a wygasa sam, gdy jest plaski.
+        LIMIT=0
+        for w in ${STADO_WYGASZANE:-}; do
+          if [ "$w" = "$gracz" ]; then
+            LIMIT=$(node -e '
+              const fs = require("fs");
+              try {
+                const s = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+                const otw = Object.keys(s.pozycje || {}).length;
+                // Minimum 1, bo limit 0 znaczy w realny.mjs "bez limitu".
+                process.stdout.write(String(Math.max(1, (s.zamkniete || 0) + otw)));
+              } catch { process.stdout.write("1"); }
+            ' "$KATALOG/state/stado-$gracz-state.json" 2>/dev/null || echo 1)
+            log "stado/$gracz: WYGASZANIE — limit $LIMIT (dokancza otwarte, nie otwiera nowych)"
+          fi
+        done
         if [ -z "$KONTO" ] || [ -z "$AGENT" ]; then
           log "stado/$gracz: brak KONTO_$DUZE albo AGENT_$DUZE — pomijam tego bota"
           continue
@@ -173,7 +214,7 @@ for bot in $BOTY; do
             REALNY_KONTO="$KONTO" \
             REALNY_AGENT_KEY="$AGENT" \
             REALNY_START_USD="${START:-37}" \
-            REALNY_MAX_TREJDOW=0 \
+            REALNY_MAX_TREJDOW="$LIMIT" \
             REALNY_STOP_KAPITAL=0 \
             node realny.mjs >>"$LOG" 2>&1; then
           log "stado/$gracz OK"
