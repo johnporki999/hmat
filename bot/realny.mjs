@@ -972,6 +972,7 @@ if (!stan.koniec) {
       atrAtEntry: r.m.atr, bestPrice: fill, trailArmed: false,
       trailAtr: def.trailAtr ?? CFG.TRAIL_ATR, bezSmyczy: !!def.bezSmyczy,
       minGodzin: def.minGodzin ?? 0, stopZawsze: !!def.stopZawsze,
+      karencjaStopH: def.karencjaStopH ?? 0, maxHoldH: def.maxHoldH ?? 0,
       // ── to, co ma dojechac do wiersza zamkniecia ────────────────────────────
       //
       // Pozycja jest JEDYNYM miejscem, w ktorym bot cokolwiek pamieta miedzy

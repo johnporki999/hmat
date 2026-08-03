@@ -445,6 +445,8 @@ for (const [id, def] of Object.entries(GRACZE)) {
       bezSmyczy: !!def.bezSmyczy,
       minGodzin: def.minGodzin ?? 0,
       stopZawsze: !!def.stopZawsze,
+      karencjaStopH: def.karencjaStopH ?? 0,
+      maxHoldH: def.maxHoldH ?? 0,
       rynekWejscie: migawka,
       // Powod i liczby zostaja PRZY POZYCJI, zeby przy zamknieciu trafily na ten sam
       // wiersz co wynik. Inaczej mielibysmy osobno "dlaczego" i osobno "co z tego wyszlo",

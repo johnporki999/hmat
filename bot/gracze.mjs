@@ -734,6 +734,31 @@ export function czyWyjsc(p, atr, px, terazMs, swieca = null) {
     return null;
   }
 
+  /**
+   * KARENCJA STOPA — stop nie dziala przez pierwsze `karencjaStopH` godzin,
+   * ale take profit i smycz dzialaja normalnie.
+   *
+   * To NIE jest to samo co `minGodzin`. Tamto wstrzymuje WSZYSTKIE wyjscia
+   * i pyta "czy oplaca sie w ogole byc cierpliwym". To pyta o cos wezszego:
+   * czy stop w pierwszych minutach mierzy RYZYKO, czy zbiera SZUM.
+   *
+   * Skad pomysl: dwa nasze wlasne wyniki stoja obok siebie i az prosza sie
+   * o zlozenie. Aneks 15 — "najlepsze wejscia to te, w ktorych odbicie zaczyna
+   * sie natychmiast". Aneks 17 — "po przegranej cena wraca +1,6 ATR w 12 h,
+   * stop wyrzuca tuz przed odbiciem". Razem znacza, ze pierwsze minuty po
+   * wejsciu w panike to obszar, w ktorym cena jeszcze szarpie, a stop lapie
+   * to szarpniecie zamiast prawdziwego pogorszenia.
+   *
+   * PODLOGA JEST OBOWIAZKOWA I DAROWA: likwidacji nie blokuje nikt, bo to nie
+   * jest nasza decyzja — gielda zamyka pozycje sama, a silnik sprawdza ja poza
+   * ta funkcja. Bez tego karencja przy dzwigni 3x bylaby zakladem o to, ze
+   * gielda nie kichnie.
+   */
+  if (p.karencjaStopH && heldH < p.karencjaStopH && wStop) {
+    if (long ? goraCeny >= p.takeProfit : dolCeny <= p.takeProfit) return 'TAKE PROFIT';
+    return null;
+  }
+
   // Na zywo bot widzi tylko biezaca cene i tak tez liczy sie domyslnie (swieca = null).
   //
   // W tescie historycznym mozna podac cala swiece i wtedy stop sprawdzamy tez wobec
@@ -751,6 +776,8 @@ export function czyWyjsc(p, atr, px, terazMs, swieca = null) {
     const tr = long ? p.bestPrice - dl * a : p.bestPrice + dl * a;
     if (long ? px <= tr : px >= tr) return 'TRAILING STOP';
   }
-  if (heldH > CFG.MAX_HOLD_HOURS && (long ? px < p.entryPrice : px > p.entryPrice)) return 'stop czasowy';
+  // Prog wlasny gracza ma pierwszenstwo nad globalnym — inaczej nie da sie
+  // zmierzyc wczesnego usmiercania bez ruszania calej ligi.
+  if (heldH > (p.maxHoldH || CFG.MAX_HOLD_HOURS) && (long ? px < p.entryPrice : px > p.entryPrice)) return 'stop czasowy';
   return null;
 }
