@@ -324,8 +324,23 @@ export function analyze(candles, cfg = CFG) {
  * bez osobnej pre-rejestracji byloby zmiana boiska w trakcie meczu.
  */
 export function wolumenWzgledny(swiece, i = null) {
-  if (!Array.isArray(swiece) || swiece.length < 21) return null;
-  const k = i == null ? swiece.length - 1 : i;
+  if (!Array.isArray(swiece) || swiece.length < 22) return null;
+  /**
+   * OSTATNIA DOMKNIETA SWIECA, nie ostatnia w tablicy.
+   *
+   * BLAD ZLAPANY 03.08.2026, po 134 zapisanych wartosciach. Pierwsza wersja
+   * brala `swiece.length - 1`, czyli swiece W TRAKCIE. Bot odpytuje w losowym
+   * momencie 15-minutowego okna, wiec jej wolumen jest CZASTKOWY — mierzylismy
+   * glownie to, jak daleko jestesmy w swiecy, a nie jak nietypowy jest obrot.
+   *
+   * Widac to bylo w rozkladzie: mediana 0,421 zamiast ~1,0, minimum 0,000,
+   * maksimum 117. Mediana odpowiadala dokladnie sredniemu uplywowi swiecy.
+   *
+   * Cena tej poprawki: odczyt jest do 15 minut nieaktualny. Dla miary REZIMU
+   * wolumenu to nie ma znaczenia, a dla porownywalnosci ma decydujace.
+   */
+  const k = i == null ? swiece.length - 2 : i;
+  if (k < 20) return null;
   const teraz = swiece[k]?.v;
   if (!Number.isFinite(teraz) || teraz <= 0) return null;
   const okno = [];
