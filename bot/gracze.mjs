@@ -616,6 +616,30 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     };
   })(),
 
+  // ── PROGI PANIKI: test funkcji celu w DOLARACH, nie procentach ──────────────
+  //
+  // Aneks 5 zamrozil prog 2% ATR i pokazal, ze obnizanie go NISZCZY strategie —
+  // przy 1,0% portfel jest na minusie. Ale to bylo mierzone w PROCENTACH.
+  //
+  // Nasze ograniczenie jest nominalne: sufit dotyczy pojedynczego zlecenia, nie
+  // rocznego obrotu. Luzniejszy prog daje wiecej trejdow o nizszym zwrocie —
+  // w procentach gorzej, w DOLARACH pod sufitem moze byc lepiej.
+  //
+  // Wszystkie z wyjsciami Paniki luznej, bo to one daja najwiekszy efekt.
+  // Gracze wylacznie do laboratorium — sklady lig sa przypiete.
+  ...(() => {
+    const luzna = (progAtr) => ({
+      nazwa: `Panika ${(progAtr * 100).toFixed(1)}%`,
+      opis: `RSI ≤ 28 i ATR ≥ ${(progAtr * 100).toFixed(1)}% — wyjścia luźne`,
+      wejscie: (sym, m) => (m.volPct >= progAtr && m.rsi <= 28
+        ? { kier: 'LONG', powod: `panika: ${(m.volPct * 100).toFixed(1)}% ATR, RSI ${m.rsi.toFixed(1)}` }
+        : null),
+      stopAtr: 3.5,
+      bezSmyczy: true,
+    });
+    return { panika15: luzna(0.015), panika10: luzna(0.010), panika07: luzna(0.007) };
+  })(),
+
   byk: {
     nazwa: 'Byk',
     opis: 'kupuje SOL i nigdy nie sprzedaje',
