@@ -248,7 +248,7 @@ async function main() {
       const m = analyze(swiece, CFG);
       // Ostatnia swieca jedzie razem z metryka — dziennik zapisuje z niej ksztalt
       // chwili decyzji, a bez tego pola bot perpowy byl jedynym, ktory tego nie ma.
-      if (m.emaTrend && m.atr && m.rsi != null) mkt[sym] = Object.assign(m, { swieca: swiece[swiece.length - 1] });
+      if (m.emaTrend && m.atr && m.rsi != null) mkt[sym] = Object.assign(m, { swieca: swiece[swiece.length - 1], swiece });
     } catch (e) {
       log(`! ${sym}: ${String(e.message).slice(0, 80)}`);
     }
@@ -454,7 +454,7 @@ async function main() {
         // sam wiersz co wynik. Osobno "dlaczego" i osobno "co z tego wyszlo" nie
         // uczy niczego — dopiero jedno obok drugiego da sie policzyc.
         powodWejscia: c.reason,
-        warunkiWejscia: warunki(m, m.swieca, long),
+        warunkiWejscia: warunki(m, m.swieca, long, m.swiece),
         // Co bot PRZEWIDYWAL w chwili decyzji. Bez tego kazda strata da sie po fakcie
         // opowiedziec jako "przeciez bylo widac" — a z tym da sie sprawdzic, czy
         // przewidywanie bylo blednie ocenione, czy tylko nie wyszlo.

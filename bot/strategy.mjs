@@ -306,7 +306,40 @@ export function analyze(candles, cfg = CFG) {
  * na wpis o ZAMKNIECIU — bo dopiero tam jest wynik, a warunek bez wyniku i wynik
  * bez warunku sa oba bezuzyteczne.
  */
-export function warunki(m, swieca = null, long = true) {
+/**
+ * Wolumen swiecy decyzji wobec typowego wolumenu ostatnich 20 swiec.
+ *
+ * Mediana, nie srednia: wolumen ma ogony gorsze niz cena i jedna swieca
+ * z wyplata funduszu zawyzylaby odniesienie tak, ze wszystkie pozostale
+ * wygladalyby na ciche.
+ *
+ * Bierzemy wolumen w walucie BAZOWEJ, nie obrot w USDT — obrot rosnie razem
+ * z cena, wiec "wysoki wolumen" znaczylby po czesci "drogo" i mierzylibysmy
+ * cene jeszcze raz. Ta sama pulapka, ktora zdemaskowala sygnal z kapitalu
+ * zablokowanego.
+ *
+ * Pole jest WYLACZNIE ZAPISYWANE — nie wchodzi do zadnej decyzji. Powstalo na
+ * mocy Aneksu 8 w HIPOTEZY.md, zeby za pol roku dalo sie powtorzyc test na
+ * trejdach, ktore jeszcze sie nie wydarzyly. Dokladanie go do reguly wejscia
+ * bez osobnej pre-rejestracji byloby zmiana boiska w trakcie meczu.
+ */
+export function wolumenWzgledny(swiece, i = null) {
+  if (!Array.isArray(swiece) || swiece.length < 21) return null;
+  const k = i == null ? swiece.length - 1 : i;
+  const teraz = swiece[k]?.v;
+  if (!Number.isFinite(teraz) || teraz <= 0) return null;
+  const okno = [];
+  for (let j = k - 20; j < k; j++) {
+    const v = swiece[j]?.v;
+    if (Number.isFinite(v) && v > 0) okno.push(v);
+  }
+  if (okno.length < 15) return null;
+  okno.sort((a, b) => a - b);
+  const med = okno[okno.length >> 1];
+  return med > 0 ? teraz / med : null;
+}
+
+export function warunki(m, swieca = null, long = true, swiece = null) {
   const z = (x, n) => (Number.isFinite(x) ? +x.toFixed(n) : null);
   const out = {
     rsi: z(m.rsi, 1),                                              // wykupienie / wyprzedanie
@@ -317,6 +350,8 @@ export function warunki(m, swieca = null, long = true) {
     volPct: z(m.volPct, 4),                                        // zmiennosc jako % ceny
     er: z(m.er, 3),                                                // ile ruchu bylo w jedna strone
     slope: z(m.trendSlope, 5),                                     // nachylenie trendu
+    // Aneks 8: tylko rejestrowane, nie uzywane do decyzji.
+    volRel: z(wolumenWzgledny(swiece), 3),
   };
 
   // ── KSZTALT SWIECY DECYZJI ─────────────────────────────────────────────────

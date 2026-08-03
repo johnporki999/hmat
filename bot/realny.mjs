@@ -158,7 +158,7 @@ async function swiece(nazwa, ile = 400) {
   const koniec = Date.now();
   const start = koniec - ile * 15 * 60000;
   const j = await poi({ type: 'candleSnapshot', req: { coin: nazwa, interval: '15m', startTime: start, endTime: koniec } });
-  return (j || []).map((k) => ({ t: +k.t, o: +k.o, h: +k.h, l: +k.l, c: +k.c })).sort((a, b) => a.t - b.t);
+  return (j || []).map((k) => ({ t: +k.t, o: +k.o, h: +k.h, l: +k.l, c: +k.c, v: +k.v })).sort((a, b) => a.t - b.t);
 }
 
 const czytaj = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
@@ -986,7 +986,7 @@ if (!stan.koniec) {
       powodWejscia: syg.powod,
       // Swieca decyzji (r.i), a nie ostatnia dostepna — to ona byla na ekranie,
       // gdy gracz powiedzial "wchodz".
-      warunkiWejscia: warunki(r.m, r.D.c[r.i], long),
+      warunkiWejscia: warunki(r.m, r.D.c[r.i], long, r.D.c.slice(0, r.i + 1)),
       score: syg.score ?? null,     // sygnal go zwraca, a dotad byl wyrzucany
       poslizgWejscia: poslizgWe,
       stopAtr: stopA, celAtr: CFG.TAKE_PROFIT_ATR,
