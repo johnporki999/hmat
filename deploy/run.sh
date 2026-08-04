@@ -285,6 +285,7 @@ for bot in $BOTY; do
             REALNY_AGENT_KEY="$AGENT" \
             REALNY_START_USD="${START:-37}" \
             REALNY_MAX_TREJDOW="$LIMIT" \
+            REALNY_PO="$POPRZEDNIK" \
             REALNY_STOP_KAPITAL=0 \
             node realny.mjs >>"$LOG" 2>&1; then
           log "stado/$gracz OK"

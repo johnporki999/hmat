@@ -1116,6 +1116,9 @@ if (PREFIKS !== 'realny') {
     wygrane: zam.length ? zam.filter((t) => t.pnlUsd > 0).length / zam.length : null,
     lastRun: stan.lastRun,
     koniec: stan.koniec ?? null,
+    // Po kim ten bot przejal KONTO. Bez tego apka sumuje kapital poprzednika
+    // i nastepcy jako dwie osobne kwoty, choc to sa DOKLADNIE TE SAME pieniadze.
+    przejalPo: env('REALNY_PO', '') || null,
   };
   pisz(F_SPIS, spis);
 }
