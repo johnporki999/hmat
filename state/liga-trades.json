@@ -1,81 +1,5 @@
 [
   {
-    "id": "1785726616433-wybicie-RENDER-o",
-    "ts": "2026-08-03T03:10:16.435Z",
-    "gracz": "wybicie",
-    "sym": "RENDER",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 1.363,
-    "margin": 74.73950279231909,
-    "notional": 224.21850837695726,
-    "leverage": 3,
-    "liqPrice": 1.7719,
-    "pnlUsd": null,
-    "reason": "1.36 pod dołkiem 20 świec 1.36",
-    "warunki": {
-      "rsi": 30.8,
-      "rsiPrev": 31.9,
-      "ext": -3.07,
-      "nadTrendem": -0.0077,
-      "fastNadSlow": -0.0003,
-      "volPct": 0.0023,
-      "er": 0.08,
-      "slope": -0.0003,
-      "knotZa": 0.5,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00738,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1785727515463-antytrend-JUP",
-    "ts": "2026-08-03T03:25:15.463Z",
-    "gracz": "antytrend",
-    "sym": "JUP",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.19287,
-    "entryPrice": 0.19367,
-    "margin": 70.51820144368482,
-    "notional": 211.55460433105446,
-    "leverage": 3,
-    "pnlUsd": -1.0040171227446444,
-    "pnlPct": -0.01423770178748026,
-    "R": -0.01603770178748026,
-    "holdMs": 3899000,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 41.4, odbicie do sredniej",
-    "warunki": {
-      "rsi": 41.4,
-      "rsiPrev": 37.1,
-      "ext": -1.33,
-      "nadTrendem": -0.0041,
-      "fastNadSlow": -0.0038,
-      "volPct": 0.0021,
-      "er": 0.12,
-      "slope": -0.00056,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00677,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0.17,
-    "mae": 1.95,
-    "rynek": {
-      "SOL": -0.00082,
-      "BTC": -0.00226,
-      "ETH": -0.00417
-    }
-  },
-  {
     "id": "1785727515463-luzny-BONK",
     "ts": "2026-08-03T03:25:15.464Z",
     "gracz": "luzny",
@@ -56700,6 +56624,84 @@
       "spodziewanyRuch": 0.00864,
       "koszt": 0.0012,
       "score": 10
+    }
+  },
+  {
+    "id": "1785856816122-smycz-SOL",
+    "ts": "2026-08-04T15:20:16.123Z",
+    "gracz": "smycz",
+    "sym": "SOL",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 73.69,
+    "entryPrice": 73.34,
+    "margin": 63.42500055372327,
+    "notional": 190.27500166116982,
+    "leverage": 3,
+    "pnlUsd": 0.7914416182583089,
+    "pnlPct": 0.01247838567361035,
+    "R": 0.010678385673610348,
+    "holdMs": 3299554,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 41.8, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 41.8,
+      "rsiPrev": 48.3,
+      "ext": -1.23,
+      "nadTrendem": 0.0003,
+      "fastNadSlow": 0.0009,
+      "volPct": 0.0028,
+      "er": 0.07,
+      "slope": 0.00057,
+      "volRel": 6.629,
+      "knotZa": 0.233,
+      "zamkniecie": 0.233
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00901,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 2.42,
+    "mae": 0,
+    "rynek": {
+      "SOL": 0.00477,
+      "BTC": 0.0044,
+      "ETH": 0.00355
+    }
+  },
+  {
+    "id": "1785856816122-smycz-SOL-o",
+    "ts": "2026-08-04T15:20:16.124Z",
+    "gracz": "smycz",
+    "sym": "SOL",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 73.69,
+    "margin": 63.59756279603262,
+    "notional": 190.79268838809787,
+    "leverage": 3,
+    "liqPrice": 51.583,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 52.4, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 52.4,
+      "rsiPrev": 55.1,
+      "ext": 0.19,
+      "nadTrendem": 0.0049,
+      "fastNadSlow": 0.0012,
+      "volPct": 0.0028,
+      "er": 0.043,
+      "slope": 0.00053,
+      "volRel": 3.421,
+      "knotZa": 0.083,
+      "zamkniecie": 0.083
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00902,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
