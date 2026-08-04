@@ -119,7 +119,32 @@ LIGAC_GRACZE="smycz,smyczFiltr,malpa,panika,panikaOstra"
 # Lista jest TUTAJ, a nie w deploy/.env, bo wygaszenie bota to zmiana, ktora
 # ma byc widoczna w historii repozytorium razem z powodem — inaczej za miesiac
 # nikt nie odtworzy, kiedy i dlaczego Smycz przestal grac.
+#
+# 04.08.2026: obaj dokonczyli i stoja plaskie (Smycz 68 trejdow, 21,97 USD;
+# Trend 37 trejdow, 29,76 USD). Zostaja na liscie, zeby przypadkowe przywrocenie
+# ich do STADO nie wznowilo handlu bez decyzji.
 STADO_WYGASZANE="smycz trend"
+
+# ── PRZEJECIE KONT ─────────────────────────────────────────────────────────
+#
+# Nowy bot wchodzi na KONTO wygaszonego. Format: nowy:SUFIKS_STAREGO, gdzie
+# sufiks wskazuje zmienne KONTO_*/AGENT_* w deploy/.env.
+#
+# Po co tak, zamiast dopisac nowe konta w .env: konta juz istnieja, maja na
+# sobie pieniadze (21,97 i 29,76 USD) i wlasne klucze agenta. Zakladanie dwoch
+# nowych portfeli, przelewanie srodkow i generowanie kluczy to trzy operacje
+# recznie, z ktorych kazda moze pojsc zle — a nie daja nic poza ladniejszym
+# nazewnictwem.
+#
+# CZEGO TO NIE ROBI: nie dotyka plikow stanu. Nowy bot ma wlasny prefiks, wiec
+# zaklada `stado-panika-*` od zera, a `stado-smycz-*` zostaje nietkniete jako
+# zapis tamtego eksperymentu. Historia sie nie miesza, kapital tak — i to jest
+# swiadome, bo pieniadze sa te same.
+#
+# START liczy sie SAM: realny.mjs przy pierwszym uruchomieniu porownuje saldo
+# konta z REALNY_START_USD i gdy sie roznia, bierze saldo (realny.mjs:384).
+# Nowe boty odczytaja wiec 21,97 i 29,76 bez naszego udzialu.
+STADO_PRZEJMUJE="panika:SMYCZ panikaLuzna:TREND"
 
 # Zabierz to, co przyszlo z zewnatrz (np. zmiany kodu wypchniete z komputera)
 git fetch origin "$GALAZ" --quiet 2>>"$LOG" || log "fetch nieudany"
@@ -157,8 +182,53 @@ for bot in $BOTY; do
         log "stado: brak zmiennej STADO w deploy/.env — pomijam"
         continue
       fi
-      for gracz in $STADO; do
+      # Sklad efektywny: ze STADO wypadaja boty, ktorych konto ktos przejmuje,
+      # a wchodza ci, ktorzy przejmuja. Dzieki temu podmiana idzie przez git,
+      # a deploy/.env na serwerze zostaje nietkniety.
+      STADO_EFEKT=""
+      for g in $STADO; do
+        GDUZE=$(echo "$g" | tr '[:lower:]' '[:upper:]')
+        POMIN=0
+        for para in ${STADO_PRZEJMUJE:-}; do
+          [ "${para#*:}" = "$GDUZE" ] && POMIN=1
+        done
+        [ "$POMIN" = "0" ] && STADO_EFEKT="$STADO_EFEKT $g"
+      done
+      for para in ${STADO_PRZEJMUJE:-}; do
+        STADO_EFEKT="$STADO_EFEKT ${para%%:*}"
+      done
+
+      for gracz in $STADO_EFEKT; do
         DUZE=$(echo "$gracz" | tr '[:lower:]' '[:upper:]')
+        # Bot przejmujacy czyta zmienne konta POPRZEDNIKA, nie swoje wlasne.
+        POPRZEDNIK=""
+        for para in ${STADO_PRZEJMUJE:-}; do
+          if [ "${para%%:*}" = "$gracz" ]; then
+            DUZE="${para#*:}"
+            POPRZEDNIK=$(echo "$DUZE" | tr '[:upper:]' '[:lower:]')
+          fi
+        done
+        # ── BEZPIECZNIK PRZEJECIA ────────────────────────────────────────
+        #
+        # Nie wolno wejsc na konto, na ktorym poprzednik ma jeszcze OTWARTA
+        # POZYCJE. Stop i take profit sa u nas wirtualne — pilnuje ich petla
+        # wyjsc tamtego bota. Gdyby przestal chodzic z otwarta pozycja,
+        # zostalaby ona bez ochrony az do likwidacji, a nowy bot nic o niej
+        # nie wie, bo ma wlasny plik stanu.
+        if [ -n "$POPRZEDNIK" ]; then
+          OTWARTE=$(node -e '
+            const fs = require("fs");
+            try {
+              const s = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+              process.stdout.write(String(Object.keys(s.pozycje || {}).length));
+            } catch { process.stdout.write("0"); }
+          ' "$KATALOG/state/stado-$POPRZEDNIK-state.json" 2>/dev/null || echo 0)
+          if [ "${OTWARTE:-0}" != "0" ]; then
+            log "stado/$gracz: POPRZEDNIK $POPRZEDNIK MA $OTWARTE OTWARTYCH POZYCJI — nie przejmuje konta"
+            continue
+          fi
+          log "stado/$gracz: przejmuje konto po $POPRZEDNIK (poprzednik plaski)"
+        fi
         # Odczyt zmiennych po nazwie gracza: KONTO_SMYCZ, AGENT_SMYCZ, START_SMYCZ.
         eval "KONTO=\${KONTO_$DUZE:-}"
         eval "AGENT=\${AGENT_$DUZE:-}"

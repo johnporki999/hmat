@@ -572,6 +572,35 @@ export const stworzGraczy = ({ malpaSzansa = 0.06, los = Math.random } = {}) => 
     },
   },
 
+  /**
+   * EUFORIA — lustro Paniki, i jedyny gracz w projekcie zbudowany PRZECIW
+   * korelacji, a nie po to, zeby zarabiac samodzielnie.
+   *
+   * Problem, ktory ma atakowac: korelacja jednoczesnych pozycji 0,68 i N_eff
+   * 1,3. Cztery miejsca zapelniaja sie w tej samej minucie tym samym zakladem,
+   * bo burze sa skorelowane. Cztery pomysly na to juz padly (transze, hedge,
+   * cluster sizing, reszta idiosynkratyczna) i kazdy okazal sie przebranym
+   * zmniejszeniem ekspozycji.
+   *
+   * Ten jest inny z jednego powodu: odpala w INNYCH MOMENTACH. Skrajne
+   * wykupienie przy wysokiej zmiennosci nie wystepuje wtedy, co skrajne
+   * wyprzedanie — wiec dwa czlony nie moga zapelnic tych samych miejsc.
+   *
+   * DLATEGO NIE WOLNO GO OCENIAC PO WLASNYM R. Nawet czlon marginalny albo
+   * lekko stratny standalone moze poprawiac sciezke portfela, jesli jest
+   * nieskorelowany w czasie. Ocena wylacznie: kapital, obsuniecie, N_eff.
+   */
+  euforia: {
+    nazwa: 'Euforia',
+    opis: 'lustro Paniki — sprzedaje głębokie wykupienie, gdy rynkiem naprawdę rzuca',
+    wejscie: (sym, m) => {
+      if (m.volPct >= 0.02 && m.rsi >= 72) {
+        return { kier: 'SHORT', powod: `euforia: zmienność ${(m.volPct * 100).toFixed(1)}% ATR, RSI ${m.rsi.toFixed(1)} — sprzedaję` };
+      }
+      return null;
+    },
+  },
+
   wybicie: {
     nazwa: 'Wybicie',
     opis: 'wchodzi na sile, gdy cena łamie zakres z 20 świec',
