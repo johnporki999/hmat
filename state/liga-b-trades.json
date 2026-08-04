@@ -1,38 +1,5 @@
 [
   {
-    "id": "1785785127371-trend-VET-o",
-    "ts": "2026-08-03T19:25:27.373Z",
-    "gracz": "trend",
-    "sym": "VET",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.004768,
-    "margin": 33.486195541697356,
-    "notional": 100.45858662509207,
-    "leverage": 3,
-    "liqPrice": 0.0033375999999999996,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 59.2, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 59.2,
-      "rsiPrev": 59.9,
-      "ext": 1.44,
-      "nadTrendem": 0.0167,
-      "fastNadSlow": 0.0075,
-      "volPct": 0.0032,
-      "er": 0.315,
-      "slope": 0.00169,
-      "volRel": 2.049,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01019,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1785785127371-antytrend-VET-o",
     "ts": "2026-08-03T19:25:27.373Z",
     "gracz": "antytrend",
@@ -56373,6 +56340,49 @@
       "spodziewanyRuch": 0.00912,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1785858027552-smycz-SAND",
+    "ts": "2026-08-04T15:40:27.555Z",
+    "gracz": "smycz",
+    "sym": "SAND",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.0418,
+    "entryPrice": 0.0419,
+    "margin": 33.181476651137935,
+    "notional": 99.54442995341381,
+    "leverage": 3,
+    "pnlUsd": 0.1768041750317346,
+    "pnlPct": 0.00532839984460641,
+    "R": 0.0035283998446064098,
+    "holdMs": 6300995,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.0, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 44,
+      "rsiPrev": 53.8,
+      "ext": -1.04,
+      "nadTrendem": -0.0084,
+      "fastNadSlow": -0.004,
+      "volPct": 0.0019,
+      "er": 0.226,
+      "slope": -0.00085,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00624,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "mfe": 2.45,
+    "mae": 0,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
     }
   }
 ]
