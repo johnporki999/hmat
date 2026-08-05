@@ -501,7 +501,41 @@ stan.lastRun = {
 };
 
 for (const t of nowe) trejdy.push(t);
-while (trejdy.length > 1500) trejdy.shift();
+/**
+ * PRZYCINANIE DZIENNIKA — Z GWARANCJA DLA GRACZY RZADKICH.
+ *
+ * Stara wersja robila `while (trejdy.length > 1500) trejdy.shift()`, czyli
+ * scinala najstarsze trejdy CALEJ ligi naraz. Przy dziewietnastu graczach
+ * i limicie 1500 oznaczalo to, ze gracz grajacy rzadko traci CALA swoja
+ * historie, bo wypychaja ja trejdy graczy czestych.
+ *
+ * Objaw byl mylacy i zglosil go uzytkownik: w lidze B Panika pokazuje
+ * "2 trejdy" (bo licznik `stats.trejdy` jest SKUMULOWANY), ale po wejsciu
+ * w jej kartę nie ma zadnego — bo dziennik jest RUCHOMYM OKNEM i oba jej
+ * trejdy dawno z niego wypadly. Dwie liczby o tej samej nazwie liczone
+ * inaczej: dokladnie ta pulapka, ktora zapisalismy w rejestrze.
+ *
+ * Nowa zasada: kazdy gracz zachowuje swoje ostatnie MIN_NA_GRACZA trejdow
+ * ZAWSZE, a dopiero reszta budzetu idzie na najswiezsze trejdy pozostalych.
+ * Gracz rzadki jest wiec widoczny nawet po miesiacach, a plik zostaje
+ * ograniczony.
+ */
+const MAX_LACZNIE = 1500, MIN_NA_GRACZA = 60;
+if (trejdy.length > MAX_LACZNIE) {
+  const wgGracza = new Map();
+  for (const t of trejdy) {
+    const k = t.gracz ?? '?';
+    if (!wgGracza.has(k)) wgGracza.set(k, []);
+    wgGracza.get(k).push(t);
+  }
+  const chronione = new Set();
+  for (const lista of wgGracza.values()) for (const t of lista.slice(-MIN_NA_GRACZA)) chronione.add(t);
+  // Budzet resztowy dostaja NAJSWIEZSZE trejdy spoza puli chronionej.
+  const reszta = trejdy.filter((t) => !chronione.has(t));
+  const miejsca = Math.max(0, MAX_LACZNIE - chronione.size);
+  const dodatkowe = new Set(reszta.slice(-miejsca));
+  trejdy = trejdy.filter((t) => chronione.has(t) || dodatkowe.has(t));
+}
 
 equity.push({ ts: teraz, ...Object.fromEntries(ranking.map((r) => [r.id, +r.kapital.toFixed(2)])) });
 // Gdy punktow zrobi sie za duzo, przerzedzamy STARSZA polowe co drugi. Dzieki temu
