@@ -334,7 +334,14 @@ fi
   echo "# ogon logu serwera, $(date -u '+%Y-%m-%d %H:%M UTC')"
   echo "# publikowany po to, zeby dalo sie diagnozowac bota bez dostepu do maszyny"
   echo
-  grep -E 'stado/|BLAD|blad|bledem|pomijam|WYGASZANIE|nieudan|brak |UWAGA' "$LOG" 2>/dev/null | tail -60
+  grep -E 'stado/|BLAD|blad|bledem|pomijam|WYGASZANIE|nieudan|brak |UWAGA' "$LOG" 2>/dev/null | tail -40
+  echo
+  echo "# --- surowy ogon logu (adresy zamaskowane) ---"
+  # Sam filtr nie wystarczyl: "stado/sito5 zakonczyl sie bledem (kod 1)" mowi, ZE
+  # sie wywalilo, ale nie DLACZEGO — komunikat node'a nie pasuje do zadnego wzorca.
+  # Bierzemy wiec takze surowy ogon, maskujac adresy 0x... i dlugie ciagi hex,
+  # zeby do repozytorium nie trafil zaden identyfikator konta ani klucz.
+  tail -50 "$LOG" 2>/dev/null | sed -E 's/0x[0-9a-fA-F]{6,}/0x…/g; s/[0-9a-fA-F]{32,}/…/g'
 } > "$KATALOG/state/logi-ostatnie.txt" 2>/dev/null || true
 
 git config user.name "hajsomat-bot"
