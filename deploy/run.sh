@@ -317,6 +317,26 @@ if [ -z "$(git status --porcelain -- state 2>/dev/null)" ]; then
   exit 0
 fi
 
+# ── LOG WYCHODZI Z SERWERA RAZEM ZE STANEM ─────────────────────────────────
+#
+# Sito 5 przestalo chodzic 04.08 o 17:20 i przez kilkanascie godzin nie dalo sie
+# powiedziec dlaczego, bo log siedzi WYLACZNIE na serwerze. Diagnoza z zewnatrz
+# sprowadzala sie do zgadywania — a zgadywanie trzy razy z rzedu to nie diagnoza.
+#
+# Publikujemy wiec ogon logu razem ze stanem. Nie caly plik: tylko ostatnie
+# linie, i tylko te, ktore cos znacza (bledy, pominiecia, wygaszenia), plus
+# jedna linia na bota z ostatniego przebiegu.
+#
+# Uwaga na sekrety: log nie zawiera kluczy ani adresow kont — `realny.mjs`
+# drukuje wylacznie nazwy graczy i wyniki. Filtr ponizej i tak przepuszcza
+# tylko dopasowane wzorce, zamiast zrzucac plik w ciemno.
+{
+  echo "# ogon logu serwera, $(date -u '+%Y-%m-%d %H:%M UTC')"
+  echo "# publikowany po to, zeby dalo sie diagnozowac bota bez dostepu do maszyny"
+  echo
+  grep -E 'stado/|BLAD|blad|bledem|pomijam|WYGASZANIE|nieudan|brak |UWAGA' "$LOG" 2>/dev/null | tail -60
+} > "$KATALOG/state/logi-ostatnie.txt" 2>/dev/null || true
+
 git config user.name "hajsomat-bot"
 git config user.email "bot@users.noreply.github.com"
 git add state
