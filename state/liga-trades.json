@@ -2629,84 +2629,6 @@
     }
   },
   {
-    "id": "1785849016288-trend-JTO",
-    "ts": "2026-08-04T13:10:16.288Z",
-    "gracz": "trend",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.49962,
-    "entryPrice": 0.50358,
-    "margin": 79.8533711359886,
-    "notional": 239.5601134079658,
-    "leverage": 3,
-    "pnlUsd": -2.0353891035358513,
-    "pnlPct": -0.025489081732938075,
-    "R": -0.02728908173293807,
-    "holdMs": 8399498,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 40.7, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 40.7,
-      "rsiPrev": 33.7,
-      "ext": -1.89,
-      "nadTrendem": 0.0032,
-      "fastNadSlow": 0.0003,
-      "volPct": 0.0032,
-      "er": 0.001,
-      "slope": 0.00078,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01039,
-      "koszt": 0.0012,
-      "score": 10
-    },
-    "mfe": 0.18,
-    "mae": 2.42,
-    "rynek": {
-      "SOL": 0.00381,
-      "BTC": 0.00314,
-      "ETH": 0.00483
-    }
-  },
-  {
-    "id": "1785849016288-trend-SOL-o",
-    "ts": "2026-08-04T13:10:16.291Z",
-    "gracz": "trend",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 73.76,
-    "margin": 79.89170602751945,
-    "notional": 239.67511808255836,
-    "leverage": 3,
-    "liqPrice": 51.632,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 57.4, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 57.4,
-      "rsiPrev": 56.8,
-      "ext": 1.03,
-      "nadTrendem": 0.0063,
-      "fastNadSlow": 0.001,
-      "volPct": 0.0022,
-      "er": 0.142,
-      "slope": 0.00062,
-      "volRel": 3.071,
-      "knotZa": 0.562,
-      "zamkniecie": 0.688
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00716,
-      "koszt": 0.0012,
-      "score": 10
-    }
-  },
-  {
     "id": "1785849016288-smycz-JTO",
     "ts": "2026-08-04T13:10:16.291Z",
     "gracz": "smycz",
@@ -56884,6 +56806,82 @@
       "spodziewanyRuch": 0.01297,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1785973516042-smycz-BTC",
+    "ts": "2026-08-05T23:45:16.043Z",
+    "gracz": "smycz",
+    "sym": "BTC",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 64610.3,
+    "entryPrice": 64558.7,
+    "margin": 60.196366558282186,
+    "notional": 180.58909967484655,
+    "leverage": 3,
+    "pnlUsd": 0.03409071912522263,
+    "pnlPct": 0.0005663251965916574,
+    "R": -0.0012336748034083424,
+    "holdMs": 2699375,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 44.1, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 44.1,
+      "rsiPrev": 45.9,
+      "ext": -1.05,
+      "nadTrendem": 0.007,
+      "fastNadSlow": 0.0021,
+      "volPct": 0.0016,
+      "er": 0.143,
+      "slope": 0.00089,
+      "volRel": 0.206,
+      "knotZa": 0.003,
+      "zamkniecie": 0.003
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00503,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.1,
+    "mae": 0.01,
+    "rynek": {
+      "SOL": 0.00135,
+      "BTC": 0.0008,
+      "ETH": 0.00243
+    }
+  },
+  {
+    "id": "1785973516042-smycz-JUP-o",
+    "ts": "2026-08-05T23:45:16.044Z",
+    "gracz": "smycz",
+    "sym": "JUP",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.18862,
+    "margin": 60.72920459158959,
+    "notional": 182.18761377476878,
+    "leverage": 3,
+    "liqPrice": 0.24520600000000004,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 51.1, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 51.1,
+      "rsiPrev": 51.1,
+      "ext": 0.32,
+      "nadTrendem": -0.0057,
+      "fastNadSlow": -0.0003,
+      "volPct": 0.0023,
+      "er": 0.108,
+      "slope": -0.00084,
+      "volRel": 0.297
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00738,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
