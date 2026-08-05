@@ -135,6 +135,36 @@ const F_EQUITY = path.join(KAT, `${PREFIKS}-equity.json`);
 // dopisywanego jednym `append`: git dokleja przyrost zamiast przepisywac calosc,
 // a apka pobiera tylko goracy plik.
 const F_ARCHIWUM = path.join(KAT, `${PREFIKS}-archiwum.jsonl`);
+/**
+ * DZIENNIK ROZBIEZNOSCI ZYWE <-> SYMULATOR.
+ *
+ * Kryterium zywego testu ("R dodatnie i wyzsze niz Sito 5 na >= 40 trejdach")
+ * rozstrzyga tylko "dziala / nie dziala". Nie odroznia dwoch zupelnie roznych
+ * porazek: SYGNAL byl zly, czy EGZEKUCJA go zjadla. Przy polokresie przewagi
+ * 25 minut i koszcie rundy 10,2 bps to jest caly wniosek, a nie szczegol.
+ *
+ * Jeden wiersz na wejscie, z trzema rzeczami, ktorych dotad nigdzie nie bylo:
+ *
+ *   OPOZNIENIA — swieca decyzji -> decyzja -> zlecenie -> wypelnienie.
+ *     Krzywa rozpadu przewagi (Aneks 15) mowi: po 15 minutach zostaje 79%,
+ *     po 30 juz 44%. Prog alarmu bierze sie stad, a nie z gustu.
+ *
+ *   POSLIZG W ATR — dolary nie sa porownywalne miedzy BTC a BONK, a ATR tak.
+ *     To ta sama jednostka, w ktorej laboratorium liczy stop i cel, wiec
+ *     dopiero tutaj widac, jaka CZESC przewagi zjada wejscie.
+ *
+ *   SWIECA ZAMKNIETA CZY NIE — i to jest rozbieznosc STRUKTURALNA, ktorej
+ *     nikt dotad nie zapisal. Symulator decyduje na swiecy ZAMKNIETEJ i wchodzi
+ *     po jej zamknieciu. Bot zywy pobiera swiece z `endTime: Date.now()`, wiec
+ *     ostatnia jest jeszcze W TRAKCIE — decyduje na cenie, ktora moze sie
+ *     jeszcze cofnac przed zamknieciem. To nie jest to samo wejscie.
+ */
+const F_ROZBIEZNOSCI = path.join(KAT, `${PREFIKS}-rozbieznosci.json`);
+const SWIECA_MS = 15 * 60000;
+// Prog alarmu: polowa swiecy. Po 15 minutach od sygnalu zostaje 79% przewagi,
+// a bot chodzi co 5 minut — wiec wszystko powyzej 450 s znaczy, ze cos poza
+// harmonogramem zabiera czas, i chcemy o tym wiedziec przy pierwszym razie.
+const PROG_OPOZNIENIA_S = 450;
 const nowISO = () => new Date().toISOString();
 const usd = (x) => `$${Number(x).toFixed(2)}`;
 const log = (...a) => console.log(...a);
@@ -880,6 +910,35 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
     ...dziennikWejscia(p),
   });
   log(`  ZAMYKAM ${sym} ${p.side} @ ${fill} — ${powod}, wynik ${usd(netto)} (${(netto / p.margin * 100).toFixed(2)}%)`);
+
+  // Domkniecie wiersza dziennika: dopiero teraz znamy poslizg WYJSCIA i pelna
+  // runde. Wiersz szukamy po `entryTs`, bo to jedyny klucz laczacy otwarcie
+  // z zamknieciem — ten sam, ktorego uzywa `dziennikWejscia`.
+  try {
+    const dziennik = czytaj(F_ROZBIEZNOSCI, []);
+    const w = dziennik.find((x) => x.ts === p.entryTs && x.sym === sym);
+    if (w) {
+      w.wyjscie = {
+        ts: nowISO(),
+        powod,
+        cenaSymulatora: sig(widziana),
+        cenaWypelnienia: sig(fill),
+        poslizgAtr: p.atrAtEntry > 0
+          ? sig((p.side === 'LONG' ? widziana - fill : fill - widziana) / p.atrAtEntry, 4)
+          : null,
+        oplataWyjscia: sig(oplata),
+        trzymane_h: sig((Date.now() - Date.parse(p.entryTs)) / 3600000),
+        R: sig(pelnyNetto / p.margin),
+      };
+      // Poslizg CALEJ rundy w ATR — ta liczba odpowiada wprost na pytanie
+      // "ile przewagi zjadla egzekucja", bo laboratorium liczy cel na 3,2 ATR.
+      w.poslizgRundyAtr = w.poslizgAtr != null && w.wyjscie.poslizgAtr != null
+        ? sig(w.poslizgAtr + w.wyjscie.poslizgAtr, 4) : null;
+      pisz(F_ROZBIEZNOSCI, dziennik);
+    }
+  } catch (e) {
+    log(`    (dziennik rozbieznosci nie domknal wiersza: ${e.message})`);
+  }
   delete stan.pozycje[sym];
   // Tak samo jak przy wejsciu: utrwalamy od razu. Gdyby proces zginal tutaj,
   // sprawdzenie "pozycja zniknela z gieldy" wyzej i tak by to posprzatalo, ale
@@ -924,6 +983,12 @@ if (!stan.koniec) {
     if (notional < P.MIN_ZLECENIE) { log(`  ${sym}: pozycja ${usd(notional)} ponizej minimum ${usd(P.MIN_ZLECENIE)} — pomijam`); continue; }
 
     const long = syg.kier === 'LONG';
+    // Znaczniki do dziennika rozbieznosci. `tSwieca` to OTWARCIE swiecy decyzji,
+    // wiec jej zamkniecie wypada o SWIECA_MS pozniej — i dopiero od tamtej chwili
+    // liczy sie opoznienie, bo to wtedy symulator uznalby sygnal za wazny.
+    const tSwieca = r.D.c[r.i].t;
+    const tDecyzja = Date.now();
+    let tZlecenie = null, tWypelnienie = null;
     const widziana = r.cena;
     const sz = notional / widziana;          // wielkosc w sztukach aktywa
     let fill = widziana, ileSztuk = sz;
@@ -936,7 +1001,9 @@ if (!stan.koniec) {
       try { await gielda.ex.updateLeverage({ asset: r.idx, isCross: true, leverage: P.LEWAR }); }
       catch (e) { log(`  ${sym}: nie ustawilem dzwigni (${e.message}) — pomijam wejscie`); continue; }
 
+      tZlecenie = Date.now();
       const w = await zlec({ idx: r.idx, szDecimals: r.szDecimals, kupno: long, wielkosc: sz, widziana, redukuje: false });
+      tWypelnienie = Date.now();
       if (!w) continue;
       fill = w.fill; ileSztuk = w.ile;
 
@@ -1001,6 +1068,62 @@ if (!stan.koniec) {
       ...(ileSztuk < sz * 0.999 ? { czesc: sig(ileSztuk / sz, 3) } : {}),
     });
     log(`  OTWIERAM ${sym} ${syg.kier} @ ${fill} — ${syg.powod}`);
+
+    // ── WIERSZ DZIENNIKA ROZBIEZNOSCI ────────────────────────────────────
+    //
+    // Pisany OSOBNO od `trejdy`, bo sluzy do czego innego: tamten plik jest
+    // ogonem ostatnich zdarzen i sie przycina, a ten ma przetrwac caly zywy
+    // test. Przy jednym wejsciu na tydzien czterdziesci wierszy to kilkanascie
+    // kilobajtow — nie ma czego przycinac.
+    try {
+      const tKoniecSwiecy = tSwieca + SWIECA_MS;
+      const zamknieta = tDecyzja >= tKoniecSwiecy;
+      const opoznienieS = ((tWypelnienie ?? tDecyzja) - tKoniecSwiecy) / 1000;
+      const rozb = {
+        ts: teraz,
+        gracz: P.GRACZ,
+        sym,
+        side: syg.kier,
+        // ── czasy ──────────────────────────────────────────────────────
+        swiecaOd: new Date(tSwieca).toISOString(),
+        swiecaZamknieta: zamknieta,
+        decyzjaPoSwiecyS: sig((tDecyzja - tKoniecSwiecy) / 1000, 4),
+        zlecenieS: tZlecenie ? sig((tZlecenie - tDecyzja) / 1000, 4) : null,
+        wypelnienieS: tWypelnienie && tZlecenie ? sig((tWypelnienie - tZlecenie) / 1000, 4) : null,
+        opoznienieS: sig(opoznienieS, 4),
+        // ── ceny ───────────────────────────────────────────────────────
+        cenaSymulatora: sig(widziana),   // to, co wzialby symulator na tej swiecy
+        cenaWypelnienia: sig(fill),
+        poslizgUsd: sig((long ? fill - widziana : widziana - fill) * ileSztuk),
+        poslizgFrakcja: sig(poslizgWe),
+        // Poslizg w ATR — jedyna jednostka porownywalna miedzy BTC a BONK,
+        // i ta sama, w ktorej liczymy stop i cel.
+        poslizgAtr: r.m.atr > 0 ? sig((long ? fill - widziana : widziana - fill) / r.m.atr, 4) : null,
+        atr: sig(r.m.atr),
+        // ── koszty ─────────────────────────────────────────────────────
+        oplataWejscia: sig(notional * P.TAKER),
+        oplataRundyPlan: sig(2 * notional * P.TAKER),
+        // Funding NIE JEST DZIS MIERZONY — bot go nie pobiera. Zapisujemy null
+        // jawnie, zeby brak byl widoczny w danych, a nie wygladal na zero.
+        funding: null,
+        notional: sig(notional),
+        alarmOpoznienie: opoznienieS > PROG_OPOZNIENIA_S,
+      };
+      const dziennik = czytaj(F_ROZBIEZNOSCI, []);
+      dziennik.push(rozb);
+      pisz(F_ROZBIEZNOSCI, dziennik);
+      if (!zamknieta) {
+        log(`    UWAGA: decyzja na swiecy JESZCZE NIEZAMKNIETEJ — symulator decydowalby po jej zamknieciu`);
+      }
+      if (rozb.alarmOpoznienie) {
+        log(`    ALARM: ${opoznienieS.toFixed(0)} s od zamkniecia swiecy do wypelnienia (prog ${PROG_OPOZNIENIA_S} s)`);
+      }
+      log(`    dziennik: poslizg ${rozb.poslizgAtr} ATR, opoznienie ${opoznienieS.toFixed(0)} s`);
+    } catch (e) {
+      // Dziennik jest pomiarem, nie czescia handlu — jego awaria NIE MOZE
+      // przewrocic bota, ktory ma juz otwarta prawdziwa pozycje.
+      log(`    (dziennik rozbieznosci nie zapisal sie: ${e.message})`);
+    }
 
     // ZAPIS NATYCHMIAST PO WYPELNIENIU, a nie dopiero na koncu przebiegu.
     //
