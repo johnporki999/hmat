@@ -362,6 +362,21 @@ for i in 1 2 3; do
     exit 0
   fi
   log "push nieudany, proba $i"
+  # ── SAMONAPRAWA PO PRZEPISANIU HISTORII ─────────────────────────────────
+  #
+  # Gdy historia na origin zostala przepisana (usuniecie plikow z calej
+  # historii + force push), rebase nie znajduje wspolnego przodka i zostaje
+  # w polowie albo probuje przegrac tysiace commitow. Bez tej sekcji pipeline
+  # stanu klablby sie co 5 minut az do recznej interwencji na serwerze.
+  #
+  # Naprawa: przerwij rebase, zrownaj sie z origin. Kosztuje jeden przebieg
+  # stanu (nastepny odtworzy go z gieldy i danych), zyskuje zywy pipeline.
+  if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+    git rebase --abort 2>>"$LOG" || true
+    if git fetch "$URL" "$GALAZ" 2>>"$LOG" && git reset --hard FETCH_HEAD 2>>"$LOG"; then
+      log "historia na origin przepisana - zrownalem sie z origin i jade dalej"
+    fi
+  fi
   sleep 5
 done
 
