@@ -489,7 +489,15 @@ async function zlec({ idx, szDecimals, kupno, wielkosc, widziana, redukuje }) {
       grouping: 'na',
     });
     const st = r?.response?.data?.statuses?.[0];
-    if (st?.filled) return { fill: Number(st.filled.avgPx), ile: Number(st.filled.totalSz) };
+    if (st?.filled) {
+      const ile = Number(st.filled.totalSz);
+      // Wypelnienie ZEROWE to porazka, a nie sukces z zerowym rozmiarem.
+      // Bez tego wywolujacy dostawal obiekt, przechodzil obok gałęzi
+      // "czesciowe" (bo `ile > 0` jest falszem) i ksiegowal PELNE zamkniecie
+      // pozycji, ktora na gieldzie stala nietknieta.
+      if (!(ile > 0)) { log('    zlecenie przyjete, ale wypelnione w zerze — traktuje jak nieudane'); return null; }
+      return { fill: Number(st.filled.avgPx), ile };
+    }
     if (st?.resting) { log('    zlecenie nie weszlo od reki (resting) — anuluje pomiar tego trejdu'); return null; }
     log(`    gielda odmowila: ${JSON.stringify(st ?? r)}`);
     return null;
@@ -883,6 +891,59 @@ for (const [sym, p] of Object.entries(stan.pozycje)) {
       continue;
     }
     fill = w.fill;
+
+    /**
+     * UZGODNIENIE Z GIELDA — KSIEGUJEMY TO, CO GIELDA POTWIERDZILA.
+     *
+     * Sito 5 stalo 26 godzin, bo zaksiegowalo zamkniecie JUP, ktore na gieldzie
+     * nie doszlo do konca. Mechanizm jest cichy i latwy do przeoczenia:
+     *
+     *   `wielkoscHL` uzywa `toFixed`, czyli ZAOKRAGLA. Przy zaokragleniu w dol
+     *   zlecenie idzie na MNIEJ, niz bot ma w ksiegach, i na gieldzie zostaje
+     *   resztka. Jesli jest mniejsza niz 0,1% pozycji, galaz "czesciowe
+     *   wypelnienie" jej nie lapie — a wtedy bot kasuje pozycje ze stanu
+     *   i zostawia na gieldzie sierote bez zadnej ochrony.
+     *
+     * Zaden prog procentowy tego nie naprawi, bo problem nie jest w progu:
+     * bot ksieguje SWOJ ZAMIAR zamiast STANU KONTA. Jedyne pewne zrodlo prawdy
+     * to gielda — wiec po zamknieciu po prostu ja pytamy.
+     *
+     * Koszt: jedno dodatkowe zapytanie na zamkniecie, czyli kilka na tydzien.
+     * Zysk: znika CALA klasa bledu, takze przypadki, ktorych nie przewidzialem.
+     */
+    try {
+      const ch = await gielda.info.clearinghouseState({ user: P.KONTO });
+      const wciazOtwarta = (ch?.assetPositions || [])
+        .map((x) => x.position)
+        // Porownanie BEZ wzgledu na wielkosc liter — tak samo jak w sprawdzKonto
+        // (linia z toUpperCase). Rozjazd miedzy tymi dwoma miejscami bylby
+        // dokladnie tym rodzajem cichej roznicy, ktora tu wlasnie naprawiamy.
+        .find((x) => x && String(x.coin).toUpperCase() === String(r.nazwa).toUpperCase()
+          && Math.abs(Number(x.szi)) > 0);
+      if (wciazOtwarta) {
+        const zostalo = Math.abs(Number(wciazOtwarta.szi));
+        const czescZamknieta = Math.max(0, 1 - zostalo / p.sz);
+        log(`  ${sym}: gielda potwierdza, ze zostalo ${zostalo} (zamkniete ${(czescZamknieta * 100).toFixed(1)}%)`);
+        if (czescZamknieta > 0) {
+          const bruttoC = (p.side === 'LONG' ? fill / p.entryPrice - 1 : 1 - fill / p.entryPrice) * p.notional * czescZamknieta;
+          stan.cash += p.margin * czescZamknieta + bruttoC - p.notional * czescZamknieta * P.TAKER;
+          p.notional *= 1 - czescZamknieta;
+          p.margin *= 1 - czescZamknieta;
+          p.czesciowe = (p.czesciowe ?? 1) * czescZamknieta;
+        }
+        p.sz = zostalo;
+        // Pozycja ZOSTAJE w ksiegach, wiec petla wyjsc dalej jej pilnuje
+        // i domknie ja przy nastepnym przebiegu. To jest cala roznica miedzy
+        // resztka pod nadzorem a sierota, ktora zatrzymuje bota na dobe.
+        if (!P.SUCHY) { stan.kapital = kapital(); pisz(F_STAN, stan); piszWiersze(F_TREJDY, trejdy); }
+        continue;
+      }
+    } catch (e) {
+      // Nie udalo sie zapytac gieldy. NIE ksiegujemy zamkniecia w ciemno —
+      // lepiej sprobowac za piec minut niz rozjechac stan z rzeczywistoscia.
+      log(`  ${sym}: nie moge potwierdzic zamkniecia u zrodla (${e.message}) — zostawiam pozycje do nastepnego przebiegu`);
+      continue;
+    }
   }
 
   const brutto = (p.side === 'LONG' ? fill / p.entryPrice - 1 : 1 - fill / p.entryPrice) * p.notional;
