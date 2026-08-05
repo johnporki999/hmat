@@ -1131,37 +1131,6 @@
     }
   },
   {
-    "id": "1785798616254-smycz-JUP-o",
-    "ts": "2026-08-03T23:10:16.256Z",
-    "gracz": "smycz",
-    "sym": "JUP",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.19388,
-    "margin": 65.93016033254946,
-    "notional": 197.7904809976484,
-    "leverage": 3,
-    "liqPrice": 0.13571599999999998,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, RSI 52.5, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 52.5,
-      "rsiPrev": 52.5,
-      "ext": 0.25,
-      "nadTrendem": 0.0026,
-      "fastNadSlow": 0.003,
-      "volPct": 0.0025,
-      "er": 0.151,
-      "slope": 0.00033,
-      "volRel": 0.016
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00789,
-      "koszt": 0.0012,
-      "score": 8
-    }
-  },
-  {
     "id": "1785799516028-czujny-PENGU",
     "ts": "2026-08-03T23:25:16.029Z",
     "gracz": "czujny",
@@ -1235,51 +1204,6 @@
       "spodziewanyRuch": 0.00732,
       "koszt": 0.0012,
       "score": 8
-    }
-  },
-  {
-    "id": "1785800716386-trend-JTO",
-    "ts": "2026-08-03T23:45:16.387Z",
-    "gracz": "trend",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.51034,
-    "entryPrice": 0.50353,
-    "margin": 85.93720333808731,
-    "notional": 257.81161001426193,
-    "leverage": 3,
-    "pnlUsd": 3.3260758556025896,
-    "pnlPct": 0.03870356174516648,
-    "R": 0.036903561745166485,
-    "holdMs": 5999067,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 52.0, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 52,
-      "rsiPrev": 59.9,
-      "ext": -0.16,
-      "nadTrendem": 0.011,
-      "fastNadSlow": 0.0079,
-      "volPct": 0.0032,
-      "er": 0.2,
-      "slope": 0.00188,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0101,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 4.28,
-    "mae": 0.43,
-    "rynek": {
-      "SOL": -0.00014,
-      "BTC": 0.00015,
-      "ETH": -0.00037
     }
   },
   {
@@ -56858,6 +56782,82 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.0021,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1785930916739-antytrend-BONK",
+    "ts": "2026-08-05T11:55:16.740Z",
+    "gracz": "antytrend",
+    "sym": "BONK",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.000002973,
+    "entryPrice": 0.000002921,
+    "margin": 63.24320877513461,
+    "notional": 189.72962632540384,
+    "leverage": 3,
+    "pnlUsd": -3.493135502661137,
+    "pnlPct": -0.055233369247300684,
+    "R": -0.05703336924730069,
+    "holdMs": 5400339,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "odwrotnie do: gotowy: trend, RSI 52.4, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 52.4,
+      "rsiPrev": 49.3,
+      "ext": 0.31,
+      "nadTrendem": 0.0067,
+      "fastNadSlow": 0.0008,
+      "volPct": 0.0072,
+      "er": 0.013,
+      "slope": 0.00038,
+      "volRel": 1.136,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02296,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0,
+    "mae": 2.48,
+    "rynek": {
+      "SOL": -0.00352,
+      "BTC": -0.00166,
+      "ETH": -0.00205
+    }
+  },
+  {
+    "id": "1785930916739-antytrend-RAY-o",
+    "ts": "2026-08-05T11:55:16.742Z",
+    "gracz": "antytrend",
+    "sym": "RAY",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.622,
+    "margin": 62.1993728542047,
+    "notional": 186.5981185626141,
+    "leverage": 3,
+    "liqPrice": 0.8086,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, trend rosnie, RSI 54.2, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 54.2,
+      "rsiPrev": 54.2,
+      "ext": 0.72,
+      "nadTrendem": 0.0124,
+      "fastNadSlow": 0.0029,
+      "volPct": 0.0019,
+      "er": 0.125,
+      "slope": 0.00142,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00607,
       "koszt": 0.0012,
       "score": null
     }
