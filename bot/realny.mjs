@@ -460,7 +460,13 @@ async function sprawdzKonto(stan) {
 
     if (naGieldzie.length && !Object.keys(stan.pozycje).length) {
       console.error(`! Na gieldzie wisi ${naGieldzie.length} pozycji, o ktorych bot nie wie: ${naGieldzie.map((x) => x.position.coin).join(', ')}`);
-      console.error('  Zamknij je recznie albo usun state/realny-state.json, zeby bot zaczal od zera.');
+      // Komunikat MUSI nazywac plik TEGO bota, a nie 'realny-state.json'.
+      // Sito 5 stalo 26 godzin z ta wiadomoscia, ktora wskazywala plik nalezacy
+      // do zupelnie innego, dawno zakonczonego eksperymentu — czyli podpowiadala
+      // operacje bez zadnego skutku dla bota, ktory sie zatrzymal.
+      console.error(`  Zamknij je recznie albo usun ${path.relative(process.cwd(), F_STAN)}, zeby bot zaczal od zera.`);
+      console.error('  UWAGA: pozycja na gieldzie NIE MA OCHRONY, dopoki bot nie chodzi —');
+      console.error('  stop i take profit sa u nas wirtualne i pilnuje ich petla wyjsc tego bota.');
       process.exit(1);
     }
   } catch (e) {
