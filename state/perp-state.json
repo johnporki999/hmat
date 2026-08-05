@@ -2,7 +2,7 @@
   "version": 1,
   "kind": "perp-sim",
   "createdAt": "2026-07-26T19:59:10.228Z",
-  "updatedAt": "2026-08-05T09:35:10.112Z",
+  "updatedAt": "2026-08-05T09:40:09.706Z",
   "cash": 361.47573844079733,
   "startEquity": 500,
   "peakEquity": 560.9561294415878,
@@ -96,7 +96,7 @@
     }
   },
   "lastRun": {
-    "ts": "2026-08-05T09:35:10.112Z",
+    "ts": "2026-08-05T09:40:09.706Z",
     "action": "HOLD",
     "reason": "bezpiecznik: obsuniecie 40.34%",
     "equityUsd": 361.47573844079733,
@@ -107,7 +107,7 @@
     "limity": {
       "dnia": 0,
       "dniaMax": 0,
-      "resetZaMs": 51889888,
+      "resetZaMs": 51590294,
       "pauzy": [],
       "pauzaMin": 0,
       "obsuniecie": 0.3556078283686217,
@@ -127,6 +127,19 @@
         "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 43.1, odbicie do sredniej, RSI zawraca w dol",
         "expectedMove": 0.0067199672311216785,
         "costPct": 0.0064
+      },
+      {
+        "sym": "SOL",
+        "price": 74.11,
+        "side": "LONG",
+        "score": 9,
+        "rsi": 57.25516192080065,
+        "volPct": 0.0020409952876672324,
+        "enter": true,
+        "held": null,
+        "reason": "gotowy: trend, RSI 57.3, cofniecie do sredniej, RSI zawraca",
+        "expectedMove": 0.0065311849205351435,
+        "costPct": 0.004
       },
       {
         "sym": "RENDER",
@@ -182,55 +195,42 @@
       },
       {
         "sym": "BTC",
-        "price": 64118.9,
+        "price": 64147.6,
         "side": "LONG",
         "score": 9,
-        "rsi": 48.57980050908051,
-        "volPct": 0.0014295620768478322,
+        "rsi": 50.30834840292983,
+        "volPct": 0.0014608800305732136,
         "enter": true,
         "held": null,
-        "reason": "gotowy: trend, RSI 48.6, cofniecie do sredniej, RSI zawraca",
-        "expectedMove": 0.0045745986459130635,
+        "reason": "gotowy: trend, RSI 50.3, cofniecie do sredniej, RSI zawraca",
+        "expectedMove": 0.004674816097834284,
         "costPct": 0.004
       },
       {
         "sym": "ETH",
-        "price": 1871.94,
+        "price": 1872.55,
         "side": "LONG",
         "score": 9,
-        "rsi": 55.55885127620136,
-        "volPct": 0.0017735744973511748,
+        "rsi": 56.43922191635601,
+        "volPct": 0.0017970281405418013,
         "enter": true,
         "held": null,
-        "reason": "gotowy: trend, RSI 55.6, cofniecie do sredniej, RSI zawraca",
-        "expectedMove": 0.00567543839152376,
-        "costPct": 0.004
-      },
-      {
-        "sym": "SOL",
-        "price": 74.09,
-        "side": "LONG",
-        "score": 8,
-        "rsi": 56.53120690723963,
-        "volPct": 0.0020126238848179423,
-        "enter": true,
-        "held": null,
-        "reason": "gotowy: trend, RSI 56.5, cofniecie do sredniej",
-        "expectedMove": 0.006440396431417416,
+        "reason": "gotowy: trend, RSI 56.4, cofniecie do sredniej, RSI zawraca",
+        "expectedMove": 0.0057504900497337644,
         "costPct": 0.004
       },
       {
         "sym": "JTO",
-        "price": 0.50319,
+        "price": 0.5047,
         "side": "SHORT",
-        "score": 5,
-        "rsi": 36.61259546566182,
-        "volPct": 0.0034745140884917514,
-        "enter": false,
+        "score": 8,
+        "rsi": 41.41215694376202,
+        "volPct": 0.0036778242263628053,
+        "enter": true,
         "held": null,
-        "reason": "2.42 ATR pod srednia — za nisko, czekam na odbicie",
-        "expectedMove": null,
-        "costPct": null
+        "reason": "SHORT: trend spadkowy, RSI 41.4, odbicie do sredniej",
+        "expectedMove": 0.011769037524360978,
+        "costPct": 0.0068
       },
       {
         "sym": "RAY",
@@ -312,9 +312,9 @@
       }
     ],
     "prices": {
-      "SOL": 74.09,
+      "SOL": 74.11,
       "JUP": 0.18775,
-      "JTO": 0.50319,
+      "JTO": 0.5047,
       "PYTH": 0.03924,
       "RAY": 0.624,
       "ORCA": 1.092,
@@ -325,8 +325,8 @@
       "DRIFT": 0.0122,
       "KMNO": 0.01793,
       "PENGU": 0.006046,
-      "BTC": 64118.9,
-      "ETH": 1871.94
+      "BTC": 64147.6,
+      "ETH": 1872.55
     }
   }
 }
