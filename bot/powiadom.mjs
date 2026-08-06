@@ -27,6 +27,16 @@ const EXPO = 'https://exp.host/--/api/v2/push/send';
 
 const log = (...a) => console.log('[powiadom]', ...a);
 
+/**
+ * Odczyt przelacznika ze zmiennej srodowiskowej — ODPORNY na spacje.
+ *
+ * W `cmd` na Windowsie zapis `set X=1 && node ...` wpisuje do zmiennej "1 ",
+ * ze spacja na koncu, bo powloka bierze wszystko az do `&&`. Porownanie
+ * `=== '1'` wtedy nie wychodzi i przelacznik po cichu nie dziala — a to
+ * najgorszy rodzaj bledu, bo wyglada jak poprawne uruchomienie.
+ */
+const wlaczone = (nazwa) => ['1', 'true', 'tak'].includes(String(process.env[nazwa] || '').trim().toLowerCase());
+
 /** Powody zamkniecia po ludzku — w plikach siedza jako identyfikatory. */
 const POWODY = {
   'STOP LOSS': 'stop',
@@ -94,7 +104,7 @@ function tresc(nazwa, t, fx) {
 async function wyslij(tokeny, wiadomosci) {
   // Proba na sucho: wypisuje, co POSZLOBY na telefon, i nie rusza sieci.
   // Sluzy do sprawdzenia ustawien bez zasypywania sie wiadomosciami.
-  if (process.env.POWIADOM_PROBA === '1') {
+  if (wlaczone('POWIADOM_PROBA')) {
     for (const w of wiadomosci) log(`PROBA │ ${w.title} │ ${w.body}`);
     return;
   }
@@ -131,6 +141,29 @@ async function main() {
   }
 
   /*
+   * TRYB DEMONSTRACYJNY: jedno powiadomienie na zadanie, zbudowane z wymyslonego
+   * trejdu, ale przepuszczone przez te sama funkcje `tresc()` co prawdziwe.
+   *
+   * To jest wazne: gdyby demo sklejalo swoj wlasny napis, sprawdzaloby jedynie,
+   * czy Expo dostarcza wiadomosci — a nie to, czy NASZE powiadomienia wygladaja
+   * poprawnie. Tak sprawdza obie rzeczy naraz.
+   *
+   * Znacznikow NIE rusza. Wyslanie demo nie moze spowodowac, ze prawdziwy trejd
+   * zostanie uznany za juz zgloszony.
+   */
+  if (wlaczone('POWIADOM_TEST')) {
+    const fx = await kursPln();
+    const udawany = {
+      sym: 'JTO', pnlUsd: 0.52, R: 0.036, powod: 'TAKE PROFIT',
+    };
+    const w = tresc('Sito 5', udawany, fx);
+    log(`demo → ${w.title} │ ${w.body}`);
+    await wyslij(tokeny, [w]);
+    log(`demo wyslane na ${tokeny.length} ${tokeny.length === 1 ? 'urzadzenie' : 'urzadzen'}`);
+    return;
+  }
+
+  /*
    * PROG KWOTOWY. Domyslnie zero, czyli wszystko — tak, jak bylo zamowione.
    *
    * Zostawiam go widocznym, bo pomiar na czterech dniach danych mowi jasno:
@@ -138,7 +171,7 @@ async function main() {
    * ponizej zlotowki. Kto ustawi 1.00, dostanie 4,5 dziennie i tylko te
    * trejdy, o ktorych naprawde chce wiedziec.
    */
-  const prog = Math.abs(Number(process.env.POWIADOM_MIN_ZL) || 0);
+  const prog = Math.abs(Number(String(process.env.POWIADOM_MIN_ZL || '').trim()) || 0);
 
   const znaczniki = czytaj(ZNACZNIKI, {});
   const pierwszyRaz = !Object.keys(znaczniki).length;

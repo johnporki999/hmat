@@ -58,6 +58,10 @@ yarn-error.*
 .env
 .env.*
 /deploy/.env
+# Poswiadczenia Firebase dla powiadomien. Repo jest PUBLICZNE, a ten plik
+# zawiera identyfikatory projektu Google — nie ma powodu ich pokazywac.
+# Do budowania apki i tak trafia przez .easignore, ktore go nie wyklucza.
+/google-services.json
 /logs/
 # plik blokady tworzony przez deploy/run.sh
 .hajsomat.lock
