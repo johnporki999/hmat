@@ -344,6 +344,22 @@ fi
   tail -50 "$LOG" 2>/dev/null | sed -E 's/0x[0-9a-fA-F]{6,}/0x…/g; s/[0-9a-fA-F]{32,}/…/g'
 } > "$KATALOG/state/logi-ostatnie.txt" 2>/dev/null || true
 
+# --- Powiadomienia o zamknietych trejdach -----------------------------------
+#
+# PO botach, a PRZED commitem — plik ze znacznikami (state/powiadomienia.json)
+# ma trafic do repo w tym samym commicie co trejdy, ktore zglosil. Inaczej po
+# odtworzeniu maszyny z repozytorium znaczniki byłyby starsze niz trejdy
+# i telefon dostalby drugi raz to samo.
+#
+# Wymaga EXPO_PUSH_TOKEN w deploy/.env. Bez niego skrypt sam sie pomija.
+# POWIADOM_MIN_ZL ustawia prog kwotowy (domyslnie 0, czyli wszystko).
+#
+# `|| true`, bo powiadomienia nie moga przewrocic publikacji stanu — stan bota
+# jest wazniejszy niz brzeczyk w telefonie.
+if [ -f "$KATALOG/bot/powiadom.mjs" ]; then
+  (cd "$KATALOG/bot" && node powiadom.mjs >>"$LOG" 2>&1) || true
+fi
+
 git config user.name "hajsomat-bot"
 git config user.email "bot@users.noreply.github.com"
 git add state
