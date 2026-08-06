@@ -21,7 +21,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const KAT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'state');
+const KORZEN = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const KAT = path.join(KORZEN, 'state');
 const ZNACZNIKI = path.join(KAT, 'powiadomienia.json');
 const EXPO = 'https://exp.host/--/api/v2/push/send';
 
@@ -53,6 +54,34 @@ const NAZWY = {
   sitoOstre: 'Sito ostre', panika: 'Panika', panikaLuzna: 'Panika luźna',
   wybicie: 'Wybicie', malpa: 'Małpa', byk: 'Byk', realny: 'Bot realny',
 };
+
+/**
+ * Ustawienia z `deploy/.env`, gdy nie ma ich w srodowisku.
+ *
+ * Normalnie skrypt odpala `run.sh`, ktory ten plik wczytuje sam. Ale czlowiek
+ * uruchamiajacy `node powiadom.mjs` recznie — zeby sprawdzic konfiguracje albo
+ * wyslac demo — dostawal "brak EXPO_PUSH_TOKEN", mimo ze token siedzial
+ * w pliku obok. Komunikat byl prawdziwy i kompletnie mylacy.
+ *
+ * Czytamy TYLKO trzy potrzebne klucze. Reszta tego pliku to sekrety portfela
+ * i nie ma powodu, zeby w ogole trafialy do pamieci tego procesu.
+ */
+function zPliku() {
+  const NASZE = ['EXPO_PUSH_TOKEN', 'POWIADOM_MIN_ZL', 'USD_PLN'];
+  if (NASZE.every((k) => process.env[k] !== undefined)) return;
+  let tekst;
+  try {
+    tekst = fs.readFileSync(path.join(KORZEN, 'deploy', '.env'), 'utf8');
+  } catch {
+    return;                                   // brak pliku to nie blad
+  }
+  for (const linia of tekst.split(/\r?\n/)) {
+    const m = linia.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*)$/);
+    if (!m || !NASZE.includes(m[1]) || process.env[m[1]] !== undefined) continue;
+    // Zdejmujemy cudzyslowy, jesli ktos je dopisal — powloka tez by je zdjela.
+    process.env[m[1]] = m[2].trim().replace(/^(['"])(.*)\1$/, '$2');
+  }
+}
 
 function czytaj(plik, gdyBrak) {
   try {
@@ -130,13 +159,15 @@ async function wyslij(tokeny, wiadomosci) {
 }
 
 async function main() {
+  zPliku();
+
   const tokeny = String(process.env.EXPO_PUSH_TOKEN || '')
     .split(',')
     .map((x) => x.trim())
     .filter(Boolean);
 
   if (!tokeny.length) {
-    log('brak EXPO_PUSH_TOKEN w deploy/.env — pomijam');
+    log('brak EXPO_PUSH_TOKEN (ani w srodowisku, ani w deploy/.env) — pomijam');
     return;
   }
 
