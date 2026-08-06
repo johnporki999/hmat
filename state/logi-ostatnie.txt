@@ -1,17 +1,6 @@
-# ogon logu serwera, 2026-08-06 09:05 UTC
+# ogon logu serwera, 2026-08-06 09:10 UTC
 # publikowany po to, zeby dalo sie diagnozowac bota bez dostepu do maszyny
 
-[2026-08-06 08:50:41] stado/panika OK
-[2026-08-06 08:50:41] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
-[2026-08-06 08:50:41] --- stado/panikaLuzna (realny.mjs) ---
-[2026-08-06 08:50:45] stado/panikaLuzna OK
-   SOL     LONG  score  0  brak trendu wzrostowego
-   RAY     LONG  score  0  brak trendu wzrostowego
-   W       LONG  score  0  brak trendu wzrostowego
-  Kontra     ████████████████████  767/714   brak przewagi wartej zachodu  (p=0.434)
-[2026-08-06 08:55:33] --- stado/sito5 (realny.mjs) ---
-[2026-08-06 08:55:37] stado/sito5 OK
-[2026-08-06 08:55:37] stado/panika: przejmuje konto po smycz (poprzednik plaski)
 [2026-08-06 08:55:37] --- stado/panika (realny.mjs) ---
 [2026-08-06 08:55:41] stado/panika OK
 [2026-08-06 08:55:41] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
@@ -41,16 +30,23 @@
 [2026-08-06 09:05:41] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
 [2026-08-06 09:05:41] --- stado/panikaLuzna (realny.mjs) ---
 [2026-08-06 09:05:46] stado/panikaLuzna OK
+   W       LONG  score  0  brak trendu wzrostowego
+  Kontra     ████████████████████  768/714   brak przewagi wartej zachodu  (p=0.482)
+[2026-08-06 09:10:33] --- stado/sito5 (realny.mjs) ---
+    UWAGA: decyzja na swiecy JESZCZE NIEZAMKNIETEJ — symulator decydowalby po jej zamknieciu
+[2026-08-06 09:10:39] stado/sito5 OK
+[2026-08-06 09:10:39] stado/panika: przejmuje konto po smycz (poprzednik plaski)
+[2026-08-06 09:10:39] --- stado/panika (realny.mjs) ---
+[2026-08-06 09:10:43] stado/panika OK
+[2026-08-06 09:10:43] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
+[2026-08-06 09:10:43] --- stado/panikaLuzna (realny.mjs) ---
+[2026-08-06 09:10:46] stado/panikaLuzna OK
 
 # --- surowy ogon logu (adresy zamaskowane) ---
-> sejsmograf: BTC 1.15% w dobę — spokój
-
-── TABELA ──
-  1. Panika      $500.00     0.00%   0 trejdów (0W)
   2. Panika ostra   $500.00     0.00%   0 trejdów (0W)
-  3. Małpa       $405.32   -18.94%   175 trejdów (56W), 2 otwarte
-  4. Smycz czysta   $372.66   -25.47%   285 trejdów (139W), 4 otwarte
-  5. Smycz       $356.28   -28.74%   284 trejdów (135W), 4 otwarte
+  3. Małpa       $407.76   -18.45%   175 trejdów (56W), 3 otwarte
+  4. Smycz czysta   $374.32   -25.14%   285 trejdów (139W), 4 otwarte
+  5. Smycz       $357.88   -28.42%   284 trejdów (135W), 4 otwarte
 
 > 2 z 4 strategii bije małpę kapitałem
 
@@ -62,34 +58,38 @@
 
 > próg istotności 0.0125 — podzielony przez 4 porównania,
   bo przy 4 strategiach naraz jedna wygrywa "istotnie" samym trafem znacznie częściej.
-[2026-08-06 09:05:33] ligac OK
-[2026-08-06 09:05:33] --- stado/sito5 (realny.mjs) ---
+[2026-08-06 09:10:33] ligac OK
+[2026-08-06 09:10:33] --- stado/sito5 (realny.mjs) ---
   (aktywna znizka polecajaca 4.0% — te sama uwaga)
-> konto 0xE0D2...B73D: perpy $14.55, spot $35.46
-=== HAJSOMAT REALNY 2026-08-06T09:05:34.446Z | *** ZA PRAWDZIWE PIENIADZE *** ===
+> konto 0xE0D2...B73D: perpy $14.53, spot $35.44
+=== HAJSOMAT REALNY 2026-08-06T09:10:34.806Z | *** ZA PRAWDZIWE PIENIADZE *** ===
 > gracz Sito 5, dzwignia 3x, 2 miejsca po 40%, bez limitu trejdow
 > rynkow gotowych: 11 z 11
-> kapital $35.01 (start $35.80), pozycji 1, trejdow 11
-> POSLIZG z 22 zlecen na zywo: mediana -0.003% na strone (12 z 22 wyszlo na nasza korzysc)
-  Pelny koszt rundy: 0.085% (poslizg -0.005% + oplaty 0.090%)
+    weszlo tylko 100% zlecenia — ksieguje mniejsza pozycje
+  OTWIERAM JUP LONG @ 0.18305 — prosty zjazd (ER 0.38), RSI 18.3 — kupuję
+    UWAGA: decyzja na swiecy JESZCZE NIEZAMKNIETEJ — symulator decydowalby po jej zamknieciu
+    dziennik: poslizg -0.1013 ATR, opoznienie -261 s
+> kapital $34.99 (start $35.80), pozycji 2, trejdow 11
+> POSLIZG z 23 zlecen na zywo: mediana -0.005% na strone (13 z 23 wyszlo na nasza korzysc)
+  Pelny koszt rundy: 0.079% (poslizg -0.011% + oplaty 0.090%)
   Liga zaklada 0,120%. Zalozenie sie broni.
-[2026-08-06 09:05:37] stado/sito5 OK
-[2026-08-06 09:05:37] stado/panika: przejmuje konto po smycz (poprzednik plaski)
-[2026-08-06 09:05:37] --- stado/panika (realny.mjs) ---
+[2026-08-06 09:10:39] stado/sito5 OK
+[2026-08-06 09:10:39] stado/panika: przejmuje konto po smycz (poprzednik plaski)
+[2026-08-06 09:10:39] --- stado/panika (realny.mjs) ---
   (aktywna znizka polecajaca 4.0% — te sama uwaga)
 > konto 0xBb99...dD26: perpy $0.00, spot $35.00  (konto zunifikowane — licze ze spotu)
-=== HAJSOMAT REALNY 2026-08-06T09:05:38.441Z | *** ZA PRAWDZIWE PIENIADZE *** ===
+=== HAJSOMAT REALNY 2026-08-06T09:10:39.974Z | *** ZA PRAWDZIWE PIENIADZE *** ===
 > gracz Panika, dzwignia 3x, 2 miejsca po 40%, bez limitu trejdow
 > rynkow gotowych: 11 z 11
 > kapital $35.00 (start $35.00), pozycji 0, trejdow 0
-[2026-08-06 09:05:41] stado/panika OK
-[2026-08-06 09:05:41] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
-[2026-08-06 09:05:41] --- stado/panikaLuzna (realny.mjs) ---
+[2026-08-06 09:10:43] stado/panika OK
+[2026-08-06 09:10:43] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
+[2026-08-06 09:10:43] --- stado/panikaLuzna (realny.mjs) ---
   (aktywna znizka polecajaca 4.0% — te sama uwaga)
 > konto 0xda7C...d8ec: perpy $0.00, spot $29.80  (konto zunifikowane — licze ze spotu)
-=== HAJSOMAT REALNY 2026-08-06T09:05:42.204Z | *** ZA PRAWDZIWE PIENIADZE *** ===
+=== HAJSOMAT REALNY 2026-08-06T09:10:44.163Z | *** ZA PRAWDZIWE PIENIADZE *** ===
 > gracz Panika luźna, dzwignia 3x, 2 miejsca po 40%, bez limitu trejdow
 > rynkow gotowych: 11 z 11
 > kapital $29.80 (start $29.80), pozycji 0, trejdow 0
-[2026-08-06 09:05:46] stado/panikaLuzna OK
-> kolektor: ostatni pomiar 5.0 min temu, czekam do 15
+[2026-08-06 09:10:46] stado/panikaLuzna OK
+> kolektor: ostatni pomiar 10.0 min temu, czekam do 15
