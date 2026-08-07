@@ -7143,82 +7143,6 @@
     }
   },
   {
-    "id": "1786023615660-krawiec-SOL-o",
-    "ts": "2026-08-06T13:40:15.665Z",
-    "gracz": "krawiec",
-    "sym": "SOL",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 73.04,
-    "margin": 80.69712264575014,
-    "notional": 242.09136793725042,
-    "leverage": 3,
-    "liqPrice": 94.95200000000001,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 38.4, odbicie do sredniej",
-    "warunki": {
-      "rsi": 38.4,
-      "rsiPrev": 31.3,
-      "ext": -1.45,
-      "nadTrendem": -0.0094,
-      "fastNadSlow": -0.0036,
-      "volPct": 0.0024,
-      "er": 0.138,
-      "slope": -0.00078,
-      "volRel": 1.506,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00756,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1786023916458-trend-JTO",
-    "ts": "2026-08-06T13:45:16.459Z",
-    "gracz": "trend",
-    "sym": "JTO",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.49422,
-    "entryPrice": 0.49155,
-    "margin": 78.24406715881423,
-    "notional": 234.7322014764427,
-    "leverage": 3,
-    "pnlUsd": -1.418204101141884,
-    "pnlPct": -0.01812538832194541,
-    "R": -0.01992538832194541,
-    "holdMs": 5999255,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 38.7, odbicie do sredniej",
-    "warunki": {
-      "rsi": 38.7,
-      "rsiPrev": 38.7,
-      "ext": -1.07,
-      "nadTrendem": -0.0286,
-      "fastNadSlow": -0.0151,
-      "volPct": 0.0031,
-      "er": 0.593,
-      "slope": -0.00333,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00991,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 0.81,
-    "mae": 1.75,
-    "rynek": {
-      "SOL": -0.00177,
-      "BTC": -0.00161,
-      "ETH": 0.00128
-    }
-  },
-  {
     "id": "1786023916458-trend-BONK",
     "ts": "2026-08-06T13:45:16.460Z",
     "gracz": "trend",
@@ -56951,6 +56875,94 @@
       "spodziewanyRuch": 0.01118,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1786129816036-kontra-PYTH",
+    "ts": "2026-08-07T19:10:16.038Z",
+    "gracz": "kontra",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.0384,
+    "entryPrice": 0.03788,
+    "margin": 89.76900623629453,
+    "notional": 269.30701870888356,
+    "leverage": 3,
+    "pnlUsd": 3.5293752094693187,
+    "pnlPct": 0.03931618893250437,
+    "R": 0.03751618893250437,
+    "holdMs": 5699470,
+    "liquidated": false,
+    "reason": "TAKE PROFIT",
+    "powodWejscia": "RSI 22.7 — panika, kupuję",
+    "warunki": {
+      "rsi": 22.7,
+      "rsiPrev": 26.9,
+      "ext": -4.5,
+      "nadTrendem": -0.0272,
+      "fastNadSlow": -0.0057,
+      "volPct": 0.0034,
+      "er": 0.193,
+      "slope": -0.00164,
+      "volRel": 0.243,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01098,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 4,
+    "mae": 0,
+    "rynek": {
+      "SOL": 0.0056,
+      "BTC": 0.00447,
+      "ETH": 0.00412
+    }
+  },
+  {
+    "id": "1786129816036-malpa-PYTH",
+    "ts": "2026-08-07T19:10:16.040Z",
+    "gracz": "malpa",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.0384,
+    "entryPrice": 0.0382,
+    "margin": 59.25177422417213,
+    "notional": 177.7553226725164,
+    "leverage": 3,
+    "pnlUsd": -1.0382867878464068,
+    "pnlPct": -0.017523302912722423,
+    "R": -0.019323302912722422,
+    "holdMs": 3299357,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "rzut monetą — żadnego powodu",
+    "warunki": {
+      "rsi": 34.9,
+      "rsiPrev": 34.9,
+      "ext": -1.73,
+      "nadTrendem": -0.0185,
+      "fastNadSlow": -0.0059,
+      "volPct": 0.0032,
+      "er": 0.182,
+      "slope": -0.00182,
+      "volRel": 3.915
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01016,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0.08,
+    "mae": 1.65,
+    "rynek": {
+      "SOL": 0.0015,
+      "BTC": -0.0002,
+      "ETH": -0.00016
     }
   }
 ]
