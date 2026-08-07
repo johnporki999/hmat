@@ -6474,82 +6474,6 @@
     }
   },
   {
-    "id": "1786041327563-krawiec-BCH-o",
-    "ts": "2026-08-06T18:35:27.566Z",
-    "gracz": "krawiec",
-    "sym": "BCH",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 213.53,
-    "margin": 37.589843371188856,
-    "notional": 112.76953011356656,
-    "leverage": 3,
-    "liqPrice": 149.471,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, RSI 51.5, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 51.5,
-      "rsiPrev": 58.6,
-      "ext": 0.03,
-      "nadTrendem": 0.0014,
-      "fastNadSlow": 0.0011,
-      "volPct": 0.0021,
-      "er": 0.08,
-      "slope": 0.00043,
-      "volRel": 3.879,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00671,
-      "koszt": 0.0012,
-      "score": 8
-    }
-  },
-  {
-    "id": "1786041327563-kontra-BCH",
-    "ts": "2026-08-06T18:35:27.566Z",
-    "gracz": "kontra",
-    "sym": "BCH",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 213.53,
-    "entryPrice": 214.83,
-    "margin": 39.448924195263984,
-    "notional": 118.34677258579195,
-    "leverage": 3,
-    "pnlUsd": 0.64407829454094,
-    "pnlPct": 0.016326891231631214,
-    "R": 0.014526891231631214,
-    "holdMs": 5399650,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "RSI 72.2 — euforia, sprzedaję",
-    "warunki": {
-      "rsi": 72.2,
-      "rsiPrev": 67.7,
-      "ext": 4.44,
-      "nadTrendem": 0.0078,
-      "fastNadSlow": -0.0001,
-      "volPct": 0.0018,
-      "er": 0.006,
-      "slope": 0.00014,
-      "volRel": 3.881
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00592,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 3.27,
-    "mae": 0,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
     "id": "1786041327563-malpa-ARB-o",
     "ts": "2026-08-06T18:35:27.568Z",
     "gracz": "malpa",
@@ -56483,6 +56407,80 @@
       "SOL": null,
       "BTC": null,
       "ETH": null
+    }
+  },
+  {
+    "id": "1786114829065-antytrend-AVA",
+    "ts": "2026-08-07T15:00:29.066Z",
+    "gracz": "antytrend",
+    "sym": "AVA",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.2046,
+    "entryPrice": 0.2033,
+    "margin": 28.8259011148859,
+    "notional": 86.4777033446577,
+    "leverage": 3,
+    "pnlUsd": -0.6068135119678287,
+    "pnlPct": -0.02105098153044263,
+    "R": -0.02285098153044263,
+    "holdMs": 13501843,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: gotowy: trend, trend rosnie, RSI 59.8, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 59.8,
+      "rsiPrev": 59.8,
+      "ext": 1.59,
+      "nadTrendem": 0.0754,
+      "fastNadSlow": 0.0184,
+      "volPct": 0.0078,
+      "er": 0.258,
+      "slope": 0.00712,
+      "volRel": 1.047
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02506,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 1.32,
+    "mae": 0.82,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1786114829065-antytrend-AVA-o",
+    "ts": "2026-08-07T15:00:29.068Z",
+    "gracz": "antytrend",
+    "sym": "AVA",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.2046,
+    "margin": 28.353070055670134,
+    "notional": 85.0592101670104,
+    "leverage": 3,
+    "liqPrice": 0.26598,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, trend rosnie, RSI 60.0, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 60,
+      "rsiPrev": 60,
+      "ext": 1.55,
+      "nadTrendem": 0.0711,
+      "fastNadSlow": 0.0152,
+      "volPct": 0.0058,
+      "er": 0.21,
+      "slope": 0.00685,
+      "volRel": 1.112
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01864,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
