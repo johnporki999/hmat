@@ -5963,80 +5963,6 @@
     }
   },
   {
-    "id": "1785987315807-wybicie-ORCA-o",
-    "ts": "2026-08-06T03:35:15.810Z",
-    "gracz": "wybicie",
-    "sym": "ORCA",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 1.077,
-    "margin": 59.96224594486475,
-    "notional": 179.88673783459424,
-    "leverage": 3,
-    "liqPrice": 1.4001,
-    "pnlUsd": null,
-    "reason": "1.08 pod dołkiem 20 świec 1.08",
-    "warunki": {
-      "rsi": 28.4,
-      "rsiPrev": 38.1,
-      "ext": -4.64,
-      "nadTrendem": -0.0072,
-      "fastNadSlow": -0.0022,
-      "volPct": 0.0008,
-      "er": 0.167,
-      "slope": -0.00047,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00263,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1785987315807-malpa-ORCA",
-    "ts": "2026-08-06T03:35:15.810Z",
-    "gracz": "malpa",
-    "sym": "ORCA",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 1.077,
-    "entryPrice": 1.08,
-    "margin": 71.75055705283292,
-    "notional": 215.25167115849877,
-    "leverage": 3,
-    "pnlUsd": -0.7283278934804946,
-    "pnlPct": -0.010150832598333649,
-    "R": -0.011950832598333648,
-    "holdMs": 1499947,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 38.1,
-      "rsiPrev": 38.1,
-      "ext": -2.14,
-      "nadTrendem": -0.0045,
-      "fastNadSlow": -0.002,
-      "volPct": 0.0007,
-      "er": 0,
-      "slope": -0.0004,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0023,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0,
-    "mae": 3.86,
-    "rynek": {
-      "SOL": -0.00014,
-      "BTC": -0.00029,
-      "ETH": -0.00036
-    }
-  },
-  {
     "id": "1785987315807-malpa-SOL-o",
     "ts": "2026-08-06T03:35:15.810Z",
     "gracz": "malpa",
@@ -56940,6 +56866,84 @@
       "spodziewanyRuch": 0.01343,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786092016155-sjesta-PYTH",
+    "ts": "2026-08-07T08:40:16.157Z",
+    "gracz": "sjesta",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.03883,
+    "entryPrice": 0.03878,
+    "margin": 80.29012013189501,
+    "notional": 240.87036039568503,
+    "leverage": 3,
+    "pnlUsd": -0.4727863002734759,
+    "pnlPct": -0.005888474192052715,
+    "R": -0.007688474192052716,
+    "holdMs": 44100549,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 41.9, odbicie do sredniej",
+    "warunki": {
+      "rsi": 41.9,
+      "rsiPrev": 31.4,
+      "ext": -1.09,
+      "nadTrendem": -0.0099,
+      "fastNadSlow": -0.0041,
+      "volPct": 0.0029,
+      "er": 0.183,
+      "slope": -0.0011,
+      "volRel": 0.003,
+      "knotZa": 0.889,
+      "zamkniecie": 0.889
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0093,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.86,
+    "mae": 3.46,
+    "rynek": {
+      "SOL": 0.0022,
+      "BTC": -0.00016,
+      "ETH": -0.00098
+    }
+  },
+  {
+    "id": "1786092016155-sjesta-PYTH-o",
+    "ts": "2026-08-07T08:40:16.159Z",
+    "gracz": "sjesta",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.03883,
+    "margin": 79.01764646089956,
+    "notional": 237.05293938269867,
+    "leverage": 3,
+    "liqPrice": 0.050479,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 49.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 49.2,
+      "rsiPrev": 46.2,
+      "ext": -0.06,
+      "nadTrendem": -0.0057,
+      "fastNadSlow": -0.0015,
+      "volPct": 0.0031,
+      "er": 0.015,
+      "slope": -0.00069,
+      "volRel": null,
+      "knotZa": 0.781,
+      "zamkniecie": 0.781
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01007,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
