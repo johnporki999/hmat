@@ -1,83 +1,5 @@
 [
   {
-    "id": "1785786034668-smycz-SOL-o",
-    "ts": "2026-08-03T19:40:34.670Z",
-    "gracz": "smycz",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 73.94,
-    "margin": 90.91064538690847,
-    "notional": 272.7319361607254,
-    "leverage": 3,
-    "liqPrice": 51.757999999999996,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 66.3, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 66.3,
-      "rsiPrev": 71.4,
-      "ext": 1.39,
-      "nadTrendem": 0.012,
-      "fastNadSlow": 0.0051,
-      "volPct": 0.0031,
-      "er": 0.276,
-      "slope": 0.00115,
-      "volRel": 0.551,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01002,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1785786034668-smyczFiltr-BTC",
-    "ts": "2026-08-03T19:40:34.670Z",
-    "gracz": "smyczFiltr",
-    "sym": "BTC",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 63831.9,
-    "entryPrice": 63794.8,
-    "margin": 91.75898974047689,
-    "notional": 275.2769692214307,
-    "leverage": 3,
-    "pnlUsd": -0.009253884088316218,
-    "pnlPct": -0.00010084989072448481,
-    "R": -0.0019008498907244849,
-    "holdMs": 3900546,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 63.0, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 63,
-      "rsiPrev": 62.7,
-      "ext": 1.14,
-      "nadTrendem": 0.0102,
-      "fastNadSlow": 0.0053,
-      "volPct": 0.0027,
-      "er": 0.294,
-      "slope": 0.00108,
-      "volRel": 0.05,
-      "knotZa": 0.001,
-      "zamkniecie": 0.122
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00874,
-      "koszt": 0.0012,
-      "score": 10
-    },
-    "mfe": 1.22,
-    "mae": 0.18,
-    "rynek": {
-      "SOL": 0.00027,
-      "BTC": 0.00058,
-      "ETH": 0.00007
-    }
-  },
-  {
     "id": "1785786034668-smyczFiltr-SOL-o",
     "ts": "2026-08-03T19:40:34.670Z",
     "gracz": "smyczFiltr",
@@ -56891,6 +56813,84 @@
       "spodziewanyRuch": 0.0101,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786106744865-smycz-PYTH",
+    "ts": "2026-08-07T12:45:44.866Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.03884,
+    "entryPrice": 0.03892,
+    "margin": 62.746531834859745,
+    "notional": 188.23959550457923,
+    "leverage": 3,
+    "pnlUsd": 0.27381449275397685,
+    "pnlPct": 0.004363818760128751,
+    "R": 0.002563818760128751,
+    "holdMs": 535323,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, RSI 51.0, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 51,
+      "rsiPrev": 53.8,
+      "ext": 0.14,
+      "nadTrendem": -0.0029,
+      "fastNadSlow": -0.0002,
+      "volPct": 0.0028,
+      "er": 0.032,
+      "slope": -0.0004,
+      "volRel": 0.328,
+      "knotZa": 0.37,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00912,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.35,
+    "mae": 0,
+    "rynek": {
+      "SOL": 0.00204,
+      "BTC": 0.00274,
+      "ETH": 0.00287
+    }
+  },
+  {
+    "id": "1786106744865-smycz-PYTH-o",
+    "ts": "2026-08-07T12:45:44.868Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.03884,
+    "margin": 62.74700217513033,
+    "notional": 188.24100652539101,
+    "leverage": 3,
+    "liqPrice": 0.050492,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, RSI 47.5, odbicie do sredniej",
+    "warunki": {
+      "rsi": 47.5,
+      "rsiPrev": 44.9,
+      "ext": -0.4,
+      "nadTrendem": -0.0049,
+      "fastNadSlow": -0.0004,
+      "volPct": 0.003,
+      "er": 0.002,
+      "slope": -0.00046,
+      "volRel": 5.26,
+      "knotZa": 0.5,
+      "zamkniecie": 0.5
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00971,
+      "koszt": 0.0012,
+      "score": 8
     }
   }
 ]
