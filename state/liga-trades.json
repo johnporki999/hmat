@@ -5811,92 +5811,6 @@
     }
   },
   {
-    "id": "1785978316512-wybicie-ORCA",
-    "ts": "2026-08-06T01:05:16.517Z",
-    "gracz": "wybicie",
-    "sym": "ORCA",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 1.085,
-    "entryPrice": 1.082,
-    "margin": 60.86748011485818,
-    "notional": 182.60244034457455,
-    "leverage": 3,
-    "pnlUsd": -0.6185005100151205,
-    "pnlPct": -0.01016142788970395,
-    "R": -0.01196142788970395,
-    "holdMs": 8699701,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "1.08 pod dołkiem 20 świec 1.09",
-    "warunki": {
-      "rsi": 30.2,
-      "rsiPrev": 47,
-      "ext": -5.07,
-      "nadTrendem": -0.0035,
-      "fastNadSlow": 0.0002,
-      "volPct": 0.0009,
-      "er": 0.148,
-      "slope": 0.00007,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00296,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 2,
-    "mae": 3,
-    "rynek": {
-      "SOL": 0.00041,
-      "BTC": -0.0009,
-      "ETH": 0.00015
-    }
-  },
-  {
-    "id": "1785978316512-malpa-ORCA",
-    "ts": "2026-08-06T01:05:16.517Z",
-    "gracz": "malpa",
-    "sym": "ORCA",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 1.085,
-    "entryPrice": 1.08,
-    "margin": 72.22855912483631,
-    "notional": 216.68567737450894,
-    "leverage": 3,
-    "pnlUsd": 0.8683598056162016,
-    "pnlPct": 0.012022388597221925,
-    "R": 0.010222388597221925,
-    "holdMs": 5700079,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 25.9,
-      "rsiPrev": 25.9,
-      "ext": -5.73,
-      "nadTrendem": -0.0051,
-      "fastNadSlow": -0.0009,
-      "volPct": 0.0008,
-      "er": 0.08,
-      "slope": -0.00017,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00257,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 5.76,
-    "mae": 0,
-    "rynek": {
-      "SOL": 0.00041,
-      "BTC": -0.00123,
-      "ETH": 0.00014
-    }
-  },
-  {
     "id": "1785978316512-malpa-PYTH-o",
     "ts": "2026-08-06T01:05:16.517Z",
     "gracz": "malpa",
@@ -56924,6 +56838,84 @@
       "spodziewanyRuch": 0.00354,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786085415986-smycz-PYTH",
+    "ts": "2026-08-07T06:50:15.987Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.0389,
+    "entryPrice": 0.0389,
+    "margin": 53.849011169959205,
+    "notional": 161.54703350987762,
+    "leverage": 3,
+    "pnlUsd": -0.09733200718542956,
+    "pnlPct": -0.001807498505,
+    "R": -0.0036074985049999995,
+    "holdMs": 1499706,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, RSI 49.4, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 49.4,
+      "rsiPrev": 50.2,
+      "ext": -0.11,
+      "nadTrendem": -0.0045,
+      "fastNadSlow": -0.0007,
+      "volPct": 0.003,
+      "er": 0.013,
+      "slope": -0.0005,
+      "volRel": 4.121,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00969,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.02,
+    "mae": 0,
+    "rynek": {
+      "SOL": -0.0026,
+      "BTC": -0.00195,
+      "ETH": -0.00141
+    }
+  },
+  {
+    "id": "1786085415986-smycz-PYTH-o",
+    "ts": "2026-08-07T06:50:15.989Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.0389,
+    "margin": 54.1647799833381,
+    "notional": 162.4943399500143,
+    "leverage": 3,
+    "liqPrice": 0.05057,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 49.8, odbicie do sredniej",
+    "warunki": {
+      "rsi": 49.8,
+      "rsiPrev": 45.2,
+      "ext": -0.01,
+      "nadTrendem": -0.0044,
+      "fastNadSlow": -0.0008,
+      "volPct": 0.0031,
+      "er": 0.059,
+      "slope": -0.00056,
+      "volRel": 4.999,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00982,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
