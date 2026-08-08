@@ -6596,84 +6596,6 @@
     }
   },
   {
-    "id": "1786033516322-kontra-JTO-o",
-    "ts": "2026-08-06T16:25:16.325Z",
-    "gracz": "kontra",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.47479,
-    "margin": 97.91657476379831,
-    "notional": 293.74972429139495,
-    "leverage": 3,
-    "liqPrice": 0.33235299999999995,
-    "pnlUsd": null,
-    "reason": "RSI 16.6 — panika, kupuję",
-    "warunki": {
-      "rsi": 16.6,
-      "rsiPrev": 19.7,
-      "ext": -6.87,
-      "nadTrendem": -0.0566,
-      "fastNadSlow": -0.0142,
-      "volPct": 0.004,
-      "er": 0.506,
-      "slope": -0.00356,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01278,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1786033516322-kontraN-JTO",
-    "ts": "2026-08-06T16:25:16.325Z",
-    "gracz": "kontraN",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.47479,
-    "entryPrice": 0.4799,
-    "margin": 99.80905893602959,
-    "notional": 299.42717680808875,
-    "leverage": 3,
-    "pnlUsd": -3.3693704327601477,
-    "pnlPct": -0.033758162522298414,
-    "R": -0.03555816252229841,
-    "holdMs": 1200650,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "RSI 21.1 — panika, kupuję",
-    "warunki": {
-      "rsi": 21.1,
-      "rsiPrev": 25.4,
-      "ext": -5.92,
-      "nadTrendem": -0.047,
-      "fastNadSlow": -0.0128,
-      "volPct": 0.0033,
-      "er": 0.462,
-      "slope": -0.00317,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01055,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0.41,
-    "mae": 3.23,
-    "rynek": {
-      "SOL": -0.00082,
-      "BTC": -0.00078,
-      "ETH": -0.00034
-    }
-  },
-  {
     "id": "1786033516322-kontraN-JTO-o",
     "ts": "2026-08-06T16:25:16.325Z",
     "gracz": "kontraN",
@@ -56929,6 +56851,80 @@
       "spodziewanyRuch": 0.00624,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786149915448-smycz-PYTH",
+    "ts": "2026-08-08T00:45:15.449Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.03798,
+    "entryPrice": 0.03808,
+    "margin": 54.44395152910866,
+    "notional": 163.33185458732598,
+    "leverage": 3,
+    "pnlUsd": 0.33018381392128177,
+    "pnlPct": 0.006064655570504425,
+    "R": 0.004264655570504426,
+    "holdMs": 2699153,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 43.5, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 43.5,
+      "rsiPrev": 43.5,
+      "ext": -0.65,
+      "nadTrendem": -0.0176,
+      "fastNadSlow": -0.0059,
+      "volPct": 0.002,
+      "er": 0.241,
+      "slope": -0.00206,
+      "volRel": 0.206
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00644,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "mfe": 1.83,
+    "mae": 0,
+    "rynek": {
+      "SOL": 0.00041,
+      "BTC": 0.00002,
+      "ETH": 0.0003
+    }
+  },
+  {
+    "id": "1786149915448-smycz-PYTH-o",
+    "ts": "2026-08-08T00:45:15.451Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.03798,
+    "margin": 54.71835633210753,
+    "notional": 164.1550689963226,
+    "leverage": 3,
+    "liqPrice": 0.049374,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 38.4, odbicie do sredniej",
+    "warunki": {
+      "rsi": 38.4,
+      "rsiPrev": 38.4,
+      "ext": -1.53,
+      "nadTrendem": -0.0196,
+      "fastNadSlow": -0.0059,
+      "volPct": 0.0019,
+      "er": 0.257,
+      "slope": -0.00201,
+      "volRel": 0.673
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00622,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
