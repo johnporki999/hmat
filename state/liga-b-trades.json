@@ -7179,49 +7179,6 @@
     }
   },
   {
-    "id": "1786152627261-krawiec-CTSI",
-    "ts": "2026-08-08T01:30:27.264Z",
-    "gracz": "krawiec",
-    "sym": "CTSI",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.02512,
-    "entryPrice": 0.02582,
-    "margin": 37.61723298211631,
-    "notional": 112.85169894634893,
-    "leverage": 3,
-    "pnlUsd": 2.991333635439533,
-    "pnlPct": 0.07952029956221525,
-    "R": 0.07772029956221525,
-    "holdMs": 2400219,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 43.8, odbicie do sredniej",
-    "warunki": {
-      "rsi": 43.8,
-      "rsiPrev": 35.2,
-      "ext": -0.65,
-      "nadTrendem": -0.0547,
-      "fastNadSlow": -0.0272,
-      "volPct": 0.0074,
-      "er": 0.307,
-      "slope": -0.00609,
-      "volRel": 0.325
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02363,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 3.67,
-    "mae": 0,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
     "id": "1786152627261-sito5-CTSI-o",
     "ts": "2026-08-08T01:30:27.265Z",
     "gracz": "sito5",
@@ -7248,68 +7205,6 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.02507,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1786152927350-trend-GALA-o",
-    "ts": "2026-08-08T01:35:27.352Z",
-    "gracz": "trend",
-    "sym": "GALA",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.00177,
-    "margin": 39.117365065210905,
-    "notional": 117.35209519563271,
-    "leverage": 3,
-    "liqPrice": 0.002301,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 61.4, odbicie do sredniej",
-    "warunki": {
-      "rsi": 61.4,
-      "rsiPrev": 50.4,
-      "ext": 2.89,
-      "nadTrendem": -0.0052,
-      "fastNadSlow": -0.0039,
-      "volPct": 0.0021,
-      "er": 0.059,
-      "slope": -0.00131,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0066,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1786152927350-antytrend-GALA-o",
-    "ts": "2026-08-08T01:35:27.352Z",
-    "gracz": "antytrend",
-    "sym": "GALA",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.00177,
-    "margin": 27.223026300007778,
-    "notional": 81.66907890002334,
-    "leverage": 3,
-    "liqPrice": 0.001239,
-    "pnlUsd": null,
-    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 61.4, odbicie do sredniej",
-    "warunki": {
-      "rsi": 61.4,
-      "rsiPrev": 50.4,
-      "ext": 2.89,
-      "nadTrendem": -0.0052,
-      "fastNadSlow": -0.0039,
-      "volPct": 0.0021,
-      "er": 0.059,
-      "slope": -0.00131,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0066,
       "koszt": 0.0012,
       "score": null
     }
@@ -56353,6 +56248,123 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.00283,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1786225226719-wybicie-BCH",
+    "ts": "2026-08-08T21:40:26.723Z",
+    "gracz": "wybicie",
+    "sym": "BCH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 216.81,
+    "entryPrice": 216.61,
+    "margin": 29.713400405380035,
+    "notional": 89.1402012161401,
+    "leverage": 3,
+    "pnlUsd": -0.13717034392731275,
+    "pnlPct": -0.004616447194057133,
+    "R": -0.006416447194057134,
+    "holdMs": 9298522,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "216.61 pod dołkiem 20 świec 216.80",
+    "warunki": {
+      "rsi": 39.7,
+      "rsiPrev": 47.9,
+      "ext": -2.15,
+      "nadTrendem": 0.0045,
+      "fastNadSlow": 0.0013,
+      "volPct": 0.001,
+      "er": 0.069,
+      "slope": 0.0007,
+      "volRel": 0.007
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00327,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 1.85,
+    "mae": 0.9,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1786225226719-wybicie-JST",
+    "ts": "2026-08-08T21:40:26.723Z",
+    "gracz": "wybicie",
+    "sym": "JST",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.10054,
+    "entryPrice": 0.10039,
+    "margin": 29.859315312150116,
+    "notional": 89.57794593645035,
+    "leverage": 3,
+    "pnlUsd": -0.18781566121078305,
+    "pnlPct": -0.006290019019101841,
+    "R": -0.008090019019101842,
+    "holdMs": 1500187,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "0.10 pod dołkiem 20 świec 0.10",
+    "warunki": {
+      "rsi": 7,
+      "rsiPrev": 9,
+      "ext": -7.71,
+      "nadTrendem": -0.0335,
+      "fastNadSlow": -0.0091,
+      "volPct": 0.0009,
+      "er": 0.801,
+      "slope": -0.00308,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00281,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0,
+    "mae": 1.7,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1786225226719-malpa-CELO-o",
+    "ts": "2026-08-08T21:40:26.724Z",
+    "gracz": "malpa",
+    "sym": "CELO",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.0627,
+    "margin": 27.34078125204248,
+    "notional": 82.02234375612744,
+    "leverage": 3,
+    "liqPrice": 0.04389,
+    "pnlUsd": null,
+    "reason": "rzut monetą — żadnego powodu",
+    "warunki": {
+      "rsi": 53.7,
+      "rsiPrev": 53.7,
+      "ext": 0.03,
+      "nadTrendem": 0.0176,
+      "fastNadSlow": 0.0049,
+      "volPct": 0.0008,
+      "er": 0.037,
+      "slope": 0.00192,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00258,
       "koszt": 0.0012,
       "score": null
     }
