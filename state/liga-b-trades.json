@@ -6324,111 +6324,6 @@
     }
   },
   {
-    "id": "1786115728275-krawiec-ARB-o",
-    "ts": "2026-08-07T15:15:28.280Z",
-    "gracz": "krawiec",
-    "sym": "ARB",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.0777,
-    "margin": 37.444983112411805,
-    "notional": 112.33494933723541,
-    "leverage": 3,
-    "liqPrice": 0.10101000000000002,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 45.6, odbicie do sredniej",
-    "warunki": {
-      "rsi": 45.6,
-      "rsiPrev": 45.6,
-      "ext": -0.77,
-      "nadTrendem": -0.0151,
-      "fastNadSlow": -0.0017,
-      "volPct": 0.0023,
-      "er": 0.085,
-      "slope": -0.00148,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00734,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1786115728275-krawiec-SAND-o",
-    "ts": "2026-08-07T15:15:28.280Z",
-    "gracz": "krawiec",
-    "sym": "SAND",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.0413,
-    "margin": 37.444983112411805,
-    "notional": 112.33494933723541,
-    "leverage": 3,
-    "liqPrice": 0.05369000000000001,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, RSI 44.2, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 44.2,
-      "rsiPrev": 44.2,
-      "ext": -0.95,
-      "nadTrendem": -0.0038,
-      "fastNadSlow": -0.0003,
-      "volPct": 0.0024,
-      "er": 0.029,
-      "slope": -0.0003,
-      "volRel": 0.483
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00768,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1786115728275-wybicie-SAND",
-    "ts": "2026-08-07T15:15:28.281Z",
-    "gracz": "wybicie",
-    "sym": "SAND",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.0413,
-    "entryPrice": 0.0412,
-    "margin": 30.31056638854678,
-    "notional": 90.93169916564034,
-    "leverage": 3,
-    "pnlUsd": -0.27549448237130103,
-    "pnlPct": -0.009089057553058461,
-    "R": -0.01088905755305846,
-    "holdMs": 1500853,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "0.04 pod dołkiem 20 świec 0.04",
-    "warunki": {
-      "rsi": 35.5,
-      "rsiPrev": 40.1,
-      "ext": -2.41,
-      "nadTrendem": -0.0063,
-      "fastNadSlow": 0.0001,
-      "volPct": 0.0022,
-      "er": 0,
-      "slope": -0.00023,
-      "volRel": 2.668
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00718,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 1.08,
-    "mae": 1.08,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
     "id": "1786115728275-malpa-JST-o",
     "ts": "2026-08-07T15:15:28.281Z",
     "gracz": "malpa",
@@ -56767,6 +56662,115 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.00335,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1786191027420-antytrend-HFT",
+    "ts": "2026-08-08T12:10:27.422Z",
+    "gracz": "antytrend",
+    "sym": "HFT",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.01234,
+    "entryPrice": 0.01328,
+    "margin": 28.50386232319325,
+    "notional": 85.51158696957975,
+    "leverage": 3,
+    "pnlUsd": -6.1071777130058384,
+    "pnlPct": -0.21425790104369474,
+    "R": -0.21605790104369477,
+    "holdMs": 9300341,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 54.3, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 54.3,
+      "rsiPrev": 67.3,
+      "ext": 0.55,
+      "nadTrendem": -0.2363,
+      "fastNadSlow": -0.0312,
+      "volPct": 0.0431,
+      "er": 0.024,
+      "slope": -0.02487,
+      "volRel": 2.219,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.13808,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0.49,
+    "mae": 1.64,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1786191027420-antytrend-HFT-o",
+    "ts": "2026-08-08T12:10:27.423Z",
+    "gracz": "antytrend",
+    "sym": "HFT",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.01234,
+    "margin": 27.80133308739706,
+    "notional": 83.40399926219118,
+    "leverage": 3,
+    "liqPrice": 0.008638,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 42.2, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 42.2,
+      "rsiPrev": 44.4,
+      "ext": -1.02,
+      "nadTrendem": -0.2723,
+      "fastNadSlow": -0.0277,
+      "volPct": 0.0402,
+      "er": 0.052,
+      "slope": -0.02489,
+      "volRel": 0.496,
+      "knotZa": 0.4,
+      "zamkniecie": 0.4
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.12852,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1786191027420-wybicie-RLC-o",
+    "ts": "2026-08-08T12:10:27.425Z",
+    "gracz": "wybicie",
+    "sym": "RLC",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.2752,
+    "margin": 29.87569011664001,
+    "notional": 89.62707034992002,
+    "leverage": 3,
+    "liqPrice": 0.19263999999999998,
+    "pnlUsd": null,
+    "reason": "0.28 nad szczytem 20 świec 0.28",
+    "warunki": {
+      "rsi": 92.5,
+      "rsiPrev": 92.1,
+      "ext": 11.08,
+      "nadTrendem": 0.0033,
+      "fastNadSlow": -0.0014,
+      "volPct": 0.0005,
+      "er": 0.174,
+      "slope": -0.00024,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00161,
       "koszt": 0.0012,
       "score": null
     }
