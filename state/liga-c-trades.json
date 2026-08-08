@@ -1,81 +1,5 @@
 [
   {
-    "id": "1785867334595-malpa-SOL",
-    "ts": "2026-08-04T18:15:34.597Z",
-    "gracz": "malpa",
-    "sym": "SOL",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 74.15,
-    "entryPrice": 73.74,
-    "margin": 83.96676691829896,
-    "notional": 251.90030075489688,
-    "leverage": 3,
-    "pnlUsd": -1.5522285879677395,
-    "pnlPct": -0.018486225502502476,
-    "R": -0.02028622550250248,
-    "holdMs": 1199539,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 50,
-      "rsiPrev": 59.3,
-      "ext": -0.12,
-      "nadTrendem": 0.0049,
-      "fastNadSlow": 0.0017,
-      "volPct": 0.0032,
-      "er": 0.009,
-      "slope": 0.00067,
-      "volRel": 0.149,
-      "knotZa": 0.1,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01037,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0,
-    "mae": 1.72,
-    "rynek": {
-      "SOL": 0.00556,
-      "BTC": 0.00464,
-      "ETH": 0.00474
-    }
-  },
-  {
-    "id": "1785867635332-malpa-KMNO-o",
-    "ts": "2026-08-04T18:20:35.334Z",
-    "gracz": "malpa",
-    "sym": "KMNO",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.01798,
-    "margin": 84.67174666693464,
-    "notional": 254.0152400008039,
-    "leverage": 3,
-    "liqPrice": 0.023374,
-    "pnlUsd": null,
-    "reason": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 53,
-      "rsiPrev": 53,
-      "ext": 0.62,
-      "nadTrendem": -0.0026,
-      "fastNadSlow": -0.0001,
-      "volPct": 0.0002,
-      "er": 0.1,
-      "slope": -0.00027,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00056,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1785867934871-smyczFiltr-PYTH",
     "ts": "2026-08-04T18:25:34.871Z",
     "gracz": "smyczFiltr",
@@ -56857,6 +56781,82 @@
       "spodziewanyRuch": 0.00802,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1786216233798-smycz-KMNO",
+    "ts": "2026-08-08T19:10:33.799Z",
+    "gracz": "smycz",
+    "sym": "KMNO",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.0183,
+    "entryPrice": 0.01834,
+    "margin": 58.40562249007501,
+    "notional": 175.21686747022503,
+    "leverage": 3,
+    "pnlUsd": 0.27272976114784303,
+    "pnlPct": 0.004669580590365056,
+    "R": 0.002869580590365056,
+    "holdMs": 14698952,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.1, odbicie do sredniej",
+    "warunki": {
+      "rsi": 44.1,
+      "rsiPrev": 31.5,
+      "ext": -0.26,
+      "nadTrendem": -0.0284,
+      "fastNadSlow": -0.0125,
+      "volPct": 0.0021,
+      "er": 0.55,
+      "slope": -0.00332,
+      "volRel": null,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0066,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 2.38,
+    "mae": 0,
+    "rynek": {
+      "SOL": -0.00549,
+      "BTC": -0.00127,
+      "ETH": -0.00114
+    }
+  },
+  {
+    "id": "1786216233798-smycz-JUP-o",
+    "ts": "2026-08-08T19:10:33.800Z",
+    "gracz": "smycz",
+    "sym": "JUP",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.18404,
+    "margin": 56.86660744271637,
+    "notional": 170.59982232814912,
+    "leverage": 3,
+    "liqPrice": 0.128828,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 49.3, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 49.3,
+      "rsiPrev": 49.3,
+      "ext": -0.42,
+      "nadTrendem": 0.0031,
+      "fastNadSlow": 0.0035,
+      "volPct": 0.0023,
+      "er": 0.088,
+      "slope": 0.00051,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0072,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
