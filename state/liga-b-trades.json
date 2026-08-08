@@ -7764,80 +7764,6 @@
     }
   },
   {
-    "id": "1786160127161-kontra-GALA-o",
-    "ts": "2026-08-08T03:35:27.165Z",
-    "gracz": "kontra",
-    "sym": "GALA",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.00178,
-    "margin": 44.98512227740499,
-    "notional": 134.95536683221496,
-    "leverage": 3,
-    "liqPrice": 0.002314,
-    "pnlUsd": null,
-    "reason": "RSI 72.4 — euforia, sprzedaję",
-    "warunki": {
-      "rsi": 72.4,
-      "rsiPrev": 61.4,
-      "ext": 4.35,
-      "nadTrendem": 0.0008,
-      "fastNadSlow": -0.0009,
-      "volPct": 0.0018,
-      "er": 0,
-      "slope": -0.0005,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0058,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1786160127161-wybicie-ARB",
-    "ts": "2026-08-08T03:35:27.166Z",
-    "gracz": "wybicie",
-    "sym": "ARB",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.0787,
-    "entryPrice": 0.0785,
-    "margin": 30.92382472113301,
-    "notional": 92.77147416339903,
-    "leverage": 3,
-    "pnlUsd": -0.2937395216427212,
-    "pnlPct": -0.009498809551911047,
-    "R": -0.011298809551911048,
-    "holdMs": 11099637,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "0.08 pod dołkiem 20 świec 0.08",
-    "warunki": {
-      "rsi": 43.7,
-      "rsiPrev": 51.2,
-      "ext": -1.88,
-      "nadTrendem": -0.004,
-      "fastNadSlow": 0.0035,
-      "volPct": 0.002,
-      "er": 0.042,
-      "slope": 0.00013,
-      "volRel": 1.39
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00648,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 2.52,
-    "mae": 1.26,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
     "id": "1786160127161-wybicie-BCH-o",
     "ts": "2026-08-08T03:35:27.166Z",
     "gracz": "wybicie",
@@ -56393,6 +56319,94 @@
       "spodziewanyRuch": 0.00216,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786231527543-antytrend-FIDA",
+    "ts": "2026-08-08T23:25:27.544Z",
+    "gracz": "antytrend",
+    "sym": "FIDA",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.01797,
+    "entryPrice": 0.01808,
+    "margin": 27.227078251210816,
+    "notional": 81.68123475363245,
+    "leverage": 3,
+    "pnlUsd": -0.5486314720810783,
+    "pnlPct": -0.020150214687713695,
+    "R": -0.021950214687713694,
+    "holdMs": 8400247,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 58.5, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 58.5,
+      "rsiPrev": 70.1,
+      "ext": 1.55,
+      "nadTrendem": -0.0069,
+      "fastNadSlow": -0.0006,
+      "volPct": 0.0028,
+      "er": 0.079,
+      "slope": -0.00088,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00894,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0.99,
+    "mae": 2.18,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1786231527543-kontra-FIDA",
+    "ts": "2026-08-08T23:25:27.546Z",
+    "gracz": "kontra",
+    "sym": "FIDA",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.01797,
+    "entryPrice": 0.01817,
+    "margin": 43.40335974736016,
+    "notional": 130.2100792420805,
+    "leverage": 3,
+    "pnlUsd": 1.3530982536269522,
+    "pnlPct": 0.031174965751568324,
+    "R": 0.029374965751568324,
+    "holdMs": 9299746,
+    "liquidated": false,
+    "reason": "TAKE PROFIT",
+    "powodWejscia": "RSI 70.1 — euforia, sprzedaję",
+    "warunki": {
+      "rsi": 70.1,
+      "rsiPrev": 65.9,
+      "ext": 3.72,
+      "nadTrendem": -0.002,
+      "fastNadSlow": -0.0009,
+      "volPct": 0.0026,
+      "er": 0.033,
+      "slope": -0.00101,
+      "volRel": null,
+      "knotZa": 1,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00836,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 4.21,
+    "mae": 0,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
     }
   }
 ]
