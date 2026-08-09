@@ -2,7 +2,7 @@
   "version": 1,
   "kind": "perp-sim",
   "createdAt": "2026-07-26T19:59:10.228Z",
-  "updatedAt": "2026-08-09T21:20:09.455Z",
+  "updatedAt": "2026-08-09T21:25:09.040Z",
   "cash": 361.47573844079733,
   "startEquity": 500,
   "peakEquity": 560.9561294415878,
@@ -96,7 +96,7 @@
     }
   },
   "lastRun": {
-    "ts": "2026-08-09T21:20:09.455Z",
+    "ts": "2026-08-09T21:25:09.041Z",
     "action": "HOLD",
     "reason": "bezpiecznik: obsuniecie 40.34%",
     "equityUsd": 361.47573844079733,
@@ -107,7 +107,7 @@
     "limity": {
       "dnia": 0,
       "dniaMax": 0,
-      "resetZaMs": 9590545,
+      "resetZaMs": 9290959,
       "pauzy": [],
       "pauzaMin": 0,
       "obsuniecie": 0.3556078283686217,
@@ -117,15 +117,15 @@
     "scan": [
       {
         "sym": "SOL",
-        "price": 77.17,
+        "price": 77.24,
         "side": "LONG",
         "score": 10,
-        "rsi": 55.529022805895636,
-        "volPct": 0.0016869266556926385,
+        "rsi": 58.197244881328295,
+        "volPct": 0.0017501311499197362,
         "enter": true,
         "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 55.5, cofniecie do sredniej, RSI zawraca",
-        "expectedMove": 0.005398165298216443,
+        "reason": "gotowy: trend, trend rosnie, RSI 58.2, cofniecie do sredniej, RSI zawraca",
+        "expectedMove": 0.0056004196797431564,
         "costPct": 0.004
       },
       {
@@ -140,6 +140,32 @@
         "reason": "gotowy: trend, trend rosnie, RSI 50.0, cofniecie do sredniej, RSI zawraca",
         "expectedMove": 0.01088577362995025,
         "costPct": 0.0056
+      },
+      {
+        "sym": "W",
+        "price": 0.00857,
+        "side": "LONG",
+        "score": 10,
+        "rsi": 58.25550816863286,
+        "volPct": 0.0024608213854886225,
+        "enter": true,
+        "held": null,
+        "reason": "gotowy: trend, trend rosnie, RSI 58.3, cofniecie do sredniej, RSI zawraca",
+        "expectedMove": 0.007874628433563593,
+        "costPct": 0.006
+      },
+      {
+        "sym": "PENGU",
+        "price": 0.006635,
+        "side": "LONG",
+        "score": 10,
+        "rsi": 58.05082041781994,
+        "volPct": 0.0064472309623193995,
+        "enter": true,
+        "held": null,
+        "reason": "gotowy: trend, trend rosnie, RSI 58.1, cofniecie do sredniej, RSI zawraca",
+        "expectedMove": 0.02063113907942208,
+        "costPct": 0.0068
       },
       {
         "sym": "JTO",
@@ -160,11 +186,11 @@
         "side": "LONG",
         "score": 9,
         "rsi": 52.63189252193867,
-        "volPct": 0.0021626373041816324,
+        "volPct": 0.0022701295109966383,
         "enter": true,
         "held": null,
         "reason": "gotowy: trend, RSI 52.6, cofniecie do sredniej, RSI zawraca",
-        "expectedMove": 0.006920439373381223,
+        "expectedMove": 0.007264414435189243,
         "costPct": 0.0056
       },
       {
@@ -179,32 +205,6 @@
         "reason": "gotowy: trend, trend rosnie, RSI 58.7, cofniecie do sredniej",
         "expectedMove": 0.04470353607406107,
         "costPct": 0.0064
-      },
-      {
-        "sym": "W",
-        "price": 0.00856,
-        "side": "LONG",
-        "score": 9,
-        "rsi": 56.40581791008511,
-        "volPct": 0.0023802515840364268,
-        "enter": true,
-        "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 56.4, cofniecie do sredniej",
-        "expectedMove": 0.007616805068916566,
-        "costPct": 0.006
-      },
-      {
-        "sym": "PENGU",
-        "price": 0.006619,
-        "side": "LONG",
-        "score": 9,
-        "rsi": 55.76382788433909,
-        "volPct": 0.006419649969674405,
-        "enter": true,
-        "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 55.8, cofniecie do sredniej",
-        "expectedMove": 0.0205428799029581,
-        "costPct": 0.0068
       },
       {
         "sym": "JUP",
@@ -259,12 +259,25 @@
         "costPct": null
       },
       {
-        "sym": "BTC",
-        "price": 65086.4,
+        "sym": "ORCA",
+        "price": 1.079,
         "side": "LONG",
         "score": 3,
-        "rsi": 46.51065883097906,
-        "volPct": 0.0004288488446706304,
+        "rsi": 55.09293752395915,
+        "volPct": 0.0010140332659403408,
+        "enter": false,
+        "held": null,
+        "reason": "zmiennosc 0.10% za niska",
+        "expectedMove": null,
+        "costPct": null
+      },
+      {
+        "sym": "BTC",
+        "price": 65086.7,
+        "side": "LONG",
+        "score": 3,
+        "rsi": 46.55856719972066,
+        "volPct": 0.00044739355814495867,
         "enter": false,
         "held": null,
         "reason": "zmiennosc 0.04% za niska",
@@ -273,27 +286,14 @@
       },
       {
         "sym": "ETH",
-        "price": 1919.99,
+        "price": 1921,
         "side": "LONG",
         "score": 3,
-        "rsi": 48.25659685195961,
-        "volPct": 0.0007391192597128083,
+        "rsi": 52.466743355010905,
+        "volPct": 0.0007762854995308962,
         "enter": false,
         "held": null,
-        "reason": "zmiennosc 0.07% za niska",
-        "expectedMove": null,
-        "costPct": null
-      },
-      {
-        "sym": "ORCA",
-        "price": 1.078,
-        "side": "LONG",
-        "score": 0,
-        "rsi": 51.36802208497713,
-        "volPct": 0.0009487136572551614,
-        "enter": false,
-        "held": null,
-        "reason": "brak trendu wzrostowego",
+        "reason": "zmiennosc 0.08% za niska",
         "expectedMove": null,
         "costPct": null
       },
@@ -312,21 +312,21 @@
       }
     ],
     "prices": {
-      "SOL": 77.17,
+      "SOL": 77.24,
       "JUP": 0.1846,
       "JTO": 0.52552,
       "PYTH": 0.04183,
       "RAY": 0.644,
-      "ORCA": 1.078,
+      "ORCA": 1.079,
       "RENDER": 1.329,
       "BONK": 0.000002769,
-      "W": 0.00856,
+      "W": 0.00857,
       "TNSR": 0.0326,
       "DRIFT": 0.014,
       "KMNO": 0.01774,
-      "PENGU": 0.006619,
-      "BTC": 65086.4,
-      "ETH": 1919.99
+      "PENGU": 0.006635,
+      "BTC": 65086.7,
+      "ETH": 1921
     }
   }
 }
