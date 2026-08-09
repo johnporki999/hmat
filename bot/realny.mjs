@@ -243,6 +243,28 @@ const piszWiersze = (f, lista) => {
 const POSLIZG_MAX = num('REALNY_POSLIZG_MAX', 0.01);   // 1% — dalej nie wchodzimy
 
 /**
+ * HAMULEC BEZPIECZENSTWA — jak daleko od wejscia stoi zlecenie na gieldzie.
+ *
+ * To NIE jest stop strategii. Stop strategii (3,5 ATR) zostaje tam, gdzie byl:
+ * w bocie, sprawdzany co przebieg. Badanie H9 pokazalo, ze szybsze reagowanie
+ * POGARSZA wynik, wiec przenoszenie go na gielde byloby cofaniem sie.
+ *
+ * Hamulec odpowiada na inne pytanie: co, jesli bot NIE ZDAZY albo NIE WSTANIE.
+ * Knot likwidujacy pozycje trwa sekundy, a bot patrzy co piec minut; przy
+ * martwym serwerze nie patrzy wcale. Dzis w takiej sytuacji pozycji nie pilnuje
+ * nic — hamulec jest jedynym, co wtedy dziala.
+ *
+ * 25% dobrane pomiarem, nie na oko: na 119 zamknietych trejdach na zywo cena
+ * odeszla od wejscia najdalej o 2,06% (mediana 0,52%). Hamulec stoi wiec
+ * dwanascie razy dalej niz najgorszy dotychczasowy ruch i przed likwidacja,
+ * ktora przy dzwigni 3x lezy okolo 33%. Zaden z tych 119 trejdow by go nie
+ * dotknal — czyli nie zmienia wynikow, dopoki nie zdarzy sie katastrofa.
+ *
+ * Zero wylacza hamulec.
+ */
+const HAMULEC = num('REALNY_HAMULEC', 0.25);
+
+/**
  * Zaokraglanie pod reguly Hyperliquid. Zle zaokraglona liczba nie powoduje
  * zlego trejdu — powoduje ODRZUCENIE zlecenia, wiec cichy brak pomiaru.
  * Ceny: najwyzej 5 cyfr znaczacych i najwyzej (6 - szDecimals) miejsc po przecinku.
@@ -503,6 +525,51 @@ async function zlec({ idx, szDecimals, kupno, wielkosc, widziana, redukuje }) {
     return null;
   } catch (e) {
     log(`    blad skladania zlecenia: ${e.message}`);
+    return null;
+  }
+}
+
+/**
+ * Sklada hamulec na gieldzie tuz po otwarciu pozycji.
+ *
+ * Uzywamy grupowania `positionTpsl`, a nie zwyklego zlecenia, i to jest
+ * kluczowa decyzja: takie zlecenie NALEZY DO POZYCJI. Gielda sama zmniejsza je
+ * razem z nia i sama je kasuje, gdy pozycja znika. Zwykle zlecenie trzeba by
+ * kasowac recznie po kazdym zamknieciu — a wystarczy jeden nieudany przebieg
+ * crona, zeby zostalo wiszace i pozniej otworzylo pozycje, ktorej nikt nie
+ * chcial. Dokladnie ten rodzaj sieroty unieruchomil kiedys Sito 5 na dobe.
+ *
+ * `r: true` (reduce-only) to druga blokada tego samego: nawet gdyby zlecenie
+ * jakims cudem przetrwalo pozycje, moze ja tylko zamknac, nigdy otworzyc.
+ *
+ * Niepowodzenie NIE przerywa trejdu. Pozycja juz jest otwarta i zamkniecie jej
+ * z powodu nieudanego zabezpieczenia byloby gorsze niz jej brak — zostaje wpis
+ * w logu i w stanie, zeby bylo widac, ze ta jedna pozycja hamulca nie ma.
+ */
+async function zlozHamulec({ idx, szDecimals, long, fill, sz }) {
+  if (!(HAMULEC > 0) || P.SUCHY) return null;
+  const prog = cenaHL(long ? fill * (1 - HAMULEC) : fill * (1 + HAMULEC), szDecimals);
+  try {
+    const r = await gielda.ex.order({
+      orders: [{
+        a: idx,
+        b: !long,                       // zamkniecie longa to sprzedaz
+        // Cena graniczna zlecenia rynkowego: z zapasem ZA progiem, zeby przy
+        // gwaltownym ruchu mialo z czego sie wypelnic. Sam prog decyduje,
+        // kiedy zlecenie ruszy — ta cena tylko, jak daleko wolno mu siegnac.
+        p: String(cenaHL(long ? prog * 0.9 : prog * 1.1, szDecimals)),
+        s: String(wielkoscHL(sz, szDecimals)),
+        r: true,
+        t: { trigger: { isMarket: true, triggerPx: String(prog), tpsl: 'sl' } },
+      }],
+      grouping: 'positionTpsl',
+    });
+    const st = r?.response?.data?.statuses?.[0];
+    if (st?.error) { log(`    hamulec ODRZUCONY: ${st.error}`); return null; }
+    log(`    hamulec na gieldzie przy ${prog} (${(HAMULEC * 100).toFixed(0)}% od wejscia)`);
+    return { prog, oid: st?.resting?.oid ?? null };
+  } catch (e) {
+    log(`    hamulca nie udalo sie zlozyc: ${e.message} — pozycja zostaje bez niego`);
     return null;
   }
 }
@@ -1117,6 +1184,9 @@ if (!stan.koniec) {
       // Przy okazji: apka pobiera plik stanu i tak, wiec dla pozycji jeszcze
       // OTWARTEJ warunki wejscia widac wlasnie stad. Dlatego mozemy je zdjac
       // z wiersza OPEN i nie placic za nie dwa razy.
+      // Wypelnione ponizej, po zlozeniu hamulca. `null` znaczy "pozycja bez
+      // zabezpieczenia na gieldzie" i ma byc widoczne, a nie domyslne.
+      hamulec: null,
       kod: KOD,
       powodWejscia: syg.powod,
       // Swieca decyzji (r.i), a nie ostatnia dostepna — to ona byla na ekranie,
@@ -1135,6 +1205,18 @@ if (!stan.koniec) {
       ...(ileSztuk < sz * 0.999 ? { czesc: sig(ileSztuk / sz, 3) } : {}),
     });
     log(`  OTWIERAM ${sym} ${syg.kier} @ ${fill} — ${syg.powod}`);
+
+    /*
+     * Hamulec skladamy PO zaksiegowaniu pozycji, nie przed.
+     *
+     * Kolejnosc jest tu wazna: gdyby bot padl miedzy zlozeniem hamulca
+     * a zapisem stanu, na gieldzie zostaloby zabezpieczenie pozycji, o ktorej
+     * bot nic nie wie. Odwrotnie jest bezpieczniej — najgorsze, co moze sie
+     * stac, to pozycja bez hamulca, czyli dokladnie stan sprzed tej zmiany.
+     */
+    stan.pozycje[sym].hamulec = await zlozHamulec({
+      idx: r.idx, szDecimals: r.szDecimals, long, fill, sz: ileSztuk,
+    });
 
     // ── WIERSZ DZIENNIKA ROZBIEZNOSCI ────────────────────────────────────
     //
