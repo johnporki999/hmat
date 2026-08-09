@@ -1,19 +1,6 @@
-# ogon logu serwera, 2026-08-09 05:23 UTC
+# ogon logu serwera, 2026-08-09 05:25 UTC
 # publikowany po to, zeby dalo sie diagnozowac bota bez dostepu do maszyny
 
-[2026-08-09 05:05:41] --- stado/panikaLuzna (realny.mjs) ---
-[2026-08-09 05:05:45] stado/panikaLuzna OK
-   W       LONG  score  0  brak trendu wzrostowego
-  Smycz      ████████████████████  828/714   brak przewagi wartej zachodu  (p=0.787)
-  Smycz      ████████████████████  798/714   brak przewagi wartej zachodu  (p=0.589)
-  Kontra     ████████████████████ 1068/714   brak przewagi wartej zachodu  (p=0.086)
-  Wybicie    ████████████████████  952/714   brak przewagi wartej zachodu  (p=0.972)
-[2026-08-09 05:10:34] --- stado/sito5 (realny.mjs) ---
-[2026-08-09 05:10:38] stado/sito5 OK
-[2026-08-09 05:10:38] stado/panika: przejmuje konto po smycz (poprzednik plaski)
-[2026-08-09 05:10:38] --- stado/panika (realny.mjs) ---
-[2026-08-09 05:10:42] stado/panika OK
-[2026-08-09 05:10:42] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
 [2026-08-09 05:10:42] --- stado/panikaLuzna (realny.mjs) ---
 [2026-08-09 05:10:46] stado/panikaLuzna OK
   Smycz      ████████████████████  828/714   brak przewagi wartej zachodu  (p=0.787)
@@ -41,55 +28,68 @@
 [2026-08-09 05:20:42] --- stado/panikaLuzna (realny.mjs) ---
 [2026-08-09 05:20:47] stado/panikaLuzna OK
 ! UWAGA: Binance nie oddal NICZEGO. Na serwerze w USA to normalne (blokada 451)
+   RENDER  LONG  score  0  brak trendu wzrostowego
+  Smycz      ████████████████████  828/714   brak przewagi wartej zachodu  (p=0.787)
+  Smycz      ████████████████████  799/714   brak przewagi wartej zachodu  (p=0.571)
+  Kontra     ████████████████████ 1070/714   brak przewagi wartej zachodu  (p=0.087)
+  Wybicie    ████████████████████  953/714   brak przewagi wartej zachodu  (p=0.959)
+[2026-08-09 05:25:34] --- stado/sito5 (realny.mjs) ---
+[2026-08-09 05:25:38] stado/sito5 OK
+[2026-08-09 05:25:38] stado/panika: przejmuje konto po smycz (poprzednik plaski)
+[2026-08-09 05:25:38] --- stado/panika (realny.mjs) ---
+[2026-08-09 05:25:42] stado/panika OK
+[2026-08-09 05:25:42] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
+[2026-08-09 05:25:42] --- stado/panikaLuzna (realny.mjs) ---
+[2026-08-09 05:25:47] stado/panikaLuzna OK
 
 # --- surowy ogon logu (adresy zamaskowane) ---
+> sejsmograf: BTC 0.39% w dobę — spokój
+
+── TABELA ──
   1. Panika ostra   $498.48    -0.30%   1 trejdów (0W)
   2. Panika      $498.48    -0.30%   1 trejdów (0W)
-  3. Małpa       $316.92   -36.62%   325 trejdów (101W), 4 otwarte
-  4. Smycz czysta   $290.03   -41.99%   461 trejdów (228W), 4 otwarte
-  5. Smycz       $277.70   -44.46%   464 trejdów (226W), 4 otwarte
+  3. Małpa       $316.82   -36.64%   325 trejdów (101W), 4 otwarte
+  4. Smycz czysta   $289.32   -42.14%   462 trejdów (228W), 4 otwarte
+  5. Smycz       $277.01   -44.60%   465 trejdów (226W), 4 otwarte
 
 > 2 z 4 strategii bije małpę kapitałem
 
 ── CZY TO JUŻ NIE PRZYPADEK ──
-  Smycz      █████████████████···  464/558   jeszcze nie wiadomo  (p=0.665)
-  Smycz czysta █████████████████···  461/558   jeszcze nie wiadomo  (p=0.510)
+  Smycz      █████████████████···  465/558   jeszcze nie wiadomo  (p=0.679)
+  Smycz czysta █████████████████···  462/558   jeszcze nie wiadomo  (p=0.523)
   Panika     ····················    1/558   za mało danych
   Panika ostra ····················    1/558   za mało danych
 
 > próg istotności 0.0125 — podzielony przez 4 porównania,
   bo przy 4 strategiach naraz jedna wygrywa "istotnie" samym trafem znacznie częściej.
-[2026-08-09 05:20:34] ligac OK
-[2026-08-09 05:20:34] --- stado/sito5 (realny.mjs) ---
+[2026-08-09 05:25:34] ligac OK
+[2026-08-09 05:25:34] --- stado/sito5 (realny.mjs) ---
   (aktywna znizka polecajaca 4.0% — te sama uwaga)
 > konto 0xE0D2...B73D: perpy $13.41, spot $33.44
-=== HAJSOMAT REALNY 2026-08-09T05:20:34.903Z | *** ZA PRAWDZIWE PIENIADZE *** ===
+=== HAJSOMAT REALNY 2026-08-09T05:25:35.204Z | *** ZA PRAWDZIWE PIENIADZE *** ===
 > gracz Sito 5, dzwignia 3x, 2 miejsca po 40%, bez limitu trejdow
 > rynkow gotowych: 11 z 11
 > kapital $33.35 (start $35.80), pozycji 1, trejdow 25
 > POSLIZG z 50 zlecen na zywo: mediana 0.000% na strone (22 z 50 wyszlo na nasza korzysc)
   Pelny koszt rundy: 0.090% (poslizg 0.000% + oplaty 0.090%)
   Liga zaklada 0,120%. Zalozenie sie broni.
-[2026-08-09 05:20:38] stado/sito5 OK
-[2026-08-09 05:20:38] stado/panika: przejmuje konto po smycz (poprzednik plaski)
-[2026-08-09 05:20:38] --- stado/panika (realny.mjs) ---
+[2026-08-09 05:25:38] stado/sito5 OK
+[2026-08-09 05:25:38] stado/panika: przejmuje konto po smycz (poprzednik plaski)
+[2026-08-09 05:25:38] --- stado/panika (realny.mjs) ---
   (aktywna znizka polecajaca 4.0% — te sama uwaga)
 > konto 0xBb99...dD26: perpy $0.00, spot $35.00  (konto zunifikowane — licze ze spotu)
-=== HAJSOMAT REALNY 2026-08-09T05:20:39.017Z | *** ZA PRAWDZIWE PIENIADZE *** ===
+=== HAJSOMAT REALNY 2026-08-09T05:25:39.605Z | *** ZA PRAWDZIWE PIENIADZE *** ===
 > gracz Panika, dzwignia 3x, 2 miejsca po 40%, bez limitu trejdow
 > rynkow gotowych: 11 z 11
 > kapital $35.00 (start $35.00), pozycji 0, trejdow 0
-[2026-08-09 05:20:42] stado/panika OK
-[2026-08-09 05:20:42] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
-[2026-08-09 05:20:42] --- stado/panikaLuzna (realny.mjs) ---
+[2026-08-09 05:25:42] stado/panika OK
+[2026-08-09 05:25:42] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
+[2026-08-09 05:25:42] --- stado/panikaLuzna (realny.mjs) ---
   (aktywna znizka polecajaca 4.0% — te sama uwaga)
 > konto 0xda7C...d8ec: perpy $0.00, spot $29.80  (konto zunifikowane — licze ze spotu)
-=== HAJSOMAT REALNY 2026-08-09T05:20:43.191Z | *** ZA PRAWDZIWE PIENIADZE *** ===
+=== HAJSOMAT REALNY 2026-08-09T05:25:43.694Z | *** ZA PRAWDZIWE PIENIADZE *** ===
 > gracz Panika luźna, dzwignia 3x, 2 miejsca po 40%, bez limitu trejdow
 > rynkow gotowych: 11 z 11
 > kapital $29.80 (start $29.80), pozycji 0, trejdow 0
-[2026-08-09 05:20:47] stado/panikaLuzna OK
-> kolektor: zbieram dane dla 15 aktywow...
-> kolektor: zapisano 16 wierszy (Jupiter 15, Binance 0, ksiega 11) — lacznie 16333 wierszy przez 13 dni
-! UWAGA: Binance nie oddal NICZEGO. Na serwerze w USA to normalne (blokada 451)
-!        i niegrozne: te metryki sa w pelni odtwarzalne z data.binance.vision.
+[2026-08-09 05:25:47] stado/panikaLuzna OK
+> kolektor: ostatni pomiar 5.0 min temu, czekam do 15
