@@ -2,7 +2,7 @@
   "version": 1,
   "kind": "perp-sim",
   "createdAt": "2026-07-26T19:59:10.228Z",
-  "updatedAt": "2026-08-09T05:45:08.948Z",
+  "updatedAt": "2026-08-09T05:50:09.534Z",
   "cash": 361.47573844079733,
   "startEquity": 500,
   "peakEquity": 560.9561294415878,
@@ -96,7 +96,7 @@
     }
   },
   "lastRun": {
-    "ts": "2026-08-09T05:45:08.948Z",
+    "ts": "2026-08-09T05:50:09.534Z",
     "action": "HOLD",
     "reason": "bezpiecznik: obsuniecie 40.34%",
     "equityUsd": 361.47573844079733,
@@ -107,7 +107,7 @@
     "limity": {
       "dnia": 0,
       "dniaMax": 0,
-      "resetZaMs": 65691052,
+      "resetZaMs": 65390466,
       "pauzy": [],
       "pauzaMin": 0,
       "obsuniecie": 0.3556078283686217,
@@ -116,29 +116,16 @@
     },
     "scan": [
       {
-        "sym": "PYTH",
-        "price": 0.04186,
+        "sym": "SOL",
+        "price": 75.93,
         "side": "LONG",
         "score": 10,
-        "rsi": 59.95765027176207,
-        "volPct": 0.0062651820097681795,
+        "rsi": 50.64738099421962,
+        "volPct": 0.001448594366942832,
         "enter": true,
         "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 60.0, cofniecie do sredniej, RSI zawraca",
-        "expectedMove": 0.020048582431258177,
-        "costPct": 0.0056
-      },
-      {
-        "sym": "SOL",
-        "price": 75.88,
-        "side": "LONG",
-        "score": 9,
-        "rsi": 46.97303777198786,
-        "volPct": 0.0014024820995063238,
-        "enter": true,
-        "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 47.0, cofniecie do sredniej",
-        "expectedMove": 0.0044879427184202365,
+        "reason": "gotowy: trend, trend rosnie, RSI 50.6, cofniecie do sredniej, RSI zawraca",
+        "expectedMove": 0.004635501974217061,
         "costPct": 0.004
       },
       {
@@ -207,6 +194,19 @@
         "costPct": 0.0068
       },
       {
+        "sym": "PYTH",
+        "price": 0.04208,
+        "side": "LONG",
+        "score": 6,
+        "rsi": 63.245656269676694,
+        "volPct": 0.006605865129353175,
+        "enter": false,
+        "held": null,
+        "reason": "1.85 ATR nad srednia — za daleko",
+        "expectedMove": null,
+        "costPct": null
+      },
+      {
         "sym": "RAY",
         "price": 0.64,
         "side": "LONG",
@@ -260,11 +260,11 @@
       },
       {
         "sym": "BTC",
-        "price": 64734.2,
+        "price": 64734.1,
         "side": "SHORT",
         "score": 3,
-        "rsi": 32.99910090422806,
-        "volPct": 0.0003384170723793796,
+        "rsi": 32.98289954816981,
+        "volPct": 0.000338638278142536,
         "enter": false,
         "held": null,
         "reason": "zmiennosc 0.03% za niska",
@@ -273,11 +273,11 @@
       },
       {
         "sym": "ETH",
-        "price": 1912.3,
+        "price": 1912.21,
         "side": "SHORT",
         "score": 3,
-        "rsi": 41.66597400514681,
-        "volPct": 0.0006036490333192821,
+        "rsi": 41.292847588121695,
+        "volPct": 0.0006118953107298542,
         "enter": false,
         "held": null,
         "reason": "zmiennosc 0.06% za niska",
@@ -286,11 +286,11 @@
       },
       {
         "sym": "RENDER",
-        "price": 1.319,
+        "price": 1.317,
         "side": "LONG",
         "score": 0,
-        "rsi": 38.14536887025136,
-        "volPct": 0.003352965306007134,
+        "rsi": 36.44821698549758,
+        "volPct": 0.0034665287634628337,
         "enter": false,
         "held": null,
         "reason": "brak trendu wzrostowego",
@@ -312,21 +312,21 @@
       }
     ],
     "prices": {
-      "SOL": 75.88,
+      "SOL": 75.93,
       "JUP": 0.18421,
       "JTO": 0.51144,
-      "PYTH": 0.04186,
+      "PYTH": 0.04208,
       "RAY": 0.64,
       "ORCA": 1.075,
-      "RENDER": 1.319,
+      "RENDER": 1.317,
       "BONK": 0.000002724,
       "W": 0.00843,
       "TNSR": 0.0326,
       "DRIFT": 0.013,
       "KMNO": 0.01782,
       "PENGU": 0.006285,
-      "BTC": 64734.2,
-      "ETH": 1912.3
+      "BTC": 64734.1,
+      "ETH": 1912.21
     }
   }
 }
