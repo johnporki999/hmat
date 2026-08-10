@@ -2,7 +2,7 @@
   "version": 1,
   "kind": "perp-sim",
   "createdAt": "2026-07-26T19:59:10.228Z",
-  "updatedAt": "2026-08-10T03:45:09.464Z",
+  "updatedAt": "2026-08-10T03:50:09.349Z",
   "cash": 361.47573844079733,
   "startEquity": 500,
   "peakEquity": 560.9561294415878,
@@ -96,7 +96,7 @@
     }
   },
   "lastRun": {
-    "ts": "2026-08-10T03:45:09.464Z",
+    "ts": "2026-08-10T03:50:09.349Z",
     "action": "HOLD",
     "reason": "bezpiecznik: obsuniecie 40.34%",
     "equityUsd": 361.47573844079733,
@@ -107,7 +107,7 @@
     "limity": {
       "dnia": 0,
       "dniaMax": 0,
-      "resetZaMs": 72890536,
+      "resetZaMs": 72590651,
       "pauzy": [],
       "pauzaMin": 0,
       "obsuniecie": 0.3556078283686217,
@@ -115,6 +115,19 @@
       "wstrzymany": true
     },
     "scan": [
+      {
+        "sym": "PENGU",
+        "price": 0.006563,
+        "side": "LONG",
+        "score": 10,
+        "rsi": 50.13390444450326,
+        "volPct": 0.006401533258089386,
+        "enter": true,
+        "held": null,
+        "reason": "gotowy: trend, trend rosnie, RSI 50.1, cofniecie do sredniej, RSI zawraca",
+        "expectedMove": 0.02048490642588604,
+        "costPct": 0.0068
+      },
       {
         "sym": "JUP",
         "price": 0.18082,
@@ -168,19 +181,6 @@
         "costPct": 0.0064
       },
       {
-        "sym": "PENGU",
-        "price": 0.006558,
-        "side": "LONG",
-        "score": 9,
-        "rsi": 49.482590642649775,
-        "volPct": 0.0063519548514330195,
-        "enter": true,
-        "held": null,
-        "reason": "gotowy: trend, trend rosnie, RSI 49.5, cofniecie do sredniej",
-        "expectedMove": 0.020326255524585665,
-        "costPct": 0.0068
-      },
-      {
         "sym": "JTO",
         "price": 0.53236,
         "side": "LONG",
@@ -208,14 +208,14 @@
       },
       {
         "sym": "RENDER",
-        "price": 1.282,
+        "price": 1.281,
         "side": "SHORT",
         "score": 5,
-        "rsi": 31.79849951416233,
-        "volPct": 0.004689055554194286,
+        "rsi": 31.24266516336573,
+        "volPct": 0.00480423603695099,
         "enter": false,
         "held": null,
-        "reason": "RSI 31.8 — wyprzedane, nie gonie dolu",
+        "reason": "RSI 31.2 — wyprzedane, nie gonie dolu",
         "expectedMove": null,
         "costPct": null
       },
@@ -247,11 +247,11 @@
       },
       {
         "sym": "SOL",
-        "price": 76.66,
+        "price": 76.67,
         "side": "LONG",
         "score": 0,
-        "rsi": 48.6971444016471,
-        "volPct": 0.00352805676306667,
+        "rsi": 48.92925975855752,
+        "volPct": 0.003574178427391669,
         "enter": false,
         "held": null,
         "reason": "brak trendu wzrostowego",
@@ -286,11 +286,11 @@
       },
       {
         "sym": "BTC",
-        "price": 64961.9,
+        "price": 64993.1,
         "side": "LONG",
         "score": 0,
-        "rsi": 48.027702985288734,
-        "volPct": 0.002157652285485739,
+        "rsi": 49.3264670761959,
+        "volPct": 0.0021970603561465318,
         "enter": false,
         "held": null,
         "reason": "brak trendu wzrostowego",
@@ -299,11 +299,11 @@
       },
       {
         "sym": "ETH",
-        "price": 1918.24,
+        "price": 1918.26,
         "side": "LONG",
         "score": 0,
-        "rsi": 50.71290314056477,
-        "volPct": 0.003332513791668002,
+        "rsi": 50.73214712197825,
+        "volPct": 0.0033462564131858,
         "enter": false,
         "held": null,
         "reason": "brak trendu wzrostowego",
@@ -312,21 +312,21 @@
       }
     ],
     "prices": {
-      "SOL": 76.66,
+      "SOL": 76.67,
       "JUP": 0.18082,
       "JTO": 0.53236,
       "PYTH": 0.04219,
       "RAY": 0.635,
       "ORCA": 1.067,
-      "RENDER": 1.282,
+      "RENDER": 1.281,
       "BONK": 0.000002771,
       "W": 0.00847,
       "TNSR": 0.0324,
       "DRIFT": 0.0136,
       "KMNO": 0.01815,
-      "PENGU": 0.006558,
-      "BTC": 64961.9,
-      "ETH": 1918.24
+      "PENGU": 0.006563,
+      "BTC": 64993.1,
+      "ETH": 1918.26
     }
   }
 }
