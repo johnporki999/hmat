@@ -7383,68 +7383,6 @@
     }
   },
   {
-    "id": "1786299327059-kontraN-ALCX-o",
-    "ts": "2026-08-09T18:15:27.063Z",
-    "gracz": "kontraN",
-    "sym": "ALCX",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 2,
-    "margin": 44.50868916817261,
-    "notional": 133.5260675045178,
-    "leverage": 3,
-    "liqPrice": 2.6,
-    "pnlUsd": null,
-    "reason": "RSI 89.3 — euforia, sprzedaję",
-    "warunki": {
-      "rsi": 89.3,
-      "rsiPrev": 89.3,
-      "ext": 9.26,
-      "nadTrendem": 0.0167,
-      "fastNadSlow": 0.001,
-      "volPct": 0.0009,
-      "er": 0.333,
-      "slope": 0.00091,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0029,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1786299327059-kontraN-ASTR-o",
-    "ts": "2026-08-09T18:15:27.063Z",
-    "gracz": "kontraN",
-    "sym": "ASTR",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.00493,
-    "margin": 44.50868916817261,
-    "notional": 133.5260675045178,
-    "leverage": 3,
-    "liqPrice": 0.003451,
-    "pnlUsd": null,
-    "reason": "RSI 29.5 — panika, kupuję",
-    "warunki": {
-      "rsi": 29.5,
-      "rsiPrev": 29.5,
-      "ext": -5.19,
-      "nadTrendem": 0.0077,
-      "fastNadSlow": 0.001,
-      "volPct": 0.0004,
-      "er": 0,
-      "slope": 0.00098,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00134,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1786299327059-kontraN-CELO-o",
     "ts": "2026-08-09T18:15:27.063Z",
     "gracz": "kontraN",
@@ -56369,6 +56307,94 @@
       "spodziewanyRuch": 0.00561,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786356626973-luzny-STORJ",
+    "ts": "2026-08-10T10:10:26.975Z",
+    "gracz": "luzny",
+    "sym": "STORJ",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.04463,
+    "entryPrice": 0.04456,
+    "margin": 42.31130984936057,
+    "notional": 126.93392954808171,
+    "leverage": 3,
+    "pnlUsd": -0.28019591988640186,
+    "pnlPct": -0.006622246413168802,
+    "R": -0.008422246413168803,
+    "holdMs": 21900063,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 41.8, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 41.8,
+      "rsiPrev": 52.9,
+      "ext": -1.53,
+      "nadTrendem": -0.014,
+      "fastNadSlow": -0.005,
+      "volPct": 0.002,
+      "er": 0.323,
+      "slope": -0.00108,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00646,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "mfe": 2.67,
+    "mae": 2.11,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1786356626973-wybicie-STORJ",
+    "ts": "2026-08-10T10:10:26.977Z",
+    "gracz": "wybicie",
+    "sym": "STORJ",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.04463,
+    "entryPrice": 0.04449,
+    "margin": 29.142639625072366,
+    "notional": 87.4279188752171,
+    "leverage": 3,
+    "pnlUsd": -0.32809719862933084,
+    "pnlPct": -0.011258321238240138,
+    "R": -0.013058321238240139,
+    "holdMs": 3599558,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "0.04 pod dołkiem 20 świec 0.04",
+    "warunki": {
+      "rsi": 40.3,
+      "rsiPrev": 45,
+      "ext": -1.94,
+      "nadTrendem": -0.0132,
+      "fastNadSlow": -0.0032,
+      "volPct": 0.0014,
+      "er": 0.145,
+      "slope": -0.00109,
+      "volRel": null,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00447,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2.73,
+    "mae": 2.25,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
     }
   }
 ]
