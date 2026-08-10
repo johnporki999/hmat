@@ -7291,39 +7291,6 @@
     }
   },
   {
-    "id": "1786329627444-smycz-AVA-o",
-    "ts": "2026-08-10T02:40:27.448Z",
-    "gracz": "smycz",
-    "sym": "AVA",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.2074,
-    "margin": 33.6958268259465,
-    "notional": 101.08748047783949,
-    "leverage": 3,
-    "liqPrice": 0.14518,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 48.1, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 48.1,
-      "rsiPrev": 54.1,
-      "ext": -0.67,
-      "nadTrendem": 0.0185,
-      "fastNadSlow": 0.0071,
-      "volPct": 0.0054,
-      "er": 0.12,
-      "slope": 0.00256,
-      "volRel": 0.26,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01733,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1786329627444-czujny-HFT",
     "ts": "2026-08-10T02:40:27.449Z",
     "gracz": "czujny",
@@ -7397,51 +7364,6 @@
       "spodziewanyRuch": 0.00752,
       "koszt": 0.0012,
       "score": 8
-    }
-  },
-  {
-    "id": "1786329627444-krawiec-HFT",
-    "ts": "2026-08-10T02:40:27.449Z",
-    "gracz": "krawiec",
-    "sym": "HFT",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.00947,
-    "entryPrice": 0.0105,
-    "margin": 30.945960521144414,
-    "notional": 92.83788156343324,
-    "leverage": 3,
-    "pnlUsd": 9.039925213660094,
-    "pnlPct": 0.2921197164807146,
-    "R": 0.29031971648071464,
-    "holdMs": 73200330,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 40.3, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 40.3,
-      "rsiPrev": 44.1,
-      "ext": -1.17,
-      "nadTrendem": -0.2545,
-      "fastNadSlow": -0.0372,
-      "volPct": 0.0303,
-      "er": 0.193,
-      "slope": -0.02321,
-      "volRel": 0.965,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.09705,
-      "koszt": 0.0012,
-      "score": 10
-    },
-    "mfe": 3.23,
-    "mae": 1.41,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
     }
   },
   {
@@ -56443,6 +56365,82 @@
       "SOL": null,
       "BTC": null,
       "ETH": null
+    }
+  },
+  {
+    "id": "1786385727716-smycz-HFT",
+    "ts": "2026-08-10T18:15:27.718Z",
+    "gracz": "smycz",
+    "sym": "HFT",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.00929,
+    "entryPrice": 0.00931,
+    "margin": 32.472159484192474,
+    "notional": 97.41647845257742,
+    "leverage": 3,
+    "pnlUsd": 0.15038455150186517,
+    "pnlPct": 0.004631184186412756,
+    "R": 0.002831184186412756,
+    "holdMs": 2699814,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 60.8, odbicie do sredniej",
+    "warunki": {
+      "rsi": 60.8,
+      "rsiPrev": 58.5,
+      "ext": 1.65,
+      "nadTrendem": -0.125,
+      "fastNadSlow": -0.0203,
+      "volPct": 0.0206,
+      "er": 0.012,
+      "slope": -0.01677,
+      "volRel": 4.511,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.06585,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.2,
+    "mae": 1.41,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1786385727716-smycz-HFT-o",
+    "ts": "2026-08-10T18:15:27.719Z",
+    "gracz": "smycz",
+    "sym": "HFT",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.00929,
+    "margin": 32.44291609728908,
+    "notional": 97.32874829186724,
+    "leverage": 3,
+    "liqPrice": 0.012077,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 54.3, odbicie do sredniej",
+    "warunki": {
+      "rsi": 54.3,
+      "rsiPrev": 54.3,
+      "ext": 0.64,
+      "nadTrendem": -0.1242,
+      "fastNadSlow": -0.0103,
+      "volPct": 0.0286,
+      "er": 0.031,
+      "slope": -0.01474,
+      "volRel": 0.689
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.09137,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
