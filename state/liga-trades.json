@@ -8141,70 +8141,6 @@
     }
   },
   {
-    "id": "1786281616091-trend-PYTH-o",
-    "ts": "2026-08-09T13:20:16.092Z",
-    "gracz": "trend",
-    "sym": "PYTH",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.04221,
-    "margin": 64.45616237482731,
-    "notional": 193.36848712448193,
-    "leverage": 3,
-    "liqPrice": 0.029546999999999997,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 57.7, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 57.7,
-      "rsiPrev": 56.4,
-      "ext": 1.04,
-      "nadTrendem": 0.0485,
-      "fastNadSlow": 0.0082,
-      "volPct": 0.0059,
-      "er": 0.14,
-      "slope": 0.00437,
-      "volRel": 2.084
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01881,
-      "koszt": 0.0012,
-      "score": 10
-    }
-  },
-  {
-    "id": "1786281616091-trend-W-o",
-    "ts": "2026-08-09T13:20:16.093Z",
-    "gracz": "trend",
-    "sym": "W",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.00846,
-    "margin": 64.45616237482731,
-    "notional": 193.36848712448193,
-    "leverage": 3,
-    "liqPrice": 0.005922,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 45.7, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 45.7,
-      "rsiPrev": 54.3,
-      "ext": -0.93,
-      "nadTrendem": 0.0055,
-      "fastNadSlow": 0.0014,
-      "volPct": 0.0023,
-      "er": 0.026,
-      "slope": 0.00096,
-      "volRel": 0.17,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00738,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1786281616091-antytrend-JUP",
     "ts": "2026-08-09T13:20:16.093Z",
     "gracz": "antytrend",
@@ -56821,6 +56757,80 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.03937,
+      "koszt": 0.0012,
+      "score": 9
+    }
+  },
+  {
+    "id": "1786398016255-smycz-RENDER",
+    "ts": "2026-08-10T21:40:16.256Z",
+    "gracz": "smycz",
+    "sym": "RENDER",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 1.29,
+    "entryPrice": 1.293,
+    "margin": 42.04520571396258,
+    "notional": 126.13561714188774,
+    "leverage": 3,
+    "pnlUsd": 0.2159677514849483,
+    "pnlPct": 0.005136560704547312,
+    "R": 0.0033365607045473117,
+    "holdMs": 4799264,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 54.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 54.2,
+      "rsiPrev": 52.2,
+      "ext": 0.7,
+      "nadTrendem": -0.0113,
+      "fastNadSlow": -0.0026,
+      "volPct": 0.0026,
+      "er": 0.163,
+      "slope": -0.00145,
+      "volRel": 0.265
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00817,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.51,
+    "mae": 0.3,
+    "rynek": {
+      "SOL": 0.00184,
+      "BTC": -0.00003,
+      "ETH": -0.00102
+    }
+  },
+  {
+    "id": "1786398016255-smycz-RENDER-o",
+    "ts": "2026-08-10T21:40:16.258Z",
+    "gracz": "smycz",
+    "sym": "RENDER",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 1.29,
+    "margin": 42.15622213121349,
+    "notional": 126.46866639364046,
+    "leverage": 3,
+    "liqPrice": 1.677,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 47.6, odbicie do sredniej",
+    "warunki": {
+      "rsi": 47.6,
+      "rsiPrev": 44.9,
+      "ext": -0.21,
+      "nadTrendem": -0.0129,
+      "fastNadSlow": -0.0022,
+      "volPct": 0.0023,
+      "er": 0.136,
+      "slope": -0.00127,
+      "volRel": 0.319
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00728,
       "koszt": 0.0012,
       "score": 9
     }
