@@ -6272,84 +6272,6 @@
     }
   },
   {
-    "id": "1786370717593-trend-RENDER-o",
-    "ts": "2026-08-10T14:05:17.595Z",
-    "gracz": "trend",
-    "sym": "RENDER",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 1.3,
-    "margin": 58.79775359497551,
-    "notional": 176.39326078492653,
-    "leverage": 3,
-    "liqPrice": 1.6900000000000002,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 55.0, odbicie do sredniej",
-    "warunki": {
-      "rsi": 55,
-      "rsiPrev": 49.8,
-      "ext": 0.81,
-      "nadTrendem": -0.0097,
-      "fastNadSlow": -0.0023,
-      "volPct": 0.0028,
-      "er": 0.023,
-      "slope": -0.0013,
-      "volRel": 0.803,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00888,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1786370717593-krawiec-RENDER",
-    "ts": "2026-08-10T14:05:17.596Z",
-    "gracz": "krawiec",
-    "sym": "RENDER",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 1.3,
-    "entryPrice": 1.293,
-    "margin": 61.98748287769453,
-    "notional": 185.9624486330836,
-    "leverage": 3,
-    "pnlUsd": -1.1188927644011741,
-    "pnlPct": -0.01805030164894459,
-    "R": -0.01985030164894459,
-    "holdMs": 1800485,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 42.8, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 42.8,
-      "rsiPrev": 45.9,
-      "ext": -0.96,
-      "nadTrendem": -0.0153,
-      "fastNadSlow": -0.0028,
-      "volPct": 0.0029,
-      "er": 0.015,
-      "slope": -0.00137,
-      "volRel": 3.543,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00917,
-      "koszt": 0.0012,
-      "score": 10
-    },
-    "mfe": 0,
-    "mae": 1.89,
-    "rynek": {
-      "SOL": 0.0021,
-      "BTC": -0.00013,
-      "ETH": 0.00021
-    }
-  },
-  {
     "id": "1786370717593-krawiec-RENDER-o",
     "ts": "2026-08-10T14:05:17.597Z",
     "gracz": "krawiec",
@@ -56901,6 +56823,80 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.00327,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1786501817788-antytrend-JTO",
+    "ts": "2026-08-12T02:30:17.789Z",
+    "gracz": "antytrend",
+    "sym": "JTO",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.56651,
+    "entryPrice": 0.56251,
+    "margin": 58.9034884032239,
+    "notional": 176.71046520967172,
+    "leverage": 3,
+    "pnlUsd": -1.3627889168298237,
+    "pnlPct": -0.023135962805816365,
+    "R": -0.024935962805816364,
+    "holdMs": 601746,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "odwrotnie do: gotowy: trend, trend rosnie, RSI 52.5, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 52.5,
+      "rsiPrev": 61,
+      "ext": -0.16,
+      "nadTrendem": 0.0315,
+      "fastNadSlow": 0.0122,
+      "volPct": 0.0042,
+      "er": 0.319,
+      "slope": 0.00427,
+      "volRel": 1.002
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01336,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0,
+    "mae": 1.7,
+    "rynek": {
+      "SOL": 0.00052,
+      "BTC": 0.00068,
+      "ETH": 0.00024
+    }
+  },
+  {
+    "id": "1786501817788-antytrend-JUP-o",
+    "ts": "2026-08-12T02:30:17.790Z",
+    "gracz": "antytrend",
+    "sym": "JUP",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.17623,
+    "margin": 58.57824409452579,
+    "notional": 175.7347322835774,
+    "leverage": 3,
+    "liqPrice": 0.12336099999999998,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 57.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 57.2,
+      "rsiPrev": 57.2,
+      "ext": 1.48,
+      "nadTrendem": -0.0187,
+      "fastNadSlow": -0.0046,
+      "volPct": 0.0022,
+      "er": 0.163,
+      "slope": -0.00238,
+      "volRel": 8.444
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00699,
       "koszt": 0.0012,
       "score": null
     }
