@@ -148,80 +148,6 @@
     }
   },
   {
-    "id": "1786135834293-malpa-TNSR",
-    "ts": "2026-08-07T20:50:34.294Z",
-    "gracz": "malpa",
-    "sym": "TNSR",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.0312,
-    "entryPrice": 0.0313,
-    "margin": 76.13021270291433,
-    "notional": 228.39063810874302,
-    "leverage": 3,
-    "pnlUsd": -0.871513318211831,
-    "pnlPct": -0.011447666928408156,
-    "R": -0.013247666928408156,
-    "holdMs": 5400223,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 44.3,
-      "rsiPrev": 44.3,
-      "ext": -1.24,
-      "nadTrendem": 0.0096,
-      "fastNadSlow": 0.0003,
-      "volPct": 0.001,
-      "er": 0.222,
-      "slope": 0.00118,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00329,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 3.11,
-    "mae": 3.11,
-    "rynek": {
-      "SOL": 0.00149,
-      "BTC": 0.00138,
-      "ETH": 0.00062
-    }
-  },
-  {
-    "id": "1786135834293-malpa-JUP-o",
-    "ts": "2026-08-07T20:50:34.295Z",
-    "gracz": "malpa",
-    "sym": "JUP",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.18224,
-    "margin": 74.83472649688211,
-    "notional": 224.50417949064632,
-    "leverage": 3,
-    "liqPrice": 0.236912,
-    "pnlUsd": null,
-    "reason": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 46,
-      "rsiPrev": 46,
-      "ext": -0.55,
-      "nadTrendem": -0.0116,
-      "fastNadSlow": -0.0032,
-      "volPct": 0.0025,
-      "er": 0.17,
-      "slope": -0.0012,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00785,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1786138234280-malpa-KMNO",
     "ts": "2026-08-07T21:30:34.281Z",
     "gracz": "malpa",
@@ -56929,6 +56855,84 @@
       "spodziewanyRuch": 0.00752,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1786503634965-smyczFiltr-SOL",
+    "ts": "2026-08-12T03:00:34.966Z",
+    "gracz": "smyczFiltr",
+    "sym": "SOL",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 76.4,
+    "entryPrice": 76.34,
+    "margin": 47.54748592255825,
+    "notional": 142.64245776767476,
+    "leverage": 3,
+    "pnlUsd": 0.02436141181332458,
+    "pnlPct": 0.0005123596198756461,
+    "R": -0.0012876403801243537,
+    "holdMs": 3901135,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 60.3, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 60.3,
+      "rsiPrev": 64.5,
+      "ext": 0.98,
+      "nadTrendem": 0.0052,
+      "fastNadSlow": 0.0033,
+      "volPct": 0.0022,
+      "er": 0.071,
+      "slope": 0.0005,
+      "volRel": 0.429,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0069,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.09,
+    "mae": 0,
+    "rynek": {
+      "SOL": 0.00079,
+      "BTC": -0.00097,
+      "ETH": 0.00043
+    }
+  },
+  {
+    "id": "1786503634965-smyczFiltr-SOL-o",
+    "ts": "2026-08-12T03:00:34.968Z",
+    "gracz": "smyczFiltr",
+    "sym": "SOL",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 76.4,
+    "margin": 47.34411221095682,
+    "notional": 142.03233663287045,
+    "leverage": 3,
+    "liqPrice": 53.480000000000004,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 59.9, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 59.9,
+      "rsiPrev": 58.8,
+      "ext": 0.86,
+      "nadTrendem": 0.0057,
+      "fastNadSlow": 0.0035,
+      "volPct": 0.0019,
+      "er": 0.277,
+      "slope": 0.00061,
+      "volRel": 0.812,
+      "knotZa": 0.25,
+      "zamkniecie": 0.75
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00622,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
