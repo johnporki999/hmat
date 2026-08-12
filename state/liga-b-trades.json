@@ -6010,70 +6010,6 @@
     }
   },
   {
-    "id": "1786455327419-kontraN-AVA-o",
-    "ts": "2026-08-11T13:35:27.422Z",
-    "gracz": "kontraN",
-    "sym": "AVA",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.1983,
-    "margin": 44.87676256387677,
-    "notional": 134.63028769163031,
-    "leverage": 3,
-    "liqPrice": 0.13881,
-    "pnlUsd": null,
-    "reason": "RSI 27.9 — panika, kupuję",
-    "warunki": {
-      "rsi": 27.9,
-      "rsiPrev": 28.3,
-      "ext": -3.9,
-      "nadTrendem": -0.0195,
-      "fastNadSlow": -0.008,
-      "volPct": 0.0032,
-      "er": 0.137,
-      "slope": -0.00169,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01017,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1786455327419-malpa-CTSI-o",
-    "ts": "2026-08-11T13:35:27.423Z",
-    "gracz": "malpa",
-    "sym": "CTSI",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.02547,
-    "margin": 25.295411954751525,
-    "notional": 75.88623586425457,
-    "leverage": 3,
-    "liqPrice": 0.017828999999999998,
-    "pnlUsd": null,
-    "reason": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 59.4,
-      "rsiPrev": 59.4,
-      "ext": 2.17,
-      "nadTrendem": -0.0151,
-      "fastNadSlow": -0.0033,
-      "volPct": 0.0037,
-      "er": 0.047,
-      "slope": -0.00219,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01199,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1786455327419-malpa-SUPER-o",
     "ts": "2026-08-11T13:35:27.423Z",
     "gracz": "malpa",
@@ -56631,6 +56567,96 @@
       "spodziewanyRuch": 0.00621,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1786518926990-antytrend-HFT",
+    "ts": "2026-08-12T07:15:26.991Z",
+    "gracz": "antytrend",
+    "sym": "HFT",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.00864,
+    "entryPrice": 0.00874,
+    "margin": 23.893403493746064,
+    "notional": 71.68021048123819,
+    "leverage": 3,
+    "pnlUsd": -0.8787860747038935,
+    "pnlPct": -0.03677944311842847,
+    "R": -0.03857944311842847,
+    "holdMs": 56100317,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 45.2, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 45.2,
+      "rsiPrev": 50.2,
+      "ext": -0.87,
+      "nadTrendem": -0.0919,
+      "fastNadSlow": -0.0018,
+      "volPct": 0.0217,
+      "er": 0.048,
+      "slope": -0.00885,
+      "volRel": 0.558,
+      "knotZa": 0.182,
+      "zamkniecie": 0.182
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.06937,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 1.48,
+    "mae": 0.53,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1786518926990-malpa-AVA",
+    "ts": "2026-08-12T07:15:26.993Z",
+    "gracz": "malpa",
+    "sym": "AVA",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.198,
+    "entryPrice": 0.199,
+    "margin": 24.3516998006642,
+    "notional": 73.0550994019926,
+    "leverage": 3,
+    "pnlUsd": -0.41128525105992336,
+    "pnlPct": -0.016889385727755456,
+    "R": -0.018689385727755456,
+    "holdMs": 1200770,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "rzut monetą — żadnego powodu",
+    "warunki": {
+      "rsi": 68.1,
+      "rsiPrev": 62,
+      "ext": 3.51,
+      "nadTrendem": 0.0025,
+      "fastNadSlow": 0.0048,
+      "volPct": 0.0028,
+      "er": 0.271,
+      "slope": -0.00032,
+      "volRel": null,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00882,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0.55,
+    "mae": 1.82,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
     }
   }
 ]
