@@ -148,82 +148,6 @@
     }
   },
   {
-    "id": "1786147234135-smyczFiltr-RENDER",
-    "ts": "2026-08-08T00:00:34.137Z",
-    "gracz": "smyczFiltr",
-    "sym": "RENDER",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 1.313,
-    "entryPrice": 1.313,
-    "margin": 64.70081002750281,
-    "notional": 194.10243008250842,
-    "leverage": 3,
-    "pnlUsd": -0.11743191617474122,
-    "pnlPct": -0.0018149991649999999,
-    "R": -0.0036149991649999996,
-    "holdMs": 2999841,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.4, odbicie do sredniej",
-    "warunki": {
-      "rsi": 44.4,
-      "rsiPrev": 36.5,
-      "ext": -0.72,
-      "nadTrendem": -0.0132,
-      "fastNadSlow": -0.0038,
-      "volPct": 0.0025,
-      "er": 0.157,
-      "slope": -0.00127,
-      "volRel": 5.995,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00799,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 1.22,
-    "mae": 0.91,
-    "rynek": {
-      "SOL": -0.00109,
-      "BTC": 0.00034,
-      "ETH": -0.00093
-    }
-  },
-  {
-    "id": "1786147234135-smyczFiltr-PYTH-o",
-    "ts": "2026-08-08T00:00:34.138Z",
-    "gracz": "smyczFiltr",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.03808,
-    "margin": 64.04214326320866,
-    "notional": 192.12642978962597,
-    "leverage": 3,
-    "liqPrice": 0.049504000000000006,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 43.5, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 43.5,
-      "rsiPrev": 43.5,
-      "ext": -0.65,
-      "nadTrendem": -0.0176,
-      "fastNadSlow": -0.0059,
-      "volPct": 0.002,
-      "er": 0.241,
-      "slope": -0.00206,
-      "volRel": 0.206
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00644,
-      "koszt": 0.0012,
-      "score": 10
-    }
-  },
-  {
     "id": "1786149634210-smycz-JTO",
     "ts": "2026-08-08T00:40:34.211Z",
     "gracz": "smycz",
@@ -56925,6 +56849,84 @@
       "spodziewanyRuch": 0.00719,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786515333045-smyczFiltr-SOL",
+    "ts": "2026-08-12T06:15:33.046Z",
+    "gracz": "smyczFiltr",
+    "sym": "SOL",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 76.13,
+    "entryPrice": 76.4,
+    "margin": 47.34411221095682,
+    "notional": 142.03233663287045,
+    "leverage": 3,
+    "pnlUsd": -0.5936275273421233,
+    "pnlPct": -0.012538571315838095,
+    "R": -0.014338571315838093,
+    "holdMs": 11698078,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 59.9, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 59.9,
+      "rsiPrev": 58.8,
+      "ext": 0.86,
+      "nadTrendem": 0.0057,
+      "fastNadSlow": 0.0035,
+      "volPct": 0.0019,
+      "er": 0.277,
+      "slope": 0.00061,
+      "volRel": 0.812,
+      "knotZa": 0.25,
+      "zamkniecie": 0.75
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00622,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "mfe": 0.4,
+    "mae": 1.82,
+    "rynek": {
+      "SOL": -0.00353,
+      "BTC": -0.00116,
+      "ETH": 0.00149
+    }
+  },
+  {
+    "id": "1786515333045-smyczFiltr-SOL-o",
+    "ts": "2026-08-12T06:15:33.048Z",
+    "gracz": "smyczFiltr",
+    "sym": "SOL",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 76.13,
+    "margin": 46.85572166669297,
+    "notional": 140.56716500007892,
+    "leverage": 3,
+    "liqPrice": 53.291,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, RSI 44.1, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 44.1,
+      "rsiPrev": 45.1,
+      "ext": -0.93,
+      "nadTrendem": 0.0017,
+      "fastNadSlow": 0.0019,
+      "volPct": 0.0017,
+      "er": 0.236,
+      "slope": 0.00033,
+      "volRel": 0.402,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0053,
+      "koszt": 0.0012,
+      "score": 8
     }
   }
 ]
