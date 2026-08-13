@@ -7044,84 +7044,6 @@
     }
   },
   {
-    "id": "1786469116315-trend-KMNO-o",
-    "ts": "2026-08-11T17:25:16.317Z",
-    "gracz": "trend",
-    "sym": "KMNO",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.01817,
-    "margin": 60.579923969291784,
-    "notional": 181.73977190787537,
-    "leverage": 3,
-    "liqPrice": 0.012718999999999998,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 49.2, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 49.2,
-      "rsiPrev": 51,
-      "ext": -0.29,
-      "nadTrendem": 0.0033,
-      "fastNadSlow": 0.003,
-      "volPct": 0.004,
-      "er": 0.08,
-      "slope": 0.0007,
-      "volRel": 1.846,
-      "knotZa": 0.75,
-      "zamkniecie": 0.75
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01286,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1786469116315-antytrend-PYTH",
-    "ts": "2026-08-11T17:25:16.317Z",
-    "gracz": "antytrend",
-    "sym": "PYTH",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.04262,
-    "entryPrice": 0.04176,
-    "margin": 57.72382914584788,
-    "notional": 173.17148743754365,
-    "leverage": 3,
-    "pnlUsd": 3.4591357977111987,
-    "pnlPct": 0.05992561215873561,
-    "R": 0.05812561215873561,
-    "holdMs": 4799767,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 42.3, odbicie do sredniej",
-    "warunki": {
-      "rsi": 42.3,
-      "rsiPrev": 34.6,
-      "ext": -0.99,
-      "nadTrendem": -0.0092,
-      "fastNadSlow": -0.0068,
-      "volPct": 0.0055,
-      "er": 0.223,
-      "slope": -0.00061,
-      "volRel": 2.414,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01758,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 3.75,
-    "mae": 0.35,
-    "rynek": {
-      "SOL": 0.00093,
-      "BTC": -0.00133,
-      "ETH": 0.00104
-    }
-  },
-  {
     "id": "1786469116315-antytrend-SOL-o",
     "ts": "2026-08-11T17:25:16.317Z",
     "gracz": "antytrend",
@@ -56985,6 +56907,84 @@
       "spodziewanyRuch": 0.00979,
       "koszt": 0.0012,
       "score": 8
+    }
+  },
+  {
+    "id": "1786589416145-smycz-PYTH",
+    "ts": "2026-08-13T02:50:16.146Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.04034,
+    "entryPrice": 0.0404,
+    "margin": 39.894687362716866,
+    "notional": 119.6840620881506,
+    "leverage": 3,
+    "pnlUsd": 0.10468149254256942,
+    "pnlPct": 0.0026239456795542743,
+    "R": 0.0008239456795542744,
+    "holdMs": 6299996,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 55.4, odbicie do sredniej",
+    "warunki": {
+      "rsi": 55.4,
+      "rsiPrev": 52.2,
+      "ext": 1.1,
+      "nadTrendem": -0.0182,
+      "fastNadSlow": -0.0044,
+      "volPct": 0.0041,
+      "er": 0.036,
+      "slope": -0.00246,
+      "volRel": 0.494,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01312,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.39,
+    "mae": 0,
+    "rynek": {
+      "SOL": 0.00251,
+      "BTC": -0.00063,
+      "ETH": -0.0016
+    }
+  },
+  {
+    "id": "1786589416145-smycz-PYTH-o",
+    "ts": "2026-08-13T02:50:16.147Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.04034,
+    "margin": 39.386372843634426,
+    "notional": 118.15911853090327,
+    "leverage": 3,
+    "liqPrice": 0.052442,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 53.1, odbicie do sredniej",
+    "warunki": {
+      "rsi": 53.1,
+      "rsiPrev": 48,
+      "ext": 0.63,
+      "nadTrendem": -0.0183,
+      "fastNadSlow": -0.0029,
+      "volPct": 0.0034,
+      "er": 0.041,
+      "slope": -0.00196,
+      "volRel": 0.525,
+      "knotZa": 0.1,
+      "zamkniecie": 0.1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01087,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
