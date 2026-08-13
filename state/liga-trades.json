@@ -7436,84 +7436,6 @@
     }
   },
   {
-    "id": "1786497916947-trend-PYTH-o",
-    "ts": "2026-08-12T01:25:16.948Z",
-    "gracz": "trend",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.04202,
-    "margin": 60.16846206444256,
-    "notional": 180.50538619332767,
-    "leverage": 3,
-    "liqPrice": 0.054626,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 52.4, odbicie do sredniej",
-    "warunki": {
-      "rsi": 52.4,
-      "rsiPrev": 50.7,
-      "ext": 0.57,
-      "nadTrendem": -0.0025,
-      "fastNadSlow": -0.0036,
-      "volPct": 0.0039,
-      "er": 0.062,
-      "slope": -0.00062,
-      "volRel": 0.181,
-      "knotZa": 0.857,
-      "zamkniecie": 0.929
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01259,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1786497916947-smycz-JUP",
-    "ts": "2026-08-12T01:25:16.948Z",
-    "gracz": "smycz",
-    "sym": "JUP",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.17547,
-    "entryPrice": 0.17578,
-    "margin": 42.65132342338685,
-    "notional": 127.95397027016054,
-    "leverage": 3,
-    "pnlUsd": 0.14824328413078872,
-    "pnlPct": 0.0034757018594528065,
-    "R": 0.0016757018594528068,
-    "holdMs": 3000500,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 49.5, odbicie do sredniej",
-    "warunki": {
-      "rsi": 49.5,
-      "rsiPrev": 43.4,
-      "ext": 0.18,
-      "nadTrendem": -0.023,
-      "fastNadSlow": -0.0061,
-      "volPct": 0.0026,
-      "er": 0.212,
-      "slope": -0.00249,
-      "volRel": 1.41,
-      "knotZa": 0.121,
-      "zamkniecie": 0.121
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0083,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 1.78,
-    "mae": 0,
-    "rynek": {
-      "SOL": 0.00157,
-      "BTC": 0.00065,
-      "ETH": -0.0002
-    }
-  },
-  {
     "id": "1786497916947-smycz-JUP-o",
     "ts": "2026-08-12T01:25:16.949Z",
     "gracz": "smycz",
@@ -57035,6 +56957,82 @@
       "spodziewanyRuch": 0.01532,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1786613416016-antytrend-JUP",
+    "ts": "2026-08-13T09:30:16.016Z",
+    "gracz": "antytrend",
+    "sym": "JUP",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.16993,
+    "entryPrice": 0.17057,
+    "margin": 56.323981065655374,
+    "notional": 168.97194319696612,
+    "leverage": 3,
+    "pnlUsd": -0.7357813659386379,
+    "pnlPct": -0.0130633764165384,
+    "R": -0.0148633764165384,
+    "holdMs": 600065,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 44.8, odbicie do sredniej",
+    "warunki": {
+      "rsi": 44.8,
+      "rsiPrev": 33.1,
+      "ext": -1.01,
+      "nadTrendem": -0.0192,
+      "fastNadSlow": -0.0013,
+      "volPct": 0.0018,
+      "er": 0.095,
+      "slope": -0.00197,
+      "volRel": 0.116,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00586,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0,
+    "mae": 2.05,
+    "rynek": {
+      "SOL": 0,
+      "BTC": -0.00006,
+      "ETH": -0.00005
+    }
+  },
+  {
+    "id": "1786613416016-antytrend-JTO-o",
+    "ts": "2026-08-13T09:30:16.017Z",
+    "gracz": "antytrend",
+    "sym": "JTO",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.57443,
+    "margin": 56.24221482578953,
+    "notional": 168.7266444773686,
+    "leverage": 3,
+    "liqPrice": 0.7467590000000001,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, trend rosnie, RSI 43.2, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 43.2,
+      "rsiPrev": 43.2,
+      "ext": -0.96,
+      "nadTrendem": 0.0238,
+      "fastNadSlow": 0.0055,
+      "volPct": 0.0044,
+      "er": 0.232,
+      "slope": 0.00283,
+      "volRel": 1.462
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01423,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
