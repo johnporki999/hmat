@@ -6968,37 +6968,6 @@
     }
   },
   {
-    "id": "1786467916580-wybicie-ORCA-o",
-    "ts": "2026-08-11T17:05:16.584Z",
-    "gracz": "wybicie",
-    "sym": "ORCA",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 1.034,
-    "margin": 40.439482681057804,
-    "notional": 121.31844804317342,
-    "leverage": 3,
-    "liqPrice": 1.3442,
-    "pnlUsd": null,
-    "reason": "1.03 pod dołkiem 20 świec 1.03",
-    "warunki": {
-      "rsi": 24.4,
-      "rsiPrev": 25.6,
-      "ext": -5.32,
-      "nadTrendem": -0.0255,
-      "fastNadSlow": -0.0069,
-      "volPct": 0.0016,
-      "er": 0.509,
-      "slope": -0.00229,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00522,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1786468516423-czujny-PYTH",
     "ts": "2026-08-11T17:15:16.424Z",
     "gracz": "czujny",
@@ -7072,49 +7041,6 @@
       "spodziewanyRuch": 0.00956,
       "koszt": 0.0012,
       "score": 10
-    }
-  },
-  {
-    "id": "1786469116315-trend-PYTH",
-    "ts": "2026-08-11T17:25:16.316Z",
-    "gracz": "trend",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.04262,
-    "entryPrice": 0.04209,
-    "margin": 61.55961580498206,
-    "notional": 184.67884741494618,
-    "leverage": 3,
-    "pnlUsd": -2.43731094977482,
-    "pnlPct": -0.039592692675277666,
-    "R": -0.04139269267527766,
-    "holdMs": 3299769,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 50.9, odbicie do sredniej",
-    "warunki": {
-      "rsi": 50.9,
-      "rsiPrev": 50.9,
-      "ext": 0.39,
-      "nadTrendem": -0.0013,
-      "fastNadSlow": -0.0061,
-      "volPct": 0.0055,
-      "er": 0.109,
-      "slope": -0.00055,
-      "volRel": 3.496
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01745,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 0,
-    "mae": 2.31,
-    "rynek": {
-      "SOL": 0.00093,
-      "BTC": -0.00056,
-      "ETH": 0.00112
     }
   },
   {
@@ -56981,6 +56907,84 @@
       "spodziewanyRuch": 0.00674,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786589116185-smycz-BONK",
+    "ts": "2026-08-13T02:45:16.185Z",
+    "gracz": "smycz",
+    "sym": "BONK",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.00000225,
+    "entryPrice": 0.00000225,
+    "margin": 39.51477099705514,
+    "notional": 118.54431299116541,
+    "leverage": 3,
+    "pnlUsd": -0.07148198838681928,
+    "pnlPct": -0.00180899412,
+    "R": -0.0036089941199999994,
+    "holdMs": 1798827,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 53.7, odbicie do sredniej",
+    "warunki": {
+      "rsi": 53.7,
+      "rsiPrev": 49.9,
+      "ext": 0.83,
+      "nadTrendem": -0.0425,
+      "fastNadSlow": -0.0041,
+      "volPct": 0.0039,
+      "er": 0.069,
+      "slope": -0.0047,
+      "volRel": 0.224,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01252,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.02,
+    "mae": 0,
+    "rynek": {
+      "SOL": 0.00159,
+      "BTC": 0.00058,
+      "ETH": -0.00009
+    }
+  },
+  {
+    "id": "1786589116185-smycz-RENDER-o",
+    "ts": "2026-08-13T02:45:16.186Z",
+    "gracz": "smycz",
+    "sym": "RENDER",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 1.264,
+    "margin": 39.50439892502773,
+    "notional": 118.51319677508319,
+    "leverage": 3,
+    "liqPrice": 0.8847999999999999,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, RSI 59.7, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 59.7,
+      "rsiPrev": 63.3,
+      "ext": 1.36,
+      "nadTrendem": 0.0005,
+      "fastNadSlow": 0.0017,
+      "volPct": 0.0031,
+      "er": 0.125,
+      "slope": -0.00002,
+      "volRel": 1.354,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00979,
+      "koszt": 0.0012,
+      "score": 8
     }
   }
 ]
