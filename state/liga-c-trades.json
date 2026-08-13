@@ -148,84 +148,6 @@
     }
   },
   {
-    "id": "1786314334955-smyczFiltr-SOL",
-    "ts": "2026-08-09T22:25:34.958Z",
-    "gracz": "smyczFiltr",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 77.35,
-    "entryPrice": 77.19,
-    "margin": 56.03369122065858,
-    "notional": 168.10107366197576,
-    "leverage": 3,
-    "pnlUsd": 0.23522471763644912,
-    "pnlPct": 0.00419791579873157,
-    "R": 0.0023979157987315696,
-    "holdMs": 18900613,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 63.4, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 63.4,
-      "rsiPrev": 66.4,
-      "ext": 1.59,
-      "nadTrendem": 0.0218,
-      "fastNadSlow": 0.0047,
-      "volPct": 0.0025,
-      "er": 0.266,
-      "slope": 0.00221,
-      "volRel": 0.672,
-      "knotZa": 0.273,
-      "zamkniecie": 0.273
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00788,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 2.05,
-    "mae": 0.95,
-    "rynek": {
-      "SOL": 0.00207,
-      "BTC": 0,
-      "ETH": 0.00294
-    }
-  },
-  {
-    "id": "1786314334955-smyczFiltr-SOL-o",
-    "ts": "2026-08-09T22:25:34.958Z",
-    "gracz": "smyczFiltr",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 77.35,
-    "margin": 55.50055424671996,
-    "notional": 166.50166274015987,
-    "leverage": 3,
-    "liqPrice": 54.144999999999996,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 56.6, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 56.6,
-      "rsiPrev": 69.8,
-      "ext": 0.8,
-      "nadTrendem": 0.0196,
-      "fastNadSlow": 0.004,
-      "volPct": 0.0022,
-      "er": 0.195,
-      "slope": 0.00196,
-      "volRel": 11.608,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00711,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1786314935281-smycz-W",
     "ts": "2026-08-09T22:35:35.282Z",
     "gracz": "smycz",
@@ -57111,6 +57033,82 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.00636,
+      "koszt": 0.0012,
+      "score": 8
+    }
+  },
+  {
+    "id": "1786662333642-smyczFiltr-PENGU",
+    "ts": "2026-08-13T23:05:33.643Z",
+    "gracz": "smyczFiltr",
+    "sym": "PENGU",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.00626,
+    "entryPrice": 0.006229,
+    "margin": 41.36295877113019,
+    "notional": 124.08887631339056,
+    "leverage": 3,
+    "pnlUsd": -0.6931258458305579,
+    "pnlPct": -0.01675716308559469,
+    "R": -0.01855716308559469,
+    "holdMs": 5399566,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 54.7, odbicie do sredniej",
+    "warunki": {
+      "rsi": 54.7,
+      "rsiPrev": 54.7,
+      "ext": 0.97,
+      "nadTrendem": -0.0135,
+      "fastNadSlow": -0.0043,
+      "volPct": 0.0029,
+      "er": 0.182,
+      "slope": -0.00173,
+      "volRel": 0.281
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00919,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 0.22,
+    "mae": 1.73,
+    "rynek": {
+      "SOL": 0.00066,
+      "BTC": 0.0002,
+      "ETH": -0.00046
+    }
+  },
+  {
+    "id": "1786662333642-smyczFiltr-RENDER-o",
+    "ts": "2026-08-13T23:05:33.645Z",
+    "gracz": "smyczFiltr",
+    "sym": "RENDER",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 1.259,
+    "margin": 40.84820513043181,
+    "notional": 122.54461539129542,
+    "leverage": 3,
+    "liqPrice": 1.6366999999999998,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, RSI 44.9, odbicie do sredniej",
+    "warunki": {
+      "rsi": 44.9,
+      "rsiPrev": 42.1,
+      "ext": -0.95,
+      "nadTrendem": -0.0039,
+      "fastNadSlow": -0.0002,
+      "volPct": 0.0033,
+      "er": 0.043,
+      "slope": 0.00007,
+      "volRel": 7.124,
+      "knotZa": 0.333,
+      "zamkniecie": 0.333
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01054,
       "koszt": 0.0012,
       "score": 8
     }
