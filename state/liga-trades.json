@@ -604,84 +604,6 @@
     }
   },
   {
-    "id": "1786255816618-cierpliwy-SOL",
-    "ts": "2026-08-09T06:10:16.619Z",
-    "gracz": "cierpliwy",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 75.92,
-    "entryPrice": 76.24,
-    "margin": 68.96442160602548,
-    "notional": 206.89326481807643,
-    "leverage": 3,
-    "pnlUsd": -1.0275223544118617,
-    "pnlPct": -0.014899310840041704,
-    "R": -0.016699310840041705,
-    "holdMs": 43499827,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 62.2, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 62.2,
-      "rsiPrev": 66.3,
-      "ext": 0.94,
-      "nadTrendem": 0.0255,
-      "fastNadSlow": 0.0082,
-      "volPct": 0.0024,
-      "er": 0.383,
-      "slope": 0.00278,
-      "volRel": 0.394,
-      "knotZa": 0.091,
-      "zamkniecie": 0.091
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00763,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 0.22,
-    "mae": 2.91,
-    "rynek": {
-      "SOL": -0.0042,
-      "BTC": -0.00497,
-      "ETH": -0.00467
-    }
-  },
-  {
-    "id": "1786255816618-cierpliwy-SOL-o",
-    "ts": "2026-08-09T06:10:16.620Z",
-    "gracz": "cierpliwy",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 75.92,
-    "margin": 71.63668614746301,
-    "notional": 214.91005844238902,
-    "leverage": 3,
-    "liqPrice": 53.144,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 49.8, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 49.8,
-      "rsiPrev": 52,
-      "ext": 0,
-      "nadTrendem": 0.0128,
-      "fastNadSlow": 0.0009,
-      "volPct": 0.0015,
-      "er": 0.096,
-      "slope": 0.00138,
-      "volRel": 0.306,
-      "knotZa": 0.125,
-      "zamkniecie": 0.125
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00466,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1786255816618-sjesta-ORCA",
     "ts": "2026-08-09T06:10:16.621Z",
     "gracz": "sjesta",
@@ -56969,6 +56891,80 @@
       "spodziewanyRuch": 0.01047,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1786579217977-cierpliwy-PYTH",
+    "ts": "2026-08-13T00:00:17.978Z",
+    "gracz": "cierpliwy",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.0401,
+    "entryPrice": 0.04075,
+    "margin": 69.94930260336432,
+    "notional": 209.84790781009295,
+    "leverage": 3,
+    "pnlUsd": 3.2062488675642564,
+    "pnlPct": 0.045836752451196665,
+    "R": 0.04403675245119666,
+    "holdMs": 43201880,
+    "liquidated": false,
+    "reason": "TAKE PROFIT",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 51.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 51.2,
+      "rsiPrev": 51.2,
+      "ext": 0.52,
+      "nadTrendem": -0.0227,
+      "fastNadSlow": -0.0093,
+      "volPct": 0.0043,
+      "er": 0.173,
+      "slope": -0.00255,
+      "volRel": 2.13
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01374,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 5.49,
+    "mae": 1.54,
+    "rynek": {
+      "SOL": -0.01615,
+      "BTC": -0.0118,
+      "ETH": -0.01958
+    }
+  },
+  {
+    "id": "1786579217977-cierpliwy-PYTH-o",
+    "ts": "2026-08-13T00:00:17.980Z",
+    "gracz": "cierpliwy",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.0401,
+    "margin": 69.89924743484114,
+    "notional": 209.69774230452344,
+    "leverage": 3,
+    "liqPrice": 0.052129999999999996,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 47.2, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 47.2,
+      "rsiPrev": 47.2,
+      "ext": -0.17,
+      "nadTrendem": -0.0262,
+      "fastNadSlow": -0.0066,
+      "volPct": 0.0037,
+      "er": 0.121,
+      "slope": -0.00293,
+      "volRel": 2.659
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01195,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
