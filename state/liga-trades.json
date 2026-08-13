@@ -7481,82 +7481,6 @@
     }
   },
   {
-    "id": "1786506916078-trend-JUP-o",
-    "ts": "2026-08-12T03:55:16.080Z",
-    "gracz": "trend",
-    "sym": "JUP",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.1764,
-    "margin": 59.36114300039588,
-    "notional": 178.08342900118762,
-    "leverage": 3,
-    "liqPrice": 0.22932,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 58.9, odbicie do sredniej",
-    "warunki": {
-      "rsi": 58.9,
-      "rsiPrev": 58.9,
-      "ext": 1.57,
-      "nadTrendem": -0.0169,
-      "fastNadSlow": -0.0029,
-      "volPct": 0.0016,
-      "er": 0.021,
-      "slope": -0.00192,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00524,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1786506916078-antytrend-JTO",
-    "ts": "2026-08-12T03:55:16.080Z",
-    "gracz": "antytrend",
-    "sym": "JTO",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.55796,
-    "entryPrice": 0.56628,
-    "margin": 58.55907045911179,
-    "notional": 175.67721137733537,
-    "leverage": 3,
-    "pnlUsd": 2.474567976847411,
-    "pnlPct": 0.04225763758622587,
-    "R": 0.040457637586225864,
-    "holdMs": 3899487,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "odwrotnie do: gotowy: trend, trend rosnie, RSI 60.7, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 60.7,
-      "rsiPrev": 60.7,
-      "ext": 1.23,
-      "nadTrendem": 0.0375,
-      "fastNadSlow": 0.0123,
-      "volPct": 0.0036,
-      "er": 0.408,
-      "slope": 0.00431,
-      "volRel": 0.415
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01157,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 4.06,
-    "mae": 0,
-    "rynek": {
-      "SOL": -0.00248,
-      "BTC": 0.0003,
-      "ETH": 0.0002
-    }
-  },
-  {
     "id": "1786506916078-antytrend-SOL-o",
     "ts": "2026-08-12T03:55:16.080Z",
     "gracz": "antytrend",
@@ -57031,6 +56955,84 @@
       "SOL": -0.00224,
       "BTC": 0.00005,
       "ETH": -0.00148
+    }
+  },
+  {
+    "id": "1786619415906-smycz-PYTH",
+    "ts": "2026-08-13T11:10:15.907Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.03999,
+    "entryPrice": 0.04007,
+    "margin": 38.10656093814879,
+    "notional": 114.31968281444637,
+    "leverage": 3,
+    "pnlUsd": 0.15821915771958886,
+    "pnlPct": 0.0041520188079002,
+    "R": 0.0023520188079002,
+    "holdMs": 7499946,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 51.6, odbicie do sredniej",
+    "warunki": {
+      "rsi": 51.6,
+      "rsiPrev": 44.9,
+      "ext": 0.57,
+      "nadTrendem": -0.0193,
+      "fastNadSlow": -0.0037,
+      "volPct": 0.0027,
+      "er": 0.056,
+      "slope": -0.00238,
+      "volRel": 0.458,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00864,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.29,
+    "mae": 0.18,
+    "rynek": {
+      "SOL": -0.00605,
+      "BTC": -0.00194,
+      "ETH": -0.00308
+    }
+  },
+  {
+    "id": "1786619415906-smycz-PYTH-o",
+    "ts": "2026-08-13T11:10:15.908Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.03999,
+    "margin": 37.405359750652906,
+    "notional": 112.21607925195872,
+    "leverage": 3,
+    "liqPrice": 0.051987,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 48.4, odbicie do sredniej",
+    "warunki": {
+      "rsi": 48.4,
+      "rsiPrev": 46.8,
+      "ext": -0.13,
+      "nadTrendem": -0.0196,
+      "fastNadSlow": -0.0029,
+      "volPct": 0.0023,
+      "er": 0.012,
+      "slope": -0.00203,
+      "volRel": 1.185,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00734,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
