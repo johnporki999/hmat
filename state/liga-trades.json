@@ -6923,84 +6923,6 @@
     }
   },
   {
-    "id": "1786471517459-luzny-SOL-o",
-    "ts": "2026-08-11T18:05:17.462Z",
-    "gracz": "luzny",
-    "sym": "SOL",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 75.16,
-    "margin": 65.79770116947414,
-    "notional": 197.39310350842243,
-    "leverage": 3,
-    "liqPrice": 97.708,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 45.3, odbicie do sredniej",
-    "warunki": {
-      "rsi": 45.3,
-      "rsiPrev": 43,
-      "ext": -0.25,
-      "nadTrendem": -0.0098,
-      "fastNadSlow": -0.0042,
-      "volPct": 0.0029,
-      "er": 0.145,
-      "slope": -0.00131,
-      "volRel": 0.777,
-      "knotZa": 0.364,
-      "zamkniecie": 0.364
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00924,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1786471517459-krawiec-SOL",
-    "ts": "2026-08-11T18:05:17.463Z",
-    "gracz": "krawiec",
-    "sym": "SOL",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 75.16,
-    "entryPrice": 75.31,
-    "margin": 62.081620136558676,
-    "notional": 186.24486040967602,
-    "leverage": 3,
-    "pnlUsd": 0.25632257985468937,
-    "pnlPct": 0.0041287997847167315,
-    "R": 0.002328799784716732,
-    "holdMs": 9300533,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 37.9, odbicie do sredniej",
-    "warunki": {
-      "rsi": 37.9,
-      "rsiPrev": 37.9,
-      "ext": -1.45,
-      "nadTrendem": -0.0092,
-      "fastNadSlow": -0.0022,
-      "volPct": 0.003,
-      "er": 0.141,
-      "slope": -0.00065,
-      "volRel": 2.252,
-      "knotZa": 0.5,
-      "zamkniecie": 0.5
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00955,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 2.89,
-    "mae": 0,
-    "rynek": {
-      "SOL": -0.00199,
-      "BTC": -0.00401,
-      "ETH": -0.00636
-    }
-  },
-  {
     "id": "1786471517459-krawiec-SOL-o",
     "ts": "2026-08-11T18:05:17.463Z",
     "gracz": "krawiec",
@@ -56989,6 +56911,80 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.00566,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1786590916576-antytrend-SOL",
+    "ts": "2026-08-13T03:15:16.577Z",
+    "gracz": "antytrend",
+    "sym": "SOL",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 76.07,
+    "entryPrice": 75.41,
+    "margin": 55.649878083635514,
+    "notional": 166.94963425090654,
+    "leverage": 3,
+    "pnlUsd": 1.348728702551228,
+    "pnlPct": 0.024235968684859298,
+    "R": 0.0224359686848593,
+    "holdMs": 18899714,
+    "liquidated": false,
+    "reason": "TAKE PROFIT",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, RSI 37.5, odbicie do sredniej",
+    "warunki": {
+      "rsi": 37.5,
+      "rsiPrev": 37.5,
+      "ext": -1.6,
+      "nadTrendem": -0.0078,
+      "fastNadSlow": -0.0025,
+      "volPct": 0.0025,
+      "er": 0.249,
+      "slope": -0.00047,
+      "volRel": 0.675
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00806,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 3.48,
+    "mae": 0.42,
+    "rynek": {
+      "SOL": 0.00875,
+      "BTC": 0.00193,
+      "ETH": 0.00319
+    }
+  },
+  {
+    "id": "1786590916576-antytrend-PYTH-o",
+    "ts": "2026-08-13T03:15:16.578Z",
+    "gracz": "antytrend",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.04014,
+    "margin": 55.965910262906554,
+    "notional": 167.89773078871966,
+    "leverage": 3,
+    "liqPrice": 0.028097999999999998,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 45.7, odbicie do sredniej",
+    "warunki": {
+      "rsi": 45.7,
+      "rsiPrev": 45.7,
+      "ext": -0.68,
+      "nadTrendem": -0.0227,
+      "fastNadSlow": -0.0031,
+      "volPct": 0.0031,
+      "er": 0.118,
+      "slope": -0.00208,
+      "volRel": 4.264
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00995,
       "koszt": 0.0012,
       "score": null
     }
