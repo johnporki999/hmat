@@ -7073,84 +7073,6 @@
     }
   },
   {
-    "id": "1786516815999-krawiec-PENGU-o",
-    "ts": "2026-08-12T06:40:16.002Z",
-    "gracz": "krawiec",
-    "sym": "PENGU",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.006411,
-    "margin": 60.67069409877941,
-    "notional": 182.01208229633824,
-    "leverage": 3,
-    "liqPrice": 0.008334300000000001,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 51.6, odbicie do sredniej",
-    "warunki": {
-      "rsi": 51.6,
-      "rsiPrev": 47.8,
-      "ext": 0.39,
-      "nadTrendem": -0.0066,
-      "fastNadSlow": -0.0016,
-      "volPct": 0.0025,
-      "er": 0.134,
-      "slope": -0.00096,
-      "volRel": 1.845,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00798,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1786516815999-wybicie-JTO",
-    "ts": "2026-08-12T06:40:16.002Z",
-    "gracz": "wybicie",
-    "sym": "JTO",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.55051,
-    "entryPrice": 0.55796,
-    "margin": 39.643750977711846,
-    "notional": 118.93125293313554,
-    "leverage": 3,
-    "pnlUsd": 1.5146741738262124,
-    "pnlPct": 0.03820713571422086,
-    "R": 0.03640713571422086,
-    "holdMs": 9899917,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "0.56 pod dołkiem 20 świec 0.56",
-    "warunki": {
-      "rsi": 39.9,
-      "rsiPrev": 51.9,
-      "ext": -2.61,
-      "nadTrendem": 0.021,
-      "fastNadSlow": 0.0103,
-      "volPct": 0.0038,
-      "er": 0.277,
-      "slope": 0.00373,
-      "volRel": 0.518,
-      "knotZa": 0,
-      "zamkniecie": 0.835
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01219,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 3.51,
-    "mae": 1.6,
-    "rynek": {
-      "SOL": -0.00354,
-      "BTC": -0.00216,
-      "ETH": 0.00047
-    }
-  },
-  {
     "id": "1786516815999-wybicie-JUP-o",
     "ts": "2026-08-12T06:40:16.003Z",
     "gracz": "wybicie",
@@ -57033,6 +56955,84 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.0193,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1786627515862-antytrend-BTC",
+    "ts": "2026-08-13T13:25:15.863Z",
+    "gracz": "antytrend",
+    "sym": "BTC",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 63511,
+    "entryPrice": 63466.2,
+    "margin": 56.40150626710779,
+    "notional": 169.2045188013234,
+    "leverage": 3,
+    "pnlUsd": 0.014956121833242991,
+    "pnlPct": 0.0002651723832057495,
+    "R": -0.0015348276167942505,
+    "holdMs": 4499178,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, RSI 41.3, odbicie do sredniej",
+    "warunki": {
+      "rsi": 41.3,
+      "rsiPrev": 36.1,
+      "ext": -1.31,
+      "nadTrendem": -0.0042,
+      "fastNadSlow": -0.0003,
+      "volPct": 0.0013,
+      "er": 0.02,
+      "slope": -0.00035,
+      "volRel": 0.597,
+      "knotZa": 0.324,
+      "zamkniecie": 0.999
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00409,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2.81,
+    "mae": 0,
+    "rynek": {
+      "SOL": 0.00383,
+      "BTC": 0.00071,
+      "ETH": 0.00225
+    }
+  },
+  {
+    "id": "1786627515862-antytrend-JUP-o",
+    "ts": "2026-08-13T13:25:15.864Z",
+    "gracz": "antytrend",
+    "sym": "JUP",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.1697,
+    "margin": 56.209137136987806,
+    "notional": 168.62741141096342,
+    "leverage": 3,
+    "liqPrice": 0.11878999999999998,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 40.8, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 40.8,
+      "rsiPrev": 43.1,
+      "ext": -1.53,
+      "nadTrendem": -0.0211,
+      "fastNadSlow": -0.0027,
+      "volPct": 0.0019,
+      "er": 0.066,
+      "slope": -0.00211,
+      "volRel": 0.029,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0061,
       "koszt": 0.0012,
       "score": null
     }
