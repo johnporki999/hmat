@@ -148,94 +148,6 @@
     }
   },
   {
-    "id": "1786317934761-smycz-PYTH",
-    "ts": "2026-08-09T23:25:34.761Z",
-    "gracz": "smycz",
-    "sym": "PYTH",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.04163,
-    "entryPrice": 0.04198,
-    "margin": 53.433920483386046,
-    "notional": 160.30176145015815,
-    "leverage": 3,
-    "pnlUsd": -1.4345353488008092,
-    "pnlPct": -0.02684690428520667,
-    "R": -0.028646904285206668,
-    "holdMs": 2999478,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 52.0, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 52,
-      "rsiPrev": 61.1,
-      "ext": 0.33,
-      "nadTrendem": 0.0295,
-      "fastNadSlow": 0.0021,
-      "volPct": 0.0036,
-      "er": 0.06,
-      "slope": 0.0031,
-      "volRel": 1.446
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01156,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 0.07,
-    "mae": 2.31,
-    "rynek": {
-      "SOL": -0.00752,
-      "BTC": -0.00173,
-      "ETH": -0.00311
-    }
-  },
-  {
-    "id": "1786317934761-smycz-SOL",
-    "ts": "2026-08-09T23:25:34.762Z",
-    "gracz": "smycz",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 76.55,
-    "entryPrice": 76.9,
-    "margin": 53.29978846037473,
-    "notional": 159.8993653811242,
-    "leverage": 3,
-    "pnlUsd": -0.8253795099736493,
-    "pnlPct": -0.015485605737202326,
-    "R": -0.01728560573720233,
-    "holdMs": 2700819,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 43.3, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 43.3,
-      "rsiPrev": 57.3,
-      "ext": -1.46,
-      "nadTrendem": 0.0136,
-      "fastNadSlow": 0.0036,
-      "volPct": 0.0025,
-      "er": 0.108,
-      "slope": 0.00193,
-      "volRel": 2.962,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00815,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 0,
-    "mae": 1.79,
-    "rynek": {
-      "SOL": -0.00455,
-      "BTC": -0.00054,
-      "ETH": -0.0003
-    }
-  },
-  {
     "id": "1786317934761-smycz-PYTH-o",
     "ts": "2026-08-09T23:25:34.764Z",
     "gracz": "smycz",
@@ -57123,6 +57035,84 @@
       "spodziewanyRuch": 0.01164,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1786667733856-smyczFiltr-SOL",
+    "ts": "2026-08-14T00:35:33.857Z",
+    "gracz": "smyczFiltr",
+    "sym": "SOL",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 75.93,
+    "entryPrice": 76.19,
+    "margin": 40.88600132093035,
+    "notional": 122.65800396279104,
+    "leverage": 3,
+    "pnlUsd": -0.49502959516576167,
+    "pnlPct": -0.012107557089774545,
+    "R": -0.013907557089774546,
+    "holdMs": 5999435,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "gotowy: trend, RSI 55.1, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 55.1,
+      "rsiPrev": 61.7,
+      "ext": 0.51,
+      "nadTrendem": 0.0027,
+      "fastNadSlow": 0.0013,
+      "volPct": 0.002,
+      "er": 0.107,
+      "slope": 0.00031,
+      "volRel": 1.133,
+      "knotZa": 0.125,
+      "zamkniecie": 0.125
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00636,
+      "koszt": 0.0012,
+      "score": 8
+    },
+    "mfe": 0.33,
+    "mae": 1.72,
+    "rynek": {
+      "SOL": -0.00341,
+      "BTC": -0.00185,
+      "ETH": -0.00264
+    }
+  },
+  {
+    "id": "1786667733856-smyczFiltr-PYTH-o",
+    "ts": "2026-08-14T00:35:33.859Z",
+    "gracz": "smyczFiltr",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.04038,
+    "margin": 40.76846266774924,
+    "notional": 122.30538800324771,
+    "leverage": 3,
+    "liqPrice": 0.052494,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 55.4, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 55.4,
+      "rsiPrev": 57.5,
+      "ext": 0.93,
+      "nadTrendem": -0.0047,
+      "fastNadSlow": 0,
+      "volPct": 0.0038,
+      "er": 0.046,
+      "slope": -0.00081,
+      "volRel": 0.411,
+      "knotZa": 0,
+      "zamkniecie": 0.056
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01207,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
