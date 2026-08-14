@@ -409,82 +409,6 @@
     }
   },
   {
-    "id": "1786359916587-cierpliwy-JTO",
-    "ts": "2026-08-10T11:05:16.589Z",
-    "gracz": "cierpliwy",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.56069,
-    "entryPrice": 0.52203,
-    "margin": 69.82126827484852,
-    "notional": 209.46380482454555,
-    "leverage": 3,
-    "pnlUsd": 15.351158575853798,
-    "pnlPct": 0.21986364549301224,
-    "R": 0.21806364549301227,
-    "holdMs": 43499725,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 43.4, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 43.4,
-      "rsiPrev": 43.4,
-      "ext": -1.81,
-      "nadTrendem": 0.027,
-      "fastNadSlow": 0.0092,
-      "volPct": 0.0036,
-      "er": 0.242,
-      "slope": 0.0037,
-      "volRel": 0.635
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01151,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 29.46,
-    "mae": 1.73,
-    "rynek": {
-      "SOL": -0.00078,
-      "BTC": -0.00095,
-      "ETH": -0.00106
-    }
-  },
-  {
-    "id": "1786359916587-cierpliwy-JTO-o",
-    "ts": "2026-08-10T11:05:16.589Z",
-    "gracz": "cierpliwy",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.56069,
-    "margin": 72.33655287227243,
-    "notional": 217.00965861681732,
-    "leverage": 3,
-    "liqPrice": 0.39248299999999997,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 52.2, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 52.2,
-      "rsiPrev": 59.1,
-      "ext": -0.19,
-      "nadTrendem": 0.0709,
-      "fastNadSlow": 0.0245,
-      "volPct": 0.0092,
-      "er": 0.301,
-      "slope": 0.00886,
-      "volRel": 0.484,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02934,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1786361416316-sitoOstre-TNSR",
     "ts": "2026-08-10T11:30:16.319Z",
     "gracz": "sitoOstre",
@@ -57049,6 +56973,80 @@
       "spodziewanyRuch": 0.0083,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786690817374-cierpliwy-JTO",
+    "ts": "2026-08-14T07:00:17.376Z",
+    "gracz": "cierpliwy",
+    "sym": "JTO",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.558,
+    "entryPrice": 0.55734,
+    "margin": 68.69634854153985,
+    "notional": 206.08904562461953,
+    "leverage": 3,
+    "pnlUsd": -0.38264481099540426,
+    "pnlPct": -0.005570089518863198,
+    "R": -0.007370089518863198,
+    "holdMs": 43500344,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 50.0, odbicie do sredniej",
+    "warunki": {
+      "rsi": 50,
+      "rsiPrev": 50,
+      "ext": 0.35,
+      "nadTrendem": -0.0042,
+      "fastNadSlow": -0.0075,
+      "volPct": 0.0038,
+      "er": 0.223,
+      "slope": -0.00062,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01211,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 3.99,
+    "mae": 9.54,
+    "rynek": {
+      "SOL": -0.0075,
+      "BTC": -0.00609,
+      "ETH": -0.00667
+    }
+  },
+  {
+    "id": "1786690817374-cierpliwy-BONK-o",
+    "ts": "2026-08-14T07:00:17.377Z",
+    "gracz": "cierpliwy",
+    "sym": "BONK",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.000002298,
+    "margin": 69.24135105168999,
+    "notional": 207.72405315506995,
+    "leverage": 3,
+    "liqPrice": 0.0000029874,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 43.8, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 43.8,
+      "rsiPrev": 44.7,
+      "ext": -1.04,
+      "nadTrendem": -0.0101,
+      "fastNadSlow": -0.001,
+      "volPct": 0.0042,
+      "er": 0.104,
+      "slope": -0.00102,
+      "volRel": 1.064
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01359,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
