@@ -195,13 +195,24 @@ async function main() {
   }
 
   /*
-   * PROG KWOTOWY. Domyslnie zero, czyli wszystko — tak, jak bylo zamowione.
+   * DWA PROGI, oba opcjonalne, dzialajace razem: trejd musi przejsc OBA.
    *
-   * Zostawiam go widocznym, bo pomiar na czterech dniach danych mowi jasno:
-   * przy zerze wychodzi 28,7 powiadomien dziennie, w wiekszosci o kwotach
-   * ponizej zlotowki. Kto ustawi 1.00, dostanie 4,5 dziennie i tylko te
-   * trejdy, o ktorych naprawde chce wiedziec.
+   * PROCENTOWY (`POWIADOM_MIN_PROC`) jest domyslnie wlaczony na 5%. Mierzy R,
+   * czyli wynik odniesiony do depozytu — to ta sama liczba, ktora widac
+   * w tytule powiadomienia. Pomiar na 134 prawdziwych zamknieciach z 9,5 dnia:
+   *
+   *     bez progu  14,1 powiadomien na dobe
+   *     przy 2%     4,9
+   *     przy 3%     1,3
+   *     przy 5%     0,31       ← czyli mniej wiecej jedno na trzy dni
+   *
+   * Mediana |R| to 1,53%, a najwiekszy trejd w historii mial 8,27% — wiec
+   * prog 5% przepuszcza tylko gorne kilka procent zdarzen. Tak ma byc: chodzi
+   * o to, zeby telefon odzywal sie wtedy, gdy naprawde jest o czym mowic.
+   *
+   * KWOTOWY (`POWIADOM_MIN_ZL`) zostaje jako drugie sito, domyslnie wylaczony.
    */
+  const progProc = Math.abs(Number(String(process.env.POWIADOM_MIN_PROC ?? '5').trim()) || 0);
   const prog = Math.abs(Number(String(process.env.POWIADOM_MIN_ZL || '').trim()) || 0);
 
   const znaczniki = czytaj(ZNACZNIKI, {});
@@ -263,12 +274,25 @@ async function main() {
   doWyslania.sort((a, b) => Date.parse(a.t.ts) - Date.parse(b.t.ts));
 
   const fx = await kursPln();
-  // Prog liczymy w zlotowkach, wiec bez kursu nie ma czego odsiewac.
-  const doProgu = prog > 0 && fx
-    ? doWyslania.filter(({ t }) => Math.abs((Number(t.pnlUsd) || 0) * fx) >= prog)
+
+  /*
+   * Trejd bez policzonego R przepuszczamy.
+   *
+   * Brak R znaczy, ze cos poszlo nie tak przy ksiegowaniu — a to jest wlasnie
+   * ta sytuacja, o ktorej chce sie wiedziec. Odsiewanie po nieznanej wartosci
+   * ukrywaloby awarie zamiast ja pokazywac.
+   */
+  const poProcencie = progProc > 0
+    ? doWyslania.filter(({ t }) => !Number.isFinite(t.R) || Math.abs(t.R * 100) >= progProc)
     : doWyslania;
+
+  // Prog kwotowy liczymy w zlotowkach, wiec bez kursu nie ma czego odsiewac.
+  const doProgu = prog > 0 && fx
+    ? poProcencie.filter(({ t }) => Math.abs((Number(t.pnlUsd) || 0) * fx) >= prog)
+    : poProcencie;
+
   if (!doProgu.length) {
-    log(`${doWyslania.length} zamkniec ponizej progu ${prog} zl — nic nie wysylam`);
+    log(`${doWyslania.length} zamkniec ponizej progow (${progProc}% / ${prog} zl) — nic nie wysylam`);
     return;
   }
 
