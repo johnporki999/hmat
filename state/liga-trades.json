@@ -7087,80 +7087,6 @@
     }
   },
   {
-    "id": "1786703116568-kontra-RAY",
-    "ts": "2026-08-14T10:25:16.569Z",
-    "gracz": "kontra",
-    "sym": "RAY",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.62,
-    "entryPrice": 0.617,
-    "margin": 88.8099406477961,
-    "notional": 266.4298219433883,
-    "leverage": 3,
-    "pnlUsd": 1.123153521258497,
-    "pnlPct": 0.012646709513214489,
-    "R": 0.01084670951321449,
-    "holdMs": 12000143,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "RSI 23.0 — panika, kupuję",
-    "warunki": {
-      "rsi": 23,
-      "rsiPrev": 29.7,
-      "ext": -5.56,
-      "nadTrendem": -0.0181,
-      "fastNadSlow": -0.0038,
-      "volPct": 0.0012,
-      "er": 0.478,
-      "slope": -0.00134,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00375,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 4.15,
-    "mae": 0,
-    "rynek": {
-      "SOL": -0.00132,
-      "BTC": -0.00248,
-      "ETH": 0.00018
-    }
-  },
-  {
-    "id": "1786703116568-kontra-TNSR-o",
-    "ts": "2026-08-14T10:25:16.571Z",
-    "gracz": "kontra",
-    "sym": "TNSR",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.0315,
-    "margin": 90.5912032071297,
-    "notional": 271.7736096213891,
-    "leverage": 3,
-    "liqPrice": 0.02205,
-    "pnlUsd": null,
-    "reason": "RSI 23.3 — panika, kupuję",
-    "warunki": {
-      "rsi": 23.3,
-      "rsiPrev": 23.3,
-      "ext": -6.02,
-      "nadTrendem": -0.0082,
-      "fastNadSlow": -0.0016,
-      "volPct": 0.0008,
-      "er": 0.2,
-      "slope": -0.00063,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00252,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1786703116568-kontraN-RAY",
     "ts": "2026-08-14T10:25:16.571Z",
     "gracz": "kontraN",
@@ -56915,6 +56841,96 @@
       "spodziewanyRuch": 0.00424,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786837215903-wybicie-ORCA",
+    "ts": "2026-08-15T23:40:15.905Z",
+    "gracz": "wybicie",
+    "sym": "ORCA",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 1.044,
+    "entryPrice": 1.04,
+    "margin": 31.84574983992892,
+    "notional": 95.53724951978677,
+    "leverage": 3,
+    "pnlUsd": -0.4249643526935647,
+    "pnlPct": -0.01334446055846155,
+    "R": -0.01514446055846155,
+    "holdMs": 1199812,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "1.04 pod dołkiem 20 świec 1.04",
+    "warunki": {
+      "rsi": 37.9,
+      "rsiPrev": 52,
+      "ext": -2.93,
+      "nadTrendem": 0.0045,
+      "fastNadSlow": 0.0017,
+      "volPct": 0.0016,
+      "er": 0.014,
+      "slope": 0.00086,
+      "volRel": null,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00516,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0,
+    "mae": 2.38,
+    "rynek": {
+      "SOL": -0.00106,
+      "BTC": -0.00044,
+      "ETH": 0.0003
+    }
+  },
+  {
+    "id": "1786837215903-malpa-BTC",
+    "ts": "2026-08-15T23:40:15.906Z",
+    "gracz": "malpa",
+    "sym": "BTC",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 63036.7,
+    "entryPrice": 63036,
+    "margin": 41.68296783260564,
+    "notional": 125.04890349781692,
+    "leverage": 3,
+    "pnlUsd": -0.08093488522307783,
+    "pnlPct": -0.0019416776067410486,
+    "R": -0.0037416776067410486,
+    "holdMs": 14999450,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "rzut monetą — żadnego powodu",
+    "warunki": {
+      "rsi": 58.1,
+      "rsiPrev": 58.1,
+      "ext": 1.18,
+      "nadTrendem": -0.0008,
+      "fastNadSlow": 0.0003,
+      "volPct": 0.0004,
+      "er": 0.014,
+      "slope": -0.00012,
+      "volRel": 1.11,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00117,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2.35,
+    "mae": 1.11,
+    "rynek": {
+      "SOL": -0.00212,
+      "BTC": 0.00001,
+      "ETH": -0.00005
     }
   }
 ]
