@@ -148,80 +148,6 @@
     }
   },
   {
-    "id": "1786533334231-malpa-DRIFT",
-    "ts": "2026-08-12T11:15:34.234Z",
-    "gracz": "malpa",
-    "sym": "DRIFT",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.0113,
-    "entryPrice": 0.0111,
-    "margin": 53.597123662452105,
-    "notional": 160.79137098735632,
-    "leverage": 3,
-    "pnlUsd": -2.994501119338145,
-    "pnlPct": -0.05587055637905372,
-    "R": -0.057670556379053724,
-    "holdMs": 3300480,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 28.2,
-      "rsiPrev": 28.2,
-      "ext": -4.31,
-      "nadTrendem": -0.0617,
-      "fastNadSlow": -0.0092,
-      "volPct": 0.0014,
-      "er": 0.25,
-      "slope": -0.00644,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00444,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0,
-    "mae": 12.98,
-    "rynek": {
-      "SOL": -0.00065,
-      "BTC": 0.00097,
-      "ETH": -0.00175
-    }
-  },
-  {
-    "id": "1786533334231-malpa-PYTH-o",
-    "ts": "2026-08-12T11:15:34.234Z",
-    "gracz": "malpa",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.04085,
-    "margin": 52.755076115676914,
-    "notional": 158.26522834703076,
-    "leverage": 3,
-    "liqPrice": 0.053105,
-    "pnlUsd": null,
-    "reason": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 54.1,
-      "rsiPrev": 53.8,
-      "ext": 1.09,
-      "nadTrendem": -0.0211,
-      "fastNadSlow": -0.0104,
-      "volPct": 0.0043,
-      "er": 0.189,
-      "slope": -0.00279,
-      "volRel": 0.387
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01366,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1786535434026-smycz-W",
     "ts": "2026-08-12T11:50:34.026Z",
     "gracz": "smycz",
@@ -57033,6 +56959,96 @@
       "spodziewanyRuch": 0.00204,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786896034487-smycz-BONK",
+    "ts": "2026-08-16T16:00:34.487Z",
+    "gracz": "smycz",
+    "sym": "BONK",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.000002358,
+    "entryPrice": 0.000002357,
+    "margin": 36.18110866157658,
+    "notional": 108.54332598472973,
+    "leverage": 3,
+    "pnlUsd": -0.020340998519577828,
+    "pnlPct": -0.0005621994259446077,
+    "R": -0.002362199425944607,
+    "holdMs": 3000337,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, RSI 53.4, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 53.4,
+      "rsiPrev": 45.4,
+      "ext": 0.45,
+      "nadTrendem": 0.0043,
+      "fastNadSlow": 0.0022,
+      "volPct": 0.0021,
+      "er": 0.116,
+      "slope": 0.00039,
+      "volRel": 0.255,
+      "knotZa": 0.2,
+      "zamkniecie": 0.8
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0067,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.22,
+    "mae": 0.2,
+    "rynek": {
+      "SOL": 0.00199,
+      "BTC": 0.00053,
+      "ETH": 0.00039
+    }
+  },
+  {
+    "id": "1786896034487-smyczFiltr-BONK",
+    "ts": "2026-08-16T16:00:34.489Z",
+    "gracz": "smyczFiltr",
+    "sym": "BONK",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.000002358,
+    "entryPrice": 0.000002357,
+    "margin": 34.74314010807586,
+    "notional": 104.22942032422759,
+    "leverage": 3,
+    "pnlUsd": -0.019532570181580264,
+    "pnlPct": -0.0005621993326112748,
+    "R": -0.0023621993326112746,
+    "holdMs": 3000336,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, RSI 53.4, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 53.4,
+      "rsiPrev": 45.4,
+      "ext": 0.45,
+      "nadTrendem": 0.0043,
+      "fastNadSlow": 0.0022,
+      "volPct": 0.0021,
+      "er": 0.116,
+      "slope": 0.00039,
+      "volRel": 0.255,
+      "knotZa": 0.2,
+      "zamkniecie": 0.8
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0067,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.22,
+    "mae": 0.2,
+    "rynek": {
+      "SOL": 0.00199,
+      "BTC": 0.00053,
+      "ETH": 0.00039
     }
   }
 ]
