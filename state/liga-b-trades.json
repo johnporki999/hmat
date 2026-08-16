@@ -6213,84 +6213,6 @@
     }
   },
   {
-    "id": "1786802128171-trend-AVA-o",
-    "ts": "2026-08-15T13:55:28.172Z",
-    "gracz": "trend",
-    "sym": "AVA",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.1812,
-    "margin": 28.895956913695347,
-    "notional": 86.68787074108604,
-    "leverage": 3,
-    "liqPrice": 0.12683999999999998,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, RSI 58.3, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 58.3,
-      "rsiPrev": 63.6,
-      "ext": 1.47,
-      "nadTrendem": 0.0016,
-      "fastNadSlow": 0.0042,
-      "volPct": 0.0021,
-      "er": 0.17,
-      "slope": 0.00009,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00659,
-      "koszt": 0.0012,
-      "score": 8
-    }
-  },
-  {
-    "id": "1786802128171-antytrend-HFT",
-    "ts": "2026-08-15T13:55:28.173Z",
-    "gracz": "antytrend",
-    "sym": "HFT",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.00755,
-    "entryPrice": 0.00769,
-    "margin": 25.209981745546216,
-    "notional": 75.62994523663865,
-    "leverage": 3,
-    "pnlUsd": -1.4235795317340965,
-    "pnlPct": -0.056468883877141114,
-    "R": -0.05826888387714111,
-    "holdMs": 4499931,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 43.7, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 43.7,
-      "rsiPrev": 46.5,
-      "ext": -1.06,
-      "nadTrendem": -0.0404,
-      "fastNadSlow": -0.0035,
-      "volPct": 0.0092,
-      "er": 0.07,
-      "slope": -0.00318,
-      "volRel": 0.14,
-      "knotZa": 0.25,
-      "zamkniecie": 0.25
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02957,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0,
-    "mae": 1.97,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
     "id": "1786802128171-antytrend-AVA-o",
     "ts": "2026-08-15T13:55:28.174Z",
     "gracz": "antytrend",
@@ -56449,6 +56371,80 @@
       "spodziewanyRuch": 0.00327,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786874126616-smycz-SAND",
+    "ts": "2026-08-16T09:55:26.618Z",
+    "gracz": "smycz",
+    "sym": "SAND",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.0393,
+    "entryPrice": 0.0394,
+    "margin": 24.386153116742097,
+    "notional": 73.1584593502263,
+    "leverage": 3,
+    "pnlUsd": 0.1414205353867852,
+    "pnlPct": 0.005799214607969233,
+    "R": 0.003999214607969232,
+    "holdMs": 2999736,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 48.0, odbicie do sredniej",
+    "warunki": {
+      "rsi": 48,
+      "rsiPrev": 40.9,
+      "ext": -0.18,
+      "nadTrendem": -0.0032,
+      "fastNadSlow": -0.0034,
+      "volPct": 0.0033,
+      "er": 0.15,
+      "slope": -0.00057,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0107,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.52,
+    "mae": 0,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1786874126616-smycz-SAND-o",
+    "ts": "2026-08-16T09:55:26.619Z",
+    "gracz": "smycz",
+    "sym": "SAND",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.0393,
+    "margin": 24.428143386964592,
+    "notional": 73.28443016089378,
+    "leverage": 3,
+    "liqPrice": 0.05109,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 45.9, odbicie do sredniej",
+    "warunki": {
+      "rsi": 45.9,
+      "rsiPrev": 42.3,
+      "ext": -0.68,
+      "nadTrendem": -0.0055,
+      "fastNadSlow": -0.0036,
+      "volPct": 0.0032,
+      "er": 0.163,
+      "slope": -0.00056,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01021,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
