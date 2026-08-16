@@ -6805,49 +6805,6 @@
     }
   },
   {
-    "id": "1786737017019-antytrend-JTO",
-    "ts": "2026-08-14T19:50:17.020Z",
-    "gracz": "antytrend",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.55954,
-    "entryPrice": 0.55162,
-    "margin": 54.37371277154263,
-    "notional": 163.1211383146279,
-    "leverage": 3,
-    "pnlUsd": 2.2418888488449533,
-    "pnlPct": 0.04123111581996443,
-    "R": 0.03943111581996443,
-    "holdMs": 3601235,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 55.9, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 55.9,
-      "rsiPrev": 63.8,
-      "ext": 1.02,
-      "nadTrendem": -0.0065,
-      "fastNadSlow": -0.0015,
-      "volPct": 0.0033,
-      "er": 0.08,
-      "slope": -0.00062,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01065,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 4.32,
-    "mae": 0,
-    "rynek": {
-      "SOL": 0.00133,
-      "BTC": 0.00084,
-      "ETH": 0.00284
-    }
-  },
-  {
     "id": "1786737017019-antytrend-SOL-o",
     "ts": "2026-08-14T19:50:17.022Z",
     "gracz": "antytrend",
@@ -56901,6 +56858,51 @@
       "spodziewanyRuch": 0.00139,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786890617014-wybicie-ETH",
+    "ts": "2026-08-16T14:30:17.017Z",
+    "gracz": "wybicie",
+    "sym": "ETH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 1879.98,
+    "entryPrice": 1880.64,
+    "margin": 30.29154446309354,
+    "notional": 90.87463338928062,
+    "leverage": 3,
+    "pnlUsd": -0.08684089459812548,
+    "pnlPct": -0.0028668361464345357,
+    "R": -0.004666836146434536,
+    "holdMs": 1200276,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "1880.64 nad szczytem 20 świec 1880.33",
+    "warunki": {
+      "rsi": 63.5,
+      "rsiPrev": 58.7,
+      "ext": 2.21,
+      "nadTrendem": 0.0003,
+      "fastNadSlow": -0.0002,
+      "volPct": 0.0004,
+      "er": 0.121,
+      "slope": -0.00008,
+      "volRel": 5.78,
+      "knotZa": 0.083,
+      "zamkniecie": 0.917
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00132,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2.3,
+    "mae": 0.85,
+    "rynek": {
+      "SOL": 0.0004,
+      "BTC": 0.00033,
+      "ETH": -0.00035
     }
   }
 ]
