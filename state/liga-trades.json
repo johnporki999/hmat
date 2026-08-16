@@ -7107,80 +7107,6 @@
     }
   },
   {
-    "id": "1786761315974-malpa-ORCA",
-    "ts": "2026-08-15T02:35:15.977Z",
-    "gracz": "malpa",
-    "sym": "ORCA",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 1.023,
-    "entryPrice": 1.02,
-    "margin": 44.336644387157506,
-    "notional": 133.00993316147253,
-    "leverage": 3,
-    "pnlUsd": -0.47114446184793174,
-    "pnlPct": -0.010626525041764388,
-    "R": -0.012426525041764388,
-    "holdMs": 599131,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 53.6,
-      "rsiPrev": 53.6,
-      "ext": 0.66,
-      "nadTrendem": -0.0071,
-      "fastNadSlow": -0.0003,
-      "volPct": 0.0005,
-      "er": 0.2,
-      "slope": -0.00072,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00172,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0,
-    "mae": 5.49,
-    "rynek": {
-      "SOL": 0,
-      "BTC": 0.00019,
-      "ETH": 0.00001
-    }
-  },
-  {
-    "id": "1786761315974-malpa-DRIFT-o",
-    "ts": "2026-08-15T02:35:15.978Z",
-    "gracz": "malpa",
-    "sym": "DRIFT",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.0112,
-    "margin": 44.23930003694319,
-    "notional": 132.7179001108296,
-    "leverage": 3,
-    "liqPrice": 0.00784,
-    "pnlUsd": null,
-    "reason": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 50.6,
-      "rsiPrev": 50.6,
-      "ext": -0.65,
-      "nadTrendem": -0.0004,
-      "fastNadSlow": 0.0044,
-      "volPct": 0.0009,
-      "er": 0.25,
-      "slope": 0.00022,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00302,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1786761915843-trend-SOL",
     "ts": "2026-08-15T02:45:15.843Z",
     "gracz": "trend",
@@ -56841,6 +56767,96 @@
       "SOL": -0.00159,
       "BTC": 0.00214,
       "ETH": 0.00294
+    }
+  },
+  {
+    "id": "1786908616819-wybicie-SOL",
+    "ts": "2026-08-16T19:30:16.822Z",
+    "gracz": "wybicie",
+    "sym": "SOL",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 75.28,
+    "entryPrice": 75.13,
+    "margin": 29.6320483888553,
+    "notional": 88.8961451665659,
+    "leverage": 3,
+    "pnlUsd": -0.2315336272845352,
+    "pnlPct": -0.007813622070474738,
+    "R": -0.009613622070474738,
+    "holdMs": 4800856,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "75.13 pod dołkiem 20 świec 75.15",
+    "warunki": {
+      "rsi": 35.3,
+      "rsiPrev": 39.6,
+      "ext": -2.23,
+      "nadTrendem": -0.0036,
+      "fastNadSlow": 0,
+      "volPct": 0.0012,
+      "er": 0.061,
+      "slope": -0.00002,
+      "volRel": 1.739,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00388,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0.88,
+    "mae": 1.65,
+    "rynek": {
+      "SOL": 0.002,
+      "BTC": 0.00089,
+      "ETH": 0.00113
+    }
+  },
+  {
+    "id": "1786908616819-wybicie-PENGU",
+    "ts": "2026-08-16T19:30:16.823Z",
+    "gracz": "wybicie",
+    "sym": "PENGU",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.006025,
+    "entryPrice": 0.006008,
+    "margin": 29.626095976330443,
+    "notional": 88.87828792899133,
+    "leverage": 3,
+    "pnlUsd": -0.3054356422722764,
+    "pnlPct": -0.010309682467656284,
+    "R": -0.012109682467656284,
+    "holdMs": 4200176,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "0.01 pod dołkiem 20 świec 0.01",
+    "warunki": {
+      "rsi": 38.9,
+      "rsiPrev": 43.1,
+      "ext": -2.34,
+      "nadTrendem": -0.0075,
+      "fastNadSlow": 0.0016,
+      "volPct": 0.0018,
+      "er": 0.091,
+      "slope": -0.00023,
+      "volRel": 1.349,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00572,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 1.49,
+    "mae": 1.58,
+    "rynek": {
+      "SOL": 0.00226,
+      "BTC": 0.00085,
+      "ETH": 0.00113
     }
   }
 ]
