@@ -6837,39 +6837,6 @@
     }
   },
   {
-    "id": "1786722016016-trend-PYTH-o",
-    "ts": "2026-08-14T15:40:16.019Z",
-    "gracz": "trend",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.0391,
-    "margin": 52.14058343446716,
-    "notional": 156.4217503034015,
-    "leverage": 3,
-    "liqPrice": 0.05083000000000001,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 45.0, odbicie do sredniej",
-    "warunki": {
-      "rsi": 45,
-      "rsiPrev": 38.8,
-      "ext": -0.71,
-      "nadTrendem": -0.0248,
-      "fastNadSlow": -0.0061,
-      "volPct": 0.0044,
-      "er": 0.197,
-      "slope": -0.00217,
-      "volRel": 5.117,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.014,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1786722016016-antytrend-SOL",
     "ts": "2026-08-14T15:40:16.019Z",
     "gracz": "antytrend",
@@ -56879,6 +56846,51 @@
       "spodziewanyRuch": 0.00866,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1786870816809-wybicie-PENGU",
+    "ts": "2026-08-16T09:00:16.812Z",
+    "gracz": "wybicie",
+    "sym": "PENGU",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.006006,
+    "entryPrice": 0.006026,
+    "margin": 31.071922649466895,
+    "notional": 93.21576794840068,
+    "leverage": 3,
+    "pnlUsd": -0.36672186886840996,
+    "pnlPct": -0.011802355232584934,
+    "R": -0.013602355232584934,
+    "holdMs": 3900172,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "0.01 nad szczytem 20 świec 0.01",
+    "warunki": {
+      "rsi": 61.8,
+      "rsiPrev": 52.7,
+      "ext": 2.38,
+      "nadTrendem": -0.0069,
+      "fastNadSlow": -0.0013,
+      "volPct": 0.0018,
+      "er": 0.019,
+      "slope": -0.00129,
+      "volRel": 12.833,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00582,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0.27,
+    "mae": 1.82,
+    "rynek": {
+      "SOL": 0.0004,
+      "BTC": 0.00022,
+      "ETH": -0.00032
     }
   }
 ]
