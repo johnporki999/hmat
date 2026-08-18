@@ -27,8 +27,22 @@ poleceń. Bez tego `idf.py` nie będzie widoczne.
 ## 1. Pobierz kod ESP-Miner w wersji v2.14.2
 
 ```
-git clone --branch v2.14.2 --depth 1 https://github.com/bitaxeorg/ESP-Miner.git
+git clone --branch v2.14.2 --depth 1 --recurse-submodules https://github.com/bitaxeorg/ESP-Miner.git
 cd ESP-Miner
+```
+
+`--recurse-submodules` jest **obowiązkowe**. ESP-Miner trzyma `libsecp256k1`
+w osobnym repozytorium; bez tego katalog zostaje pusty i cmake przerywa
+komunikatem:
+
+```
+Include directory '.../components/libsecp256k1/libsecp256k1/include' is not a directory.
+```
+
+Gdyby jednak wyszło — doklejasz to po fakcie:
+
+```
+git submodule update --init --recursive --depth 1
 ```
 
 ## 2. Wgraj naszą łatkę
@@ -49,6 +63,17 @@ W liście `SRCS`, obok pozostałych zadań (okolice linii 32–41), dopisz linij
 ```cmake
     "./tasks/hajsomat_task.c"
 ```
+
+Oraz — w tym samym pliku, niżej — w bloku `PRIV_REQUIRES`, alfabetycznie tuż
+przed `"esp_http_server"`:
+
+```cmake
+    "esp_http_client"
+```
+
+Bez tego kompilator nie widzi `esp_http_client.h`. Łatwo to przeoczyć, bo błąd
+wychodzi dopiero pod sam koniec budowania — u nas przeszło 1638 z 1648 plików
+i wywalił się wyłącznie nasz.
 
 ### b) `main/main.c` — nagłówek
 
