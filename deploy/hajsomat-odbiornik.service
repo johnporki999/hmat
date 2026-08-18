@@ -1,0 +1,53 @@
+# Usluga przyjmujaca odczyty z koparki Bitaxe.
+#
+# To jest SZABLON — `deploy/setup.sh` podstawia za __UZYTKOWNIK__ i __KATALOG__
+# prawdziwe wartosci i kopiuje wynik do /etc/systemd/system/. Nie instaluj tego
+# pliku recznie, bo trafisz na cudza nazwe uzytkownika.
+#
+# Recznie, gdyby setup.sh nie byl pod reka:
+#   sed -e "s|__UZYTKOWNIK__|$USER|g" -e "s|__KATALOG__|$HOME/hajsomat|g" \
+#     deploy/hajsomat-odbiornik.service | sudo tee /etc/systemd/system/hajsomat-odbiornik.service
+#   sudo systemctl daemon-reload && sudo systemctl enable --now hajsomat-odbiornik
+#
+# ZAPORA GOOGLE CLOUD (raz, z dowolnego komputera z gcloud):
+#   gcloud compute firewall-rules create hajsomat-bitaxe \
+#     --allow tcp:8787 --description "odczyty z koparki Bitaxe"
+#
+# PODGLAD:  journalctl -u hajsomat-odbiornik -f
+#
+# DLACZEGO OSOBNA USLUGA, A NIE CRON: bot chodzi co piec minut i konczy prace.
+# Odbiornik musi sluchac caly czas, bo to koparka decyduje, kiedy zadzwoni.
+# Cron by tu nie zadzialal, a wpiecie nasluchu w skrypt bota oznaczaloby, ze
+# awaria jednego kladzie drugie.
+
+[Unit]
+Description=Hajsomat — odbiornik odczytow z koparki Bitaxe
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__UZYTKOWNIK__
+WorkingDirectory=__KATALOG__
+# Klucz i port czytamy z tego samego pliku, co reszta bota — jedno miejsce na
+# sekrety zamiast dwoch, ktore moglyby sie rozjechac.
+EnvironmentFile=__KATALOG__/deploy/.env
+ExecStart=/usr/bin/env node __KATALOG__/deploy/odbiornik.mjs
+
+# Awaria ma byc niewidoczna: usluga wstaje sama, ale nie czesciej niz co 10 s,
+# zeby przy trwalym bledzie (np. braku klucza) nie zapetlic sie w nieskonczonosc.
+Restart=always
+RestartSec=10
+StartLimitBurst=5
+StartLimitIntervalSec=120
+
+# Odbiornik zapisuje wylacznie do state/. Reszta systemu jest dla niego tylko
+# do odczytu — gdyby ktos znalazl w nim dziure, nie ma stad gdzie pojsc dalej.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=__KATALOG__/state
+
+[Install]
+WantedBy=multi-user.target

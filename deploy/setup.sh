@@ -56,6 +56,26 @@ fi
 
 chmod +x deploy/run.sh
 
+# ── odbiornik odczytow z koparki ─────────────────────────────────────────────
+# Osobna usluga, bo musi sluchac caly czas — cron sie do tego nie nadaje.
+# Instalujemy ja zawsze; bez BITAXE_KLUCZ w .env po prostu sie nie uruchomi
+# i nie bedzie przeszkadzac.
+if command -v systemctl >/dev/null 2>&1 && [ -f deploy/hajsomat-odbiornik.service ]; then
+  echo "--- instaluje usluge odbiornika koparki ---"
+  sed -e "s|__UZYTKOWNIK__|$USER|g" -e "s|__KATALOG__|$KATALOG|g"     deploy/hajsomat-odbiornik.service | sudo tee /etc/systemd/system/hajsomat-odbiornik.service >/dev/null
+  sudo systemctl daemon-reload
+  sudo systemctl enable hajsomat-odbiornik >/dev/null 2>&1 || true
+  # Nie startujemy od razu: bez klucza usluga i tak by padla, a systemd
+  # zapisalby to jako awarie. Wstanie przy pierwszym restarcie po uzupelnieniu .env.
+  if grep -q '^BITAXE_KLUCZ=.\+' deploy/.env 2>/dev/null; then
+    sudo systemctl restart hajsomat-odbiornik || true
+    echo "    odbiornik uruchomiony"
+  else
+    echo "    odbiornik zainstalowany, ale NIE uruchomiony — brak BITAXE_KLUCZ w .env"
+    echo "    po uzupelnieniu:  sudo systemctl start hajsomat-odbiornik"
+  fi
+fi
+
 # ── harmonogram ──────────────────────────────────────────────────────────────
 WPIS="*/5 * * * * $KATALOG/deploy/run.sh >/dev/null 2>&1"
 if crontab -l 2>/dev/null | grep -Fq "$KATALOG/deploy/run.sh"; then
@@ -85,3 +105,4 @@ echo "Ustawienia:  nano $KATALOG/deploy/.env"
 echo "Test teraz:  $KATALOG/deploy/run.sh"
 echo "Podglad:     tail -f $KATALOG/logs/hajsomat.log"
 echo "Harmonogram: crontab -l"
+echo "Koparka:     journalctl -u hajsomat-odbiornik -f"
