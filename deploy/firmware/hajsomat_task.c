@@ -1,5 +1,5 @@
 /*
- * WYSYLANIE ODCZYTOW NA WLASNY SERWER — latka do ESP-Miner (AxeOS).
+ * WYSYLANIE ODCZYTOW NA WLASNY SERWER — latka do ESP-Miner (AxeOS) v2.14.2.
  *
  * Bitaxe stoi za routerem i z internetu nikt do niego nie dojdzie, ale
  * polaczenia WYCHODZACE z domu przechodza bez zadnej konfiguracji. To zadanie
@@ -12,7 +12,7 @@
  *  1. Ten plik → `main/tasks/hajsomat_task.c`, naglowek → `main/tasks/hajsomat_task.h`.
  *  2. W `main/CMakeLists.txt`, do listy SRCS, dopisz:  "./tasks/hajsomat_task.c"
  *  3. W `main/main.c` dodaj `#include "hajsomat_task.h"` obok pozostalych,
- *     a zaraz PO utworzeniu zadania "statistics" (okolo linii 217) wstaw:
+ *     a zaraz PO utworzeniu zadania "statistics" (w v2.14.2 linie 160-162) wstaw:
  *
  *         if (xTaskCreateWithCaps(hajsomat_task, "hajsomat", 8192,
  *                                 (void *) &GLOBAL_STATE, 2, NULL,
@@ -20,7 +20,8 @@
  *             ESP_LOGE(TAG, "Error creating hajsomat task");
  *         }
  *
- *  4. Ustaw ponizej ADRES_SERWERA i KLUCZ, potem zbuduj i wgraj.
+ *  4. W `sdkconfig.defaults` dopisz:  CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
+ *  5. Ustaw ponizej ADRES_SERWERA i KLUCZ, potem zbuduj i wgraj.
  *
  * ── DECYZJE, KTORE WARTO ZNAC ───────────────────────────────────────────────
  *
@@ -36,6 +37,14 @@
  *
  * NAZWY POL takie same jak w `/api/system/info` — dzieki temu serwer i apka nie
  * musza rozrozniac, czy odczyt przyszedl z sieci domowej, czy tą droga.
+ *
+ * ── ZGODNOSC Z WERSJA ───────────────────────────────────────────────────────
+ *
+ * Pisane i sprawdzone pod ESP-Miner v2.14.2. Pierwsza wersja tej latki uzywala
+ * `sys->pools[i].user` oraz `sys->primary_pool_index` — pol, ktore istnieja
+ * dopiero w galezi rozwojowej. W v2.14.2 pule sa PLASKIE (`pool_user`,
+ * `fallback_pool_user`), a o tym, ktora jest w uzyciu, mowi `use_fallback_stratum`.
+ * Przy przesiadce na nowsze wydanie to jest pierwsze miejsce do sprawdzenia.
  */
 
 #include <stdio.h>
@@ -44,6 +53,7 @@
 #include "esp_timer.h"
 #include "esp_http_client.h"
 #include "esp_app_desc.h"
+#include "esp_ota_ops.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "hajsomat_task.h"
@@ -54,6 +64,12 @@
 #define KLUCZ         "TU-WPISZ-DLUGI-LOSOWY-CIAG"
 #define ODSTEP_S      60
 /* ──────────────────────────────────────────────────────────────────────── */
+
+/*
+ * Po ilu cyklach z dzialajacym kopaniem uznajemy obraz za sprawny.
+ * 3 cykle po 60 s = trzy minuty. Patrz komentarz przy `zatwierdz_obraz`.
+ */
+#define ZATWIERDZ_PO 3
 
 static const char * TAG = "hajsomat";
 
@@ -68,6 +84,45 @@ static const char * TAG = "hajsomat";
  */
 #define BUFOR 1024
 
+/**
+ * ZATWIERDZENIE OBRAZU — siec bezpieczenstwa przy wgrywaniu przez OTA.
+ *
+ * Przy wlaczonym CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE swiezo wgrany obraz
+ * startuje w stanie PENDING_VERIFY. Jesli aplikacja nie zglosi, ze dziala,
+ * i urzadzenie sie zrestartuje, bootloader SAM wraca do poprzedniej wersji.
+ *
+ * KRYTERIUM JEST KOPANIE, NIE WYSYLKA. Gdybysmy zatwierdzali obraz dopiero po
+ * udanym POST, to awaria serwera albo zerwane Wi-Fi cofnelyby firmware —
+ * a przeciez wtedy koparka dziala bez zarzutu. Pytamy wiec o jedno: czy ASIC
+ * liczy. Jesli tak, to system wstal, sterowniki weszly, pula odpowiada —
+ * czyli nasz dodatek niczego nie polamal.
+ *
+ * CZEGO TO NIE OBEJMUJE: zawieszenia bez restartu. Cofniecie dzieje sie przy
+ * ponownym uruchomieniu, wiec ratuje przed padem w petli (najczestszy przypadek),
+ * a nie przed cichym zwisem. Od tego jest kabel USB.
+ *
+ * SKUTEK UBOCZNY, o ktorym trzeba wiedziec: jesli odetniesz prad w ciagu
+ * pierwszych trzech minut po wgraniu, koparka wstanie na STAREJ wersji.
+ * To nie awaria, tylko dzialanie zgodne z zamierzeniem.
+ *
+ * Wywolujemy najwyzej raz — potem `*cykle` zostaje na -1 i funkcja od razu wraca.
+ */
+static void zatwierdz_obraz(SystemModule * sys, int * cykle)
+{
+    if (*cykle < 0) return;                        /* juz zalatwione */
+    if (!(sys->current_hashrate > 0)) return;      /* jeszcze nie kopie */
+    if (++(*cykle) < ZATWIERDZ_PO) return;
+
+    esp_ota_img_states_t stan;
+    const esp_partition_t * part = esp_ota_get_running_partition();
+    if (part && esp_ota_get_state_partition(part, &stan) == ESP_OK
+        && stan == ESP_OTA_IMG_PENDING_VERIFY) {
+        esp_ota_mark_app_valid_cancel_rollback();
+        ESP_LOGI(TAG, "obraz zatwierdzony — cofniecie odwolane");
+    }
+    *cykle = -1;
+}
+
 void hajsomat_task(void * pvParameters)
 {
     ESP_LOGI(TAG, "Starting, cel: %s co %d s", ADRES_SERWERA, ODSTEP_S);
@@ -79,8 +134,10 @@ void hajsomat_task(void * pvParameters)
     char tresc[BUFOR];
 
     /* Ile razy pod rzad nie udalo sie wyslac. Sluzy do wycofywania sie —
-       patrz komentarz przy `czekaj` na koncu petli. */
+       patrz komentarz przy `mnoznik` na koncu petli. */
     int pudla = 0;
+    /* Licznik cykli do zatwierdzenia obrazu; -1 znaczy "zalatwione". */
+    int cykle = 0;
 
     /* `vTaskDelayUntil` zamiast `vTaskDelay`, tak jak w statistics_task:
        odmierza od USTALONEJ chwili, a nie od konca poprzedniej roboty.
@@ -93,19 +150,28 @@ void hajsomat_task(void * pvParameters)
     vTaskDelayUntil(&budzik, pdMS_TO_TICKS(ODSTEP_S * 1000));
 
     while (1) {
-        /* UWAGA na typy: `core_voltage` i `fan_perc` sa w tej strukturze
-           liczbami zmiennoprzecinkowymi, mimo ze wygladaja na calkowite.
-           Formatowanie ich przez %d jest niezdefiniowanym zachowaniem —
-           dlatego wszedzie tutaj jest %.0f. */
+        zatwierdz_obraz(sys, &cykle);
+
+        /* UWAGA na typy: `core_voltage`, `fan_perc` i `frequency_value` sa
+           w tej strukturze liczbami zmiennoprzecinkowymi, mimo ze wygladaja
+           na calkowite. Formatowanie ich przez %d jest niezdefiniowanym
+           zachowaniem — dlatego wszedzie tutaj jest %.0f albo %.1f. */
+
         /*
-         * Ktora pula jest w uzyciu — przy przelaczeniu na zapasowa adres
+         * Ktora pula jest w uzyciu. Przy przelaczeniu na zapasowa adres
          * portfela moze byc inny, a apka ma pokazywac ten, na ktory NAPRAWDE
-         * ida udzialy.
+         * ida udzialy. W v2.14.2 pola sa plaskie, a nie tablica.
          */
-        uint16_t poolIdx = sys->is_using_fallback
-            ? sys->secondary_pool_index : sys->primary_pool_index;
-        const char * poolUser = sys->pools[poolIdx].user ? sys->pools[poolIdx].user : "";
-        const char * poolUrl  = sys->pools[poolIdx].url  ? sys->pools[poolIdx].url  : "";
+        const bool zapas   = sys->use_fallback_stratum;
+        const char * pUser = zapas ? sys->fallback_pool_user : sys->pool_user;
+        const char * pUrl  = zapas ? sys->fallback_pool_url  : sys->pool_url;
+        if (!pUser) pUser = "";
+        if (!pUrl)  pUrl  = "";
+
+        const char * plytka = GLOBAL_STATE->DEVICE_CONFIG.board_version
+            ? GLOBAL_STATE->DEVICE_CONFIG.board_version : "";
+        const char * uklad = GLOBAL_STATE->DEVICE_CONFIG.family.asic.name
+            ? GLOBAL_STATE->DEVICE_CONFIG.family.asic.name : "";
 
         int n = snprintf(tresc, sizeof(tresc),
             "{\"hashRate\":%.2f,\"hashRate_10m\":%.2f,\"errorPercentage\":%.3f,"
@@ -115,7 +181,7 @@ void hajsomat_task(void * pvParameters)
             "\"fanspeed\":%.0f,\"fanrpm\":%u,\"fan2rpm\":%u,"
             "\"sharesAccepted\":%llu,\"sharesRejected\":%llu,"
             "\"bestDiff\":%llu,\"bestSessionDiff\":%llu,"
-            "\"uptimeSeconds\":%lld,"
+            "\"uptimeSeconds\":%lld,\"isUsingFallbackStratum\":%d,"
             "\"ASICModel\":\"%s\",\"boardVersion\":\"%s\",\"version\":\"%s\","
             "\"stratumURL\":\"%s\",\"stratumUser\":\"%s\"}",
             sys->current_hashrate, sys->hashrate_10m, sys->error_percentage,
@@ -128,14 +194,13 @@ void hajsomat_task(void * pvParameters)
             (unsigned long long) sys->best_nonce_diff,
             (unsigned long long) sys->best_session_nonce_diff,
             (long long) (esp_timer_get_time() / 1000000),
+            zapas ? 1 : 0,
+            uklad, plytka,
             /* `version` NIE jest w SystemModule — tamtejsze pole o tej nazwie
                nalezy do struktury opisujacej partycje, nie do stanu systemu.
                Wersje firmware bierzemy tak, jak robi to ESP-IDF. */
-            GLOBAL_STATE->DEVICE_CONFIG.family.asic.name,
-            GLOBAL_STATE->DEVICE_CONFIG.board_version
-                ? GLOBAL_STATE->DEVICE_CONFIG.board_version : "",
             esp_app_get_description()->version,
-            poolUrl, poolUser);
+            pUrl, pUser);
 
         if (n <= 0 || n >= (int) sizeof(tresc)) {
             /* Ucieta tresc bylaby niepoprawnym JSON-em. Lepiej nie wyslac nic,
