@@ -43,7 +43,7 @@ const PLIK_HIST = path.join(KORZEN, 'state', 'bitaxe-historia.json');
  * marnowaniem miejsca w repozytorium.
  */
 const HIST_MAX = 500;
-const HIST_POLA = ['hashRate', 'temp', 'vrTemp', 'power', 'errorPercentage'];
+const HIST_POLA = ['hashRate', 'temp', 'vrTemp', 'power', 'errorPercentage', 'bestDiff'];
 
 const KLUCZ = process.env.BITAXE_KLUCZ?.trim();
 const PORT = Number(process.env.BITAXE_PORT) || 8787;

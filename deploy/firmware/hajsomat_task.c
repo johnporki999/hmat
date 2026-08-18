@@ -74,15 +74,15 @@
 static const char * TAG = "hajsomat";
 
 /*
- * Odczyt to okolo 600 bajtow razem z adresem portfela i adresem puli.
- * 1024 daje zapas, a przy 8 kB stosu zadania to dalej nic.
+ * Odczyt to okolo 700 bajtow razem z adresem portfela i adresem puli.
+ * 1280 daje zapas, a przy 8 kB stosu zadania to dalej nic.
  *
  * UWAGA przy dopisywaniu pol tekstowych: nie sa tu w zaden sposob escapowane.
  * Adres bitcoina i adres puli to znaki alfanumeryczne z kropkami, wiec JSON
  * z nich nie wyjdzie zepsuty — ale gdyby kiedys doszlo pole, ktore moze
  * zawierac cudzyslow, trzeba je przepuscic przez escapowanie albo pominac.
  */
-#define BUFOR 1024
+#define BUFOR 1280
 
 /**
  * ZATWIERDZENIE OBRAZU — siec bezpieczenstwa przy wgrywaniu przez OTA.
@@ -182,6 +182,7 @@ void hajsomat_task(void * pvParameters)
             "\"sharesAccepted\":%llu,\"sharesRejected\":%llu,"
             "\"bestDiff\":%llu,\"bestSessionDiff\":%llu,"
             "\"uptimeSeconds\":%lld,\"isUsingFallbackStratum\":%d,"
+            "\"blockFound\":%d,\"networkDifficulty\":%llu,\"smallCoreCount\":%u,"
             "\"ASICModel\":\"%s\",\"boardVersion\":\"%s\",\"version\":\"%s\","
             "\"stratumURL\":\"%s\",\"stratumUser\":\"%s\"}",
             sys->current_hashrate, sys->hashrate_10m, sys->error_percentage,
@@ -195,6 +196,13 @@ void hajsomat_task(void * pvParameters)
             (unsigned long long) sys->best_session_nonce_diff,
             (long long) (esp_timer_get_time() / 1000000),
             zapas ? 1 : 0,
+            /* `block_found` siedzi w SystemModule, ale trudnosc sieci NIE —
+               nalezy do GlobalState, bo przychodzi ze stratum, a nie z ukladu. */
+            sys->block_found,
+            (unsigned long long) GLOBAL_STATE->network_nonce_diff,
+            /* Liczba malych rdzeni razy czestotliwosc daje moc TEORETYCZNA.
+               Apka porownuje z nia moc zmierzona i pokazuje sprawnosc. */
+            (unsigned) GLOBAL_STATE->DEVICE_CONFIG.family.asic.small_core_count,
             uklad, plytka,
             /* `version` NIE jest w SystemModule — tamtejsze pole o tej nazwie
                nalezy do struktury opisujacej partycje, nie do stanu systemu.

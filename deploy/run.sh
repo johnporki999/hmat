@@ -360,6 +360,13 @@ if [ -f "$KATALOG/bot/powiadom.mjs" ]; then
   (cd "$KATALOG/bot" && node powiadom.mjs >>"$LOG" 2>&1) || true
 fi
 
+# Powiadomienia o koparce — osobny skrypt, bo zrodlo danych i zdarzenia sa inne:
+# blok, rekord i MILCZENIE. To ostatnie jest najwazniejsze, bo o zaniku pradu
+# w domu inaczej dowiesz sie dopiero, gdy sam zajrzysz do apki.
+if [ -f "$KATALOG/bot/koparka.mjs" ]; then
+  (cd "$KATALOG/bot" && node koparka.mjs >>"$LOG" 2>&1) || true
+fi
+
 git config user.name "hajsomat-bot"
 git config user.email "bot@users.noreply.github.com"
 git add state
