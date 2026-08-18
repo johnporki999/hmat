@@ -106,6 +106,9 @@ async function wyslij(tokeny, wiadomosci) {
   }
 }
 
+/** Czy odczyt jest juz przeterminowany — wspolne dla alarmu ciszy i „stoi". */
+const milczyTeraz = (wiek, prog) => wiek != null && wiek > prog;
+
 async function main() {
   zPliku();
 
@@ -216,12 +219,48 @@ async function main() {
       + ` (zgubione ${Math.round(zgubione)} s), powod: ${i.resetReason || '?'}`);
   }
 
-  // ── 4. MILCZENIE ─────────────────────────────────────────────────────────
+  // ── 4. STOI, ALE SIE ODZYWA ──────────────────────────────────────────────
+  /*
+   * DZIURA, KTORA MILCZENIE PRZEPUSZCZA.
+   *
+   * Przy przegrzaniu firmware wywoluje `mining_stop()`, zapisuje `overheat_mode`
+   * i CZEKA — ale ESP32 zyje dalej i nasze zadanie dalej wysyla odczyty.
+   * Z punktu widzenia alarmu "milczenie" wszystko jest w porzadku: dane
+   * przychodza co minute. Tyle ze w srodku stoi zero.
+   *
+   * To samo dotyczy zatrzymania recznego i awarii ukladu. Dlatego pytamy
+   * wprost o moc obliczeniowa, a nie o to, czy przyszedl pakiet.
+   *
+   * Prog 1 GH/s, nie 0: przy starcie i przy ponownym rozruchu po schlodzeniu
+   * moc bywa przez chwile ulamkowa, a nie dokladnie zerowa.
+   */
+  const moc = Number(i.hashRate);
+  const stoi = Number.isFinite(moc) && moc < 1 && !milczyTeraz(wiek, PROG_MS);
+  if (!pierwszy && stoi && !zn.stoi) {
+    const t = Number(i.temp);
+    const gorace = Number.isFinite(t) && t >= 70;
+    wiadomosci.push({
+      title: '🛑 Koparka stoi',
+      body: gorace
+        ? `Przegrzanie — ${t.toFixed(0)}°C. Sprawdź wentylator.`
+        : 'Zero mocy, ale odczyty przychodzą. Sprawdź stan w apce.',
+    });
+    log(`stoi: hashRate ${moc}, temp ${i.temp}`);
+  }
+  if (!pierwszy && !stoi && zn.stoi) {
+    wiadomosci.push({
+      title: '✅ Koparka znowu kopie',
+      body: `${(moc / 1000).toFixed(2)} TH/s · ${Number(i.temp).toFixed(0)}°C`,
+    });
+    log('znowu kopie');
+  }
+
+  // ── 5. MILCZENIE ─────────────────────────────────────────────────────────
   /*
    * Stan trzymamy w znacznikach, zeby wyslac DOKLADNIE JEDNO powiadomienie na
    * epizod. Bez tego przy dobie bez pradu przyszloby ich 288.
    */
-  const milczy = wiek != null && wiek > PROG_MS;
+  const milczy = milczyTeraz(wiek, PROG_MS);
   if (!pierwszy && milczy && !zn.milczy) {
     wiadomosci.push({
       title: '⚠️ Koparka milczy',
@@ -247,6 +286,7 @@ async function main() {
       ? Math.max(rekord, Number.isFinite(poprzedni) ? poprzedni : 0)
       : poprzedni,
     milczy,
+    stoi,
     // Czas pracy zapisujemy ZAWSZE, takze przy pierwszym przebiegu — inaczej
     // pierwszy restart po instalacji przeszedlby niezauwazony.
     uptimeSeconds: Number.isFinite(up) ? up : null,
