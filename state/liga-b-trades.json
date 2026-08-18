@@ -5313,82 +5313,6 @@
     }
   },
   {
-    "id": "1787000727979-trend-ALCX",
-    "ts": "2026-08-17T21:05:27.980Z",
-    "gracz": "trend",
-    "sym": "ALCX",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 1.95,
-    "entryPrice": 1.93,
-    "margin": 27.680518583266498,
-    "notional": 83.0415557497995,
-    "leverage": 3,
-    "pnlUsd": -0.9106084121655641,
-    "pnlPct": -0.03289708642655444,
-    "R": -0.03469708642655443,
-    "holdMs": 1800709,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.0, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 44,
-      "rsiPrev": 62.6,
-      "ext": -1.32,
-      "nadTrendem": -0.0083,
-      "fastNadSlow": -0.0015,
-      "volPct": 0.0027,
-      "er": 0,
-      "slope": -0.00076,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00851,
-      "koszt": 0.0012,
-      "score": 10
-    },
-    "mfe": 0,
-    "mae": 3.9,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
-    "id": "1787000727979-trend-ARB-o",
-    "ts": "2026-08-17T21:05:27.981Z",
-    "gracz": "trend",
-    "sym": "ARB",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.0751,
-    "margin": 27.512791110592925,
-    "notional": 82.53837333177877,
-    "leverage": 3,
-    "liqPrice": 0.05257,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 45.2, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 45.2,
-      "rsiPrev": 49.8,
-      "ext": -1.4,
-      "nadTrendem": 0.007,
-      "fastNadSlow": 0.0032,
-      "volPct": 0.0022,
-      "er": 0.086,
-      "slope": 0.00123,
-      "volRel": 4.342,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00717,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1787000727979-antytrend-ALCX",
     "ts": "2026-08-17T21:05:27.981Z",
     "gracz": "antytrend",
@@ -56607,6 +56531,84 @@
       "SOL": null,
       "BTC": null,
       "ETH": null
+    }
+  },
+  {
+    "id": "1787064627721-antytrend-QNT",
+    "ts": "2026-08-18T14:50:27.723Z",
+    "gracz": "antytrend",
+    "sym": "QNT",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 55.63,
+    "entryPrice": 55.67,
+    "margin": 23.207655613478067,
+    "notional": 69.6229668404342,
+    "leverage": 3,
+    "pnlUsd": -0.09253010615003032,
+    "pnlPct": -0.0039870509839991155,
+    "R": -0.005787050983999116,
+    "holdMs": 2699281,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 41.3, odbicie do sredniej",
+    "warunki": {
+      "rsi": 41.3,
+      "rsiPrev": 38.3,
+      "ext": -1.41,
+      "nadTrendem": -0.0152,
+      "fastNadSlow": -0.0032,
+      "volPct": 0.0023,
+      "er": 0.228,
+      "slope": -0.00123,
+      "volRel": 1.344,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00727,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2.37,
+    "mae": 1.11,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1787064627721-antytrend-QNT-o",
+    "ts": "2026-08-18T14:50:27.724Z",
+    "gracz": "antytrend",
+    "sym": "QNT",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 55.63,
+    "margin": 23.274634796598384,
+    "notional": 69.82390438979516,
+    "leverage": 3,
+    "liqPrice": 38.941,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 42.3, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 42.3,
+      "rsiPrev": 48,
+      "ext": -1.17,
+      "nadTrendem": -0.0155,
+      "fastNadSlow": -0.0033,
+      "volPct": 0.0027,
+      "er": 0.108,
+      "slope": -0.00131,
+      "volRel": 0.38,
+      "knotZa": 0.182,
+      "zamkniecie": 0.182
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00867,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
