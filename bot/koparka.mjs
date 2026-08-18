@@ -162,7 +162,36 @@ async function main() {
     log(`rekord ${poprzedni} → ${rekord}`);
   }
 
-  // ── 3. MILCZENIE ─────────────────────────────────────────────────────────
+  // ── 3. RESTART ───────────────────────────────────────────────────────────
+  /*
+   * Wykrywamy go po SPADKU czasu pracy, a nie po `resetReason` — ta ostatnia
+   * mowi tylko, dlaczego bylo ostatnie uruchomienie, i wyglada tak samo przez
+   * cala dobe po zdarzeniu. Spadek uptime jest jednoznaczny: cokolwiek sie
+   * stalo, urzadzenie zaczelo liczyc od zera.
+   *
+   * Po co to wiedziec: restart, ktorego NIE spowodowales sam, znaczy zanik
+   * pradu albo pad oprogramowania. Bez tego powiadomienia dowiesz sie o nim
+   * tylko przypadkiem, patrzac na kafelek "pracuje".
+   */
+  const up = Number(i.uptimeSeconds);
+  const upStary = Number(zn.uptimeSeconds);
+  if (!pierwszy && Number.isFinite(up) && Number.isFinite(upStary) && up < upStary) {
+    const powod = String(i.resetReason || '').toLowerCase();
+    const ludzko = powod.includes('panic') || powod.includes('exception')
+      ? 'awaria oprogramowania'
+      : powod.includes('power')
+        ? 'zanik zasilania'
+        : powod.includes('software')
+          ? 'restart programowy'
+          : (i.resetReason || 'nieznany powód');
+    wiadomosci.push({
+      title: '🔄 Koparka się zrestartowała',
+      body: `${ludzko} · chodziła ${Math.round(upStary / 60)} min`,
+    });
+    log(`restart: uptime ${upStary} -> ${up}, powod: ${i.resetReason || '?'}`);
+  }
+
+  // ── 4. MILCZENIE ─────────────────────────────────────────────────────────
   /*
    * Stan trzymamy w znacznikach, zeby wyslac DOKLADNIE JEDNO powiadomienie na
    * epizod. Bez tego przy dobie bez pradu przyszloby ich 288.
@@ -193,6 +222,9 @@ async function main() {
       ? Math.max(rekord, Number.isFinite(poprzedni) ? poprzedni : 0)
       : poprzedni,
     milczy,
+    // Czas pracy zapisujemy ZAWSZE, takze przy pierwszym przebiegu — inaczej
+    // pierwszy restart po instalacji przeszedlby niezauwazony.
+    uptimeSeconds: Number.isFinite(up) ? up : null,
     sprawdzono: teraz,
   });
 

@@ -14,11 +14,18 @@
  *  3. W `main/main.c` dodaj `#include "hajsomat_task.h"` obok pozostalych,
  *     a zaraz PO utworzeniu zadania "statistics" (w v2.14.2 linie 160-162) wstaw:
  *
- *         if (xTaskCreateWithCaps(hajsomat_task, "hajsomat", 8192,
- *                                 (void *) &GLOBAL_STATE, 2, NULL,
- *                                 MALLOC_CAP_SPIRAM) != pdPASS) {
+ *         if (xTaskCreate(hajsomat_task, "hajsomat", 10240,
+ *                         (void *) &GLOBAL_STATE, 2, NULL) != pdPASS) {
  *             ESP_LOGE(TAG, "Error creating hajsomat task");
  *         }
+ *
+ *     ZWYKLE xTaskCreate, NIE xTaskCreateWithCaps(MALLOC_CAP_SPIRAM) — mimo ze
+ *     sasiednie zadania tak wlasnie robia. Stos w PSRAM jest dobry dla zadan
+ *     LICZACYCH, ale to zadanie otwiera gniazdo, a stos sieciowy potrafi zlecac
+ *     DMA z buforow na stosie. DMA nie siega do PSRAM. Skopiowalem ten wzorzec
+ *     ze statistics_task bez zastanowienia i koparka panikowala raz na
+ *     kilkadziesiat minut. Wszystkie zadania sieciowe w ESP-Miner (stratum,
+ *     protocol coord, self_test) uzywaja zwyklego xTaskCreate.
  *
  *  4. W `sdkconfig.defaults` dopisz:  CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE=y
  *  5. Ustaw ponizej ADRES_SERWERA i KLUCZ, potem zbuduj i wgraj.
@@ -54,6 +61,7 @@
 #include "esp_http_client.h"
 #include "esp_app_desc.h"
 #include "esp_ota_ops.h"
+#include "esp_system.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "hajsomat_task.h"
@@ -72,6 +80,23 @@
 #define ZATWIERDZ_PO 3
 
 static const char * TAG = "hajsomat";
+
+/** Powod ostatniego uruchomienia, tymi samymi slowami co AxeOS na swojej stronie. */
+static const char * esp_reset_reason_nazwa(void)
+{
+    switch (esp_reset_reason()) {
+        case ESP_RST_POWERON:  return "Power on reset";
+        case ESP_RST_SW:       return "Software reset";
+        case ESP_RST_PANIC:    return "Software reset due to exception/panic";
+        case ESP_RST_INT_WDT:  return "Interrupt watchdog";
+        case ESP_RST_TASK_WDT: return "Task watchdog";
+        case ESP_RST_WDT:      return "Other watchdog";
+        case ESP_RST_BROWNOUT: return "Brownout reset";
+        case ESP_RST_DEEPSLEEP:return "Deep sleep reset";
+        case ESP_RST_EXT:      return "External reset";
+        default:               return "Unknown";
+    }
+}
 
 /*
  * Odczyt to okolo 700 bajtow razem z adresem portfela i adresem puli.
@@ -184,6 +209,7 @@ void hajsomat_task(void * pvParameters)
             "\"uptimeSeconds\":%lld,\"isUsingFallbackStratum\":%d,"
             "\"blockFound\":%d,\"networkDifficulty\":%llu,\"smallCoreCount\":%u,"
             "\"ASICModel\":\"%s\",\"boardVersion\":\"%s\",\"version\":\"%s\","
+            "\"resetReason\":\"%s\","
             "\"stratumURL\":\"%s\",\"stratumUser\":\"%s\"}",
             sys->current_hashrate, sys->hashrate_10m, sys->error_percentage,
             pwr->chip_temp_avg, pwr->chip_temp2_avg, pwr->vr_temp,
@@ -208,6 +234,10 @@ void hajsomat_task(void * pvParameters)
                nalezy do struktury opisujacej partycje, nie do stanu systemu.
                Wersje firmware bierzemy tak, jak robi to ESP-IDF. */
             esp_app_get_description()->version,
+            /* Powod OSTATNIEGO uruchomienia. Sam w sobie nie mowi, KIEDY
+               restart nastapil — od tego jest spadek uptime po stronie serwera —
+               ale mowi, czy byl to zanik pradu, czy pad oprogramowania. */
+            esp_reset_reason_nazwa(),
             pUrl, pUser);
 
         if (n <= 0 || n >= (int) sizeof(tresc)) {
