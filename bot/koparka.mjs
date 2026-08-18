@@ -173,9 +173,33 @@ async function main() {
    * pradu albo pad oprogramowania. Bez tego powiadomienia dowiesz sie o nim
    * tylko przypadkiem, patrzac na kafelek "pracuje".
    */
+  /*
+   * WYKRYWANIE PRZEZ PORoWNANIE Z UPLYWEM CZASU, a nie przez samo "uptime spadl".
+   *
+   * Prosty warunek `up < upStary` gubi restart, ktory zdarzyl sie tuz po
+   * poprzednim. Przyklad z liczbami: ostatni odczyt mial uptime 60 s, koparka
+   * padla, wstala i po 105 s przyslala uptime 60. 60 < 60 jest FALSZEM, wiec
+   * awaria przeszlaby niezauwazona — a to wlasnie seria szybkich restartow
+   * jest najgorszym objawem i tym, o ktorym najbardziej chce sie wiedziec.
+   *
+   * Poprawnie: czas pracy powinien rosnac dokladnie tyle, ile minelo miedzy
+   * odczytami. Jesli urosl WYRAZNIE mniej, urzadzenie po drodze wstalo od zera.
+   * Oba znaczniki czasu pochodzą z zegara serwera, wiec roznica jest rzetelna.
+   *
+   * Tolerancja 60 s: rozruch trwa kilkanascie sekund, a nasze zadanie czeka
+   * minute przed pierwszym wyslaniem — kazdy prawdziwy restart gubi wiecej.
+   */
   const up = Number(i.uptimeSeconds);
   const upStary = Number(zn.uptimeSeconds);
-  if (!pierwszy && Number.isFinite(up) && Number.isFinite(upStary) && up < upStary) {
+  const pobrano = Number(odczyt.pobrano);
+  const pobranoStary = Number(zn.pobrano);
+  const przerwa = Number.isFinite(pobrano) && Number.isFinite(pobranoStary)
+    ? (pobrano - pobranoStary) / 1000
+    : null;
+  const zgubione = Number.isFinite(up) && Number.isFinite(upStary) && przerwa != null
+    ? (upStary + przerwa) - up
+    : null;
+  if (!pierwszy && zgubione != null && zgubione > 60) {
     const powod = String(i.resetReason || '').toLowerCase();
     const ludzko = powod.includes('panic') || powod.includes('exception')
       ? 'awaria oprogramowania'
@@ -188,7 +212,8 @@ async function main() {
       title: '🔄 Koparka się zrestartowała',
       body: `${ludzko} · chodziła ${Math.round(upStary / 60)} min`,
     });
-    log(`restart: uptime ${upStary} -> ${up}, powod: ${i.resetReason || '?'}`);
+    log(`restart: uptime ${upStary} -> ${up} przy przerwie ${Math.round(przerwa)} s`
+      + ` (zgubione ${Math.round(zgubione)} s), powod: ${i.resetReason || '?'}`);
   }
 
   // ── 4. MILCZENIE ─────────────────────────────────────────────────────────
@@ -225,6 +250,9 @@ async function main() {
     // Czas pracy zapisujemy ZAWSZE, takze przy pierwszym przebiegu — inaczej
     // pierwszy restart po instalacji przeszedlby niezauwazony.
     uptimeSeconds: Number.isFinite(up) ? up : null,
+    // Czas POBRANIA odczytu, nie czas sprawdzenia — porownujemy uplyw miedzy
+    // dwoma odczytami z koparki, a nie miedzy dwoma przebiegami tego skryptu.
+    pobrano: Number.isFinite(pobrano) ? pobrano : null,
     sprawdzono: teraz,
   });
 
