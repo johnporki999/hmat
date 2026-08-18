@@ -24,6 +24,11 @@
 Description=Hajsomat — odbiornik odczytow z koparki Bitaxe
 After=network-online.target
 Wants=network-online.target
+# Ogranicznik restartow NALEZY DO [Unit], nie do [Service] — w [Service]
+# systemd wypisuje "Unknown key ... ignoring" i po cichu go nie stosuje.
+# Zlapane na dzienniku uslugi. 5 prob na 120 s, potem usluga sie poddaje.
+StartLimitBurst=5
+StartLimitIntervalSec=120
 
 [Service]
 Type=simple
@@ -38,8 +43,6 @@ ExecStart=/usr/bin/env node __KATALOG__/deploy/odbiornik.mjs
 # zeby przy trwalym bledzie (np. braku klucza) nie zapetlic sie w nieskonczonosc.
 Restart=always
 RestartSec=10
-StartLimitBurst=5
-StartLimitIntervalSec=120
 
 # Odbiornik zapisuje wylacznie do state/. Reszta systemu jest dla niego tylko
 # do odczytu — gdyby ktos znalazl w nim dziure, nie ma stad gdzie pojsc dalej.
