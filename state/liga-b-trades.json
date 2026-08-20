@@ -11231,80 +11231,6 @@
     }
   },
   {
-    "id": "1787125227885-wybicie-FIDA-o",
-    "ts": "2026-08-19T07:40:27.890Z",
-    "gracz": "wybicie",
-    "sym": "FIDA",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.01707,
-    "margin": 21.61289766395301,
-    "notional": 64.83869299185903,
-    "leverage": 3,
-    "liqPrice": 0.011948999999999998,
-    "pnlUsd": null,
-    "reason": "0.02 nad szczytem 20 świec 0.02",
-    "warunki": {
-      "rsi": 64.7,
-      "rsiPrev": 20.6,
-      "ext": 3.87,
-      "nadTrendem": -0.0055,
-      "fastNadSlow": -0.0024,
-      "volPct": 0.0008,
-      "er": 0.273,
-      "slope": -0.00099,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00252,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1787125527100-trend-ARB",
-    "ts": "2026-08-19T07:45:27.101Z",
-    "gracz": "trend",
-    "sym": "ARB",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.0766,
-    "entryPrice": 0.076,
-    "margin": 26.70271787894871,
-    "notional": 80.10815363684614,
-    "leverage": 3,
-    "pnlUsd": 0.5839007560215163,
-    "pnlPct": 0.021866716289649257,
-    "R": 0.020066716289649258,
-    "holdMs": 1499509,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 59.5, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 59.5,
-      "rsiPrev": 62.7,
-      "ext": 1.54,
-      "nadTrendem": 0.0123,
-      "fastNadSlow": 0.0031,
-      "volPct": 0.0025,
-      "er": 0.148,
-      "slope": 0.00112,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00789,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 3.2,
-    "mae": 0,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
     "id": "1787125527100-antytrend-ARB",
     "ts": "2026-08-19T07:45:27.102Z",
     "gracz": "antytrend",
@@ -56811,6 +56737,80 @@
       "spodziewanyRuch": 0.00817,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1787184027321-smycz-HFT",
+    "ts": "2026-08-20T00:00:27.322Z",
+    "gracz": "smycz",
+    "sym": "HFT",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.00643,
+    "entryPrice": 0.00648,
+    "margin": 22.231438562491693,
+    "notional": 66.69431568747508,
+    "leverage": 3,
+    "pnlUsd": 0.474266559728166,
+    "pnlPct": 0.021333147578148012,
+    "R": 0.019533147578148013,
+    "holdMs": 3000124,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 48.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 48.2,
+      "rsiPrev": 35.8,
+      "ext": -0.19,
+      "nadTrendem": -0.0389,
+      "fastNadSlow": -0.0076,
+      "volPct": 0.0101,
+      "er": 0.004,
+      "slope": -0.00405,
+      "volRel": 0.039
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.03244,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.67,
+    "mae": 0,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1787184027321-smycz-ASTR-o",
+    "ts": "2026-08-20T00:00:27.324Z",
+    "gracz": "smycz",
+    "sym": "ASTR",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.00472,
+    "margin": 22.316025013262394,
+    "notional": 66.94807503978718,
+    "leverage": 3,
+    "liqPrice": 0.003304,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 57.7, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 57.7,
+      "rsiPrev": 57.7,
+      "ext": 0.68,
+      "nadTrendem": 0.0414,
+      "fastNadSlow": 0.0156,
+      "volPct": 0.0023,
+      "er": 0.389,
+      "slope": 0.00478,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00751,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
