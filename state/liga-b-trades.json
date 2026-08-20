@@ -14550,37 +14550,6 @@
     }
   },
   {
-    "id": "1787204726918-smycz-SAND-o",
-    "ts": "2026-08-20T05:45:26.921Z",
-    "gracz": "smycz",
-    "sym": "SAND",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.0409,
-    "margin": 22.078612484077095,
-    "notional": 66.23583745223128,
-    "leverage": 3,
-    "liqPrice": 0.028629999999999996,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 45.9, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 45.9,
-      "rsiPrev": 45.9,
-      "ext": -1.28,
-      "nadTrendem": 0.0288,
-      "fastNadSlow": 0.0078,
-      "volPct": 0.0023,
-      "er": 0.17,
-      "slope": 0.00315,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00721,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1787205027982-sjesta-CTSI",
     "ts": "2026-08-20T05:50:27.983Z",
     "gracz": "sjesta",
@@ -14616,49 +14585,6 @@
       "score": 9
     },
     "mfe": 13.13,
-    "mae": 0,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
-    "id": "1787205326768-trend-CELO",
-    "ts": "2026-08-20T05:55:26.768Z",
-    "gracz": "trend",
-    "sym": "CELO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.0623,
-    "entryPrice": 0.0622,
-    "margin": 27.883464488378277,
-    "notional": 83.65039346513483,
-    "leverage": 3,
-    "pnlUsd": 0.07580574945488604,
-    "pnlPct": 0.0027186632237354,
-    "R": 0.0009186632237354003,
-    "holdMs": 26099012,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 60.2, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 60.2,
-      "rsiPrev": 67.3,
-      "ext": 1,
-      "nadTrendem": 0.0476,
-      "fastNadSlow": 0.0198,
-      "volPct": 0.0071,
-      "er": 0.429,
-      "slope": 0.0056,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02263,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 3.18,
     "mae": 0,
     "rynek": {
       "SOL": null,
@@ -56753,6 +56679,82 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.00638,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1787261727706-kontra-RLC",
+    "ts": "2026-08-20T21:35:27.709Z",
+    "gracz": "kontra",
+    "sym": "RLC",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.3046,
+    "entryPrice": 0.3029,
+    "margin": 33.455493421253735,
+    "notional": 100.3664802637612,
+    "leverage": 3,
+    "pnlUsd": -0.6236686262638776,
+    "pnlPct": -0.018641740488205476,
+    "R": -0.020441740488205476,
+    "holdMs": 900101,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "RSI 80.1 — euforia, sprzedaję",
+    "warunki": {
+      "rsi": 80.1,
+      "rsiPrev": 72.6,
+      "ext": 6.37,
+      "nadTrendem": 0.0372,
+      "fastNadSlow": 0.0063,
+      "volPct": 0.0019,
+      "er": 0.333,
+      "slope": 0.00265,
+      "volRel": null,
+      "knotZa": 0.25,
+      "zamkniecie": 0.25
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00618,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0,
+    "mae": 2.91,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1787261727706-kontra-RLC-o",
+    "ts": "2026-08-20T21:35:27.710Z",
+    "gracz": "kontra",
+    "sym": "RLC",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.3046,
+    "margin": 33.37464082022243,
+    "notional": 100.1239224606673,
+    "leverage": 3,
+    "liqPrice": 0.39598,
+    "pnlUsd": null,
+    "reason": "RSI 84.0 — euforia, sprzedaję",
+    "warunki": {
+      "rsi": 84,
+      "rsiPrev": 82.3,
+      "ext": 7.83,
+      "nadTrendem": 0.0426,
+      "fastNadSlow": 0.0072,
+      "volPct": 0.002,
+      "er": 0.372,
+      "slope": 0.00287,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00651,
       "koszt": 0.0012,
       "score": null
     }
