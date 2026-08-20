@@ -10942,82 +10942,6 @@
     }
   },
   {
-    "id": "1787138715605-trend-BONK",
-    "ts": "2026-08-19T11:25:15.606Z",
-    "gracz": "trend",
-    "sym": "BONK",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.000002309,
-    "entryPrice": 0.000002298,
-    "margin": 39.74090982305884,
-    "notional": 119.22272946917653,
-    "leverage": 3,
-    "pnlUsd": -0.6428213966162629,
-    "pnlPct": -0.016175306490926866,
-    "R": -0.017975306490926865,
-    "holdMs": 2998641,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 48.2, odbicie do sredniej",
-    "warunki": {
-      "rsi": 48.2,
-      "rsiPrev": 44.8,
-      "ext": 0.04,
-      "nadTrendem": -0.0071,
-      "fastNadSlow": -0.0035,
-      "volPct": 0.0023,
-      "er": 0.159,
-      "slope": -0.00094,
-      "volRel": 0.379
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00733,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 0,
-    "mae": 2.09,
-    "rynek": {
-      "SOL": 0.0044,
-      "BTC": 0.00197,
-      "ETH": 0.00242
-    }
-  },
-  {
-    "id": "1787138715605-trend-BONK-o",
-    "ts": "2026-08-19T11:25:15.608Z",
-    "gracz": "trend",
-    "sym": "BONK",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.000002309,
-    "margin": 40.009490910008296,
-    "notional": 120.02847273002489,
-    "leverage": 3,
-    "liqPrice": 0.0000030017,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 58.7, odbicie do sredniej",
-    "warunki": {
-      "rsi": 58.7,
-      "rsiPrev": 54.1,
-      "ext": 1.8,
-      "nadTrendem": -0.0022,
-      "fastNadSlow": -0.0026,
-      "volPct": 0.0022,
-      "er": 0.049,
-      "slope": -0.00077,
-      "volRel": 0.695,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.007,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1787138715605-antytrend-BONK",
     "ts": "2026-08-19T11:25:15.608Z",
     "gracz": "antytrend",
@@ -57105,6 +57029,84 @@
       "spodziewanyRuch": 0.00922,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1787239517196-smycz-PYTH",
+    "ts": "2026-08-20T15:25:17.196Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.0441,
+    "entryPrice": 0.04357,
+    "margin": 26.820454978202193,
+    "notional": 80.46136493460658,
+    "leverage": 3,
+    "pnlUsd": 0.9271962973634362,
+    "pnlPct": 0.034570490997151135,
+    "R": 0.03277049099715113,
+    "holdMs": 10500801,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 49.2, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 49.2,
+      "rsiPrev": 47.9,
+      "ext": -0.56,
+      "nadTrendem": 0.0662,
+      "fastNadSlow": 0.0184,
+      "volPct": 0.0072,
+      "er": 0.126,
+      "slope": 0.00834,
+      "volRel": 0.277,
+      "knotZa": 0.148,
+      "zamkniecie": 0.148
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02295,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "mfe": 2.46,
+    "mae": 1.02,
+    "rynek": {
+      "SOL": -0.00299,
+      "BTC": 0.00413,
+      "ETH": 0.00888
+    }
+  },
+  {
+    "id": "1787239517196-smycz-PYTH-o",
+    "ts": "2026-08-20T15:25:17.198Z",
+    "gracz": "smycz",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.0441,
+    "margin": 26.82194737132798,
+    "notional": 80.46584211398394,
+    "leverage": 3,
+    "liqPrice": 0.030869999999999998,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 58.3, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 58.3,
+      "rsiPrev": 60.7,
+      "ext": 1.04,
+      "nadTrendem": 0.0713,
+      "fastNadSlow": 0.0129,
+      "volPct": 0.007,
+      "er": 0.186,
+      "slope": 0.00673,
+      "volRel": 5.194,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02235,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
