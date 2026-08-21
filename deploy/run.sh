@@ -43,6 +43,18 @@ fi
 
 GALAZ="${GIT_BRANCH:-main}"
 
+# Ile OTWARTYCH pozycji ma bot ze stada. Uzywane w dwoch miejscach przy
+# przejmowaniu kont, wiec raz, a nie dwa razy wklejone.
+stado_otwarte() {
+  node -e '
+    const fs = require("fs");
+    try {
+      const s = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+      process.stdout.write(String(Object.keys(s.pozycje || {}).length));
+    } catch { process.stdout.write("0"); }
+  ' "$KATALOG/state/stado-$1-state.json" 2>/dev/null || echo 0
+}
+
 # Ktore boty uruchomic. Domyslnie tylko kontraktowy — spot zostal wylaczony,
 # bo przy stalych oplatach sieciowych nie mial szans, a dzwignia daje ruchy
 # na tyle duze, ze oplaty przestaja decydowac.
@@ -144,7 +156,24 @@ STADO_WYGASZANE="smycz trend"
 # START liczy sie SAM: realny.mjs przy pierwszym uruchomieniu porownuje saldo
 # konta z REALNY_START_USD i gdy sie roznia, bierze saldo (realny.mjs:384).
 # Nowe boty odczytaja wiec 21,97 i 29,76 bez naszego udzialu.
-STADO_PRZEJMUJE="panika:SMYCZ panikaLuzna:TREND"
+#
+# 21.08.2026 — Sito ostre wchodzi na konto Sita 5. Powod: Aneks 73. Sito ostre
+# jest jedynym graczem z DODATNIM R na trejd w obu ligach naraz (+0,306% na
+# 15 aktywach Solany, +0,396% na 24 spoza niej) i jedynym, ktory potwierdzil
+# przewidywanie zapisane PRZED zebraniem danych (Aneks 4, punkt 1: "ma wypasc
+# lepiej na trejd niz Sito 5"). Wypadl lepiej w obu ligach.
+#
+# CENA TEJ ZMIANY, ZAPISANA WPROST:
+#   - Sito ostre wchodzi 2-2,5x rzadziej. Sito 5 zrobilo 79 trejdow w 19 dni;
+#     nastepca zrobi ich okolo 30 na miesiac. Na moc testu na zywo trzeba
+#     bedzie czekac ponad rok — to jest wdrozenie, nie pomiar.
+#   - Zywy dorobek Sita 5 (79 trejdow, 35,80 -> 34,81 USD) zamyka sie tutaj.
+#     Plik `stado-sito5-*` zostaje nietkniety jako zapis tamtego eksperymentu.
+#   - Sito ostre ma dopiero 30% proby w lidze A i 57% w lidze B. Decyzja jest
+#     podjeta na tropie, nie na dowodzie, i tak ma byc czytana.
+#
+# Progi (ER >= 0,45, RSI < 25) sa ZAMROZONE regula z Aneksu 4, punkt 3.
+STADO_PRZEJMUJE="panika:SMYCZ panikaLuzna:TREND sitoOstre:SITO5"
 
 # Zabierz to, co przyszlo z zewnatrz (np. zmiany kodu wypchniete z komputera)
 git fetch origin "$GALAZ" --quiet 2>>"$LOG" || log "fetch nieudany"
@@ -185,17 +214,43 @@ for bot in $BOTY; do
       # Sklad efektywny: ze STADO wypadaja boty, ktorych konto ktos przejmuje,
       # a wchodza ci, ktorzy przejmuja. Dzieki temu podmiana idzie przez git,
       # a deploy/.env na serwerze zostaje nietkniety.
+      #
+      # POPRZEDNIK ZNIKA DOPIERO, GDY JEST PLASKI. Wczesniej bylo tak, ze bot
+      # przejmowany wypadal ze skladu od razu, a przejmujacy odbijal sie od
+      # bezpiecznika ("ma otwarte pozycje") i tez nie wchodzil. Wynik: w tym
+      # jednym przebiegu NIE CHODZIL ZADEN Z NICH, a lewarowana pozycja
+      # zostawala bez opieki — stop i take profit sa u nas wirtualne, wiec
+      # pilnuje ich wylacznie petla wyjsc wlasnego bota.
+      #
+      # Teraz poprzednik zostaje w skladzie (w trybie wygaszania, bo trafia
+      # tez na liste WYGASZANE_EFEKT nizej), a nastepca czeka na swoja kolej.
+      # Podmiana dzieje sie sama, w pierwszym przebiegu po zamknieciu pozycji.
       STADO_EFEKT=""
       for g in $STADO; do
         GDUZE=$(echo "$g" | tr '[:lower:]' '[:upper:]')
         POMIN=0
         for para in ${STADO_PRZEJMUJE:-}; do
-          [ "${para#*:}" = "$GDUZE" ] && POMIN=1
+          if [ "${para#*:}" = "$GDUZE" ] && [ "$(stado_otwarte "$g")" = "0" ]; then
+            POMIN=1
+          fi
         done
         [ "$POMIN" = "0" ] && STADO_EFEKT="$STADO_EFEKT $g"
       done
+      # Poprzednicy zawsze wygaszani: gdy sa jeszcze w skladzie, maja dokonczyc
+      # otwarte i nie otwierac nowych. Gdy sa plascy, i tak ich tu nie ma.
+      WYGASZANE_EFEKT="${STADO_WYGASZANE:-}"
       for para in ${STADO_PRZEJMUJE:-}; do
-        STADO_EFEKT="$STADO_EFEKT ${para%%:*}"
+        NASTEPCA="${para%%:*}"
+        PRZED=$(echo "${para#*:}" | tr '[:upper:]' '[:lower:]')
+        case " $WYGASZANE_EFEKT " in
+          *" $PRZED "*) ;;
+          *) WYGASZANE_EFEKT="$WYGASZANE_EFEKT $PRZED" ;;
+        esac
+        if [ "$(stado_otwarte "$PRZED")" = "0" ]; then
+          STADO_EFEKT="$STADO_EFEKT $NASTEPCA"
+        else
+          log "stado/$NASTEPCA: czeka — $PRZED ma jeszcze otwarta pozycje, wygaszam poprzednika"
+        fi
       done
 
       for gracz in $STADO_EFEKT; do
@@ -216,13 +271,7 @@ for bot in $BOTY; do
         # zostalaby ona bez ochrony az do likwidacji, a nowy bot nic o niej
         # nie wie, bo ma wlasny plik stanu.
         if [ -n "$POPRZEDNIK" ]; then
-          OTWARTE=$(node -e '
-            const fs = require("fs");
-            try {
-              const s = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
-              process.stdout.write(String(Object.keys(s.pozycje || {}).length));
-            } catch { process.stdout.write("0"); }
-          ' "$KATALOG/state/stado-$POPRZEDNIK-state.json" 2>/dev/null || echo 0)
+          OTWARTE=$(stado_otwarte "$POPRZEDNIK")
           if [ "${OTWARTE:-0}" != "0" ]; then
             log "stado/$gracz: POPRZEDNIK $POPRZEDNIK MA $OTWARTE OTWARTYCH POZYCJI — nie przejmuje konta"
             continue
@@ -251,7 +300,7 @@ for bot in $BOTY; do
         #     bo tylko wtedy zamkniete >= limit.
         # Bot pilnuje wiec swojej pozycji do konca, a wygasa sam, gdy jest plaski.
         LIMIT=0
-        for w in ${STADO_WYGASZANE:-}; do
+        for w in ${WYGASZANE_EFEKT:-}; do
           if [ "$w" = "$gracz" ]; then
             LIMIT=$(node -e '
               const fs = require("fs");
