@@ -2759,39 +2759,6 @@
     }
   },
   {
-    "id": "1787017216570-sito5-JTO-o",
-    "ts": "2026-08-18T01:40:16.576Z",
-    "gracz": "sito5",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.57418,
-    "margin": 109.24009876154778,
-    "notional": 327.7202962846434,
-    "leverage": 3,
-    "liqPrice": 0.401926,
-    "pnlUsd": null,
-    "reason": "prosty zjazd (ER 0.36), RSI 31.0 — kupuję",
-    "warunki": {
-      "rsi": 31,
-      "rsiPrev": 35.1,
-      "ext": -2.44,
-      "nadTrendem": -0.0244,
-      "fastNadSlow": -0.0112,
-      "volPct": 0.004,
-      "er": 0.36,
-      "slope": -0.00211,
-      "volRel": 0.236,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01276,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1787018416450-sito5-W",
     "ts": "2026-08-18T02:00:16.456Z",
     "gracz": "sito5",
@@ -11110,51 +11077,6 @@
       "spodziewanyRuch": 0.0162,
       "koszt": 0.0012,
       "score": 10
-    }
-  },
-  {
-    "id": "1787281216459-kontra-PYTH",
-    "ts": "2026-08-21T03:00:16.462Z",
-    "gracz": "kontra",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.04597,
-    "entryPrice": 0.04535,
-    "margin": 69.91740862574005,
-    "notional": 209.75222587722016,
-    "leverage": 3,
-    "pnlUsd": -2.99357203528634,
-    "pnlPct": -0.04281583219582109,
-    "R": -0.04461583219582109,
-    "holdMs": 299846,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "RSI 71.9 — euforia, sprzedaję",
-    "warunki": {
-      "rsi": 71.9,
-      "rsiPrev": 70.1,
-      "ext": 3.38,
-      "nadTrendem": 0.0718,
-      "fastNadSlow": 0.01,
-      "volPct": 0.0049,
-      "er": 0.221,
-      "slope": 0.00622,
-      "volRel": 2.028,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01565,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0,
-    "mae": 2.79,
-    "rynek": {
-      "SOL": 0.00045,
-      "BTC": 0.00067,
-      "ETH": -0.00012
     }
   },
   {
@@ -57373,6 +57295,96 @@
       "SOL": 0.0165,
       "BTC": 0.00476,
       "ETH": 0.00585
+    }
+  },
+  {
+    "id": "1787411716041-kontra-ETH",
+    "ts": "2026-08-22T15:15:16.042Z",
+    "gracz": "kontra",
+    "sym": "ETH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 2406.5,
+    "entryPrice": 2397.52,
+    "margin": 53.40285924209675,
+    "notional": 160.20857772629026,
+    "leverage": 3,
+    "pnlUsd": 0.49291423698664216,
+    "pnlPct": 0.009230109473203721,
+    "R": 0.007430109473203722,
+    "holdMs": 17700288,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "RSI 25.4 — panika, kupuję",
+    "warunki": {
+      "rsi": 25.4,
+      "rsiPrev": 26.3,
+      "ext": -2.38,
+      "nadTrendem": 0.0112,
+      "fastNadSlow": -0.0065,
+      "volPct": 0.0064,
+      "er": 0.405,
+      "slope": 0.00221,
+      "volRel": 9.496,
+      "knotZa": 0.177,
+      "zamkniecie": 0.177
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02049,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2.59,
+    "mae": 0.25,
+    "rynek": {
+      "SOL": 0.01165,
+      "BTC": 0.00294,
+      "ETH": 0.00375
+    }
+  },
+  {
+    "id": "1787411716041-sito5-ETH",
+    "ts": "2026-08-22T15:15:16.043Z",
+    "gracz": "sito5",
+    "sym": "ETH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 2406.5,
+    "entryPrice": 2397.52,
+    "margin": 116.1129863068445,
+    "notional": 348.3389589205335,
+    "leverage": 3,
+    "pnlUsd": 1.0717356033204612,
+    "pnlPct": 0.009230109718203722,
+    "R": 0.007430109718203723,
+    "holdMs": 17700287,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "prosty zjazd (ER 0.40), RSI 25.4 — kupuję",
+    "warunki": {
+      "rsi": 25.4,
+      "rsiPrev": 26.3,
+      "ext": -2.38,
+      "nadTrendem": 0.0112,
+      "fastNadSlow": -0.0065,
+      "volPct": 0.0064,
+      "er": 0.405,
+      "slope": 0.00221,
+      "volRel": 9.496,
+      "knotZa": 0.177,
+      "zamkniecie": 0.177
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02049,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2.59,
+    "mae": 0.25,
+    "rynek": {
+      "SOL": 0.01165,
+      "BTC": 0.00294,
+      "ETH": 0.00375
     }
   }
 ]
