@@ -14799,84 +14799,6 @@
     }
   },
   {
-    "id": "1787347529328-trend-GALA-o",
-    "ts": "2026-08-21T21:25:29.330Z",
-    "gracz": "trend",
-    "sym": "GALA",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.00214,
-    "margin": 33.86038451425386,
-    "notional": 101.58115354276157,
-    "leverage": 3,
-    "liqPrice": 0.001498,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 56.3, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 56.3,
-      "rsiPrev": 69.4,
-      "ext": 0.55,
-      "nadTrendem": 0.2327,
-      "fastNadSlow": 0.0568,
-      "volPct": 0.0244,
-      "er": 0.231,
-      "slope": 0.02502,
-      "volRel": 1.198,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.07809,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1787347529328-smycz-ARB",
-    "ts": "2026-08-21T21:25:29.330Z",
-    "gracz": "smycz",
-    "sym": "ARB",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.0984,
-    "entryPrice": 0.0952,
-    "margin": 25.64538572590329,
-    "notional": 76.93615717770987,
-    "leverage": 3,
-    "pnlUsd": 2.5379535256842267,
-    "pnlPct": 0.0989633594444536,
-    "R": 0.09716335944445359,
-    "holdMs": 6598036,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 39.1, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 39.1,
-      "rsiPrev": 39.1,
-      "ext": -2,
-      "nadTrendem": 0.0527,
-      "fastNadSlow": 0.0115,
-      "volPct": 0.0089,
-      "er": 0.057,
-      "slope": 0.0077,
-      "volRel": 0.419,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02839,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 3.79,
-    "mae": 0.47,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
     "id": "1787347529328-smycz-GALA-o",
     "ts": "2026-08-21T21:25:29.331Z",
     "gracz": "smycz",
@@ -57071,6 +56993,80 @@
       "SOL": null,
       "BTC": null,
       "ETH": null
+    }
+  },
+  {
+    "id": "1787420428071-smycz-STORJ",
+    "ts": "2026-08-22T17:40:28.073Z",
+    "gracz": "smycz",
+    "sym": "STORJ",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.04131,
+    "entryPrice": 0.04154,
+    "margin": 22.409782494128528,
+    "notional": 67.22934748238558,
+    "leverage": 3,
+    "pnlUsd": 0.3307570993981665,
+    "pnlPct": 0.01475949619255905,
+    "R": 0.012959496192559051,
+    "holdMs": 10200001,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, RSI 46.1, odbicie do sredniej",
+    "warunki": {
+      "rsi": 46.1,
+      "rsiPrev": 46.1,
+      "ext": -0.67,
+      "nadTrendem": -0.0021,
+      "fastNadSlow": -0.0033,
+      "volPct": 0.0062,
+      "er": 0.178,
+      "slope": 0.00049,
+      "volRel": 1.172
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01983,
+      "koszt": 0.0012,
+      "score": 8
+    },
+    "mfe": 2.02,
+    "mae": 0,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1787420428071-smycz-STORJ-o",
+    "ts": "2026-08-22T17:40:28.074Z",
+    "gracz": "smycz",
+    "sym": "STORJ",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.04131,
+    "margin": 22.385234480187993,
+    "notional": 67.15570344056398,
+    "leverage": 3,
+    "liqPrice": 0.053703,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 46.9, odbicie do sredniej",
+    "warunki": {
+      "rsi": 46.9,
+      "rsiPrev": 39.4,
+      "ext": -0.25,
+      "nadTrendem": -0.0065,
+      "fastNadSlow": -0.0065,
+      "volPct": 0.0039,
+      "er": 0.01,
+      "slope": -0.00107,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01242,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
