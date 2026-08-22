@@ -5050,39 +5050,6 @@
     }
   },
   {
-    "id": "1787074520374-sjesta-BTC-o",
-    "ts": "2026-08-18T17:35:20.380Z",
-    "gracz": "sjesta",
-    "sym": "BTC",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 64750.1,
-    "margin": 58.358857655901616,
-    "notional": 175.07657296770486,
-    "leverage": 3,
-    "liqPrice": 45325.07,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 60.8, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 60.8,
-      "rsiPrev": 62.9,
-      "ext": 1.35,
-      "nadTrendem": 0.0129,
-      "fastNadSlow": 0.0032,
-      "volPct": 0.0017,
-      "er": 0.182,
-      "slope": 0.00136,
-      "volRel": 0.414,
-      "knotZa": 0.002,
-      "zamkniecie": 0.002
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0055,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1787078417176-sjesta-SOL",
     "ts": "2026-08-18T18:40:17.180Z",
     "gracz": "sjesta",
@@ -11104,51 +11071,6 @@
       "spodziewanyRuch": 0.01388,
       "koszt": 0.0012,
       "score": 10
-    }
-  },
-  {
-    "id": "1787290217005-smycz-SOL",
-    "ts": "2026-08-21T05:30:17.006Z",
-    "gracz": "smycz",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 89.59,
-    "entryPrice": 89,
-    "margin": 27.471064014592287,
-    "notional": 82.41319204377686,
-    "leverage": 3,
-    "pnlUsd": 0.4943866612037833,
-    "pnlPct": 0.01799663314610498,
-    "R": 0.01619663314610498,
-    "holdMs": 7800659,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 62.3, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 62.3,
-      "rsiPrev": 64.5,
-      "ext": 0.9,
-      "nadTrendem": 0.0554,
-      "fastNadSlow": 0.0089,
-      "volPct": 0.0063,
-      "er": 0.214,
-      "slope": 0.00582,
-      "volRel": 0.871,
-      "knotZa": 0.522,
-      "zamkniecie": 0.522
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02001,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 1.6,
-    "mae": 0.16,
-    "rynek": {
-      "SOL": 0.00663,
-      "BTC": 0.00955,
-      "ETH": 0.00356
     }
   },
   {
@@ -57375,6 +57297,82 @@
       "spodziewanyRuch": 0.04081,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1787419817598-sjesta-TNSR-o",
+    "ts": "2026-08-22T17:30:17.600Z",
+    "gracz": "sjesta",
+    "sym": "TNSR",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.0352,
+    "margin": 76.44515506909616,
+    "notional": 229.33546520728848,
+    "leverage": 3,
+    "liqPrice": 0.04576,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 48.0, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 48,
+      "rsiPrev": 52.8,
+      "ext": 0.06,
+      "nadTrendem": -0.0001,
+      "fastNadSlow": -0.0107,
+      "volPct": 0.0055,
+      "er": 0.024,
+      "slope": -0.00099,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01748,
+      "koszt": 0.0012,
+      "score": 10
+    }
+  },
+  {
+    "id": "1787419817598-wybicie-TNSR",
+    "ts": "2026-08-22T17:30:17.601Z",
+    "gracz": "wybicie",
+    "sym": "TNSR",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.0352,
+    "entryPrice": 0.0346,
+    "margin": 29.27291576090536,
+    "notional": 87.81874728271607,
+    "leverage": 3,
+    "pnlUsd": -1.5765697629518267,
+    "pnlPct": -0.053857626477283524,
+    "R": -0.05565762647728352,
+    "holdMs": 6901085,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "0.03 pod dołkiem 20 świec 0.04",
+    "warunki": {
+      "rsi": 28.4,
+      "rsiPrev": 37.4,
+      "ext": -3.85,
+      "nadTrendem": -0.0179,
+      "fastNadSlow": -0.008,
+      "volPct": 0.0069,
+      "er": 0.225,
+      "slope": 0.00028,
+      "volRel": null,
+      "knotZa": 0,
+      "zamkniecie": 0.333
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02201,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0,
+    "mae": 2.52,
+    "rynek": {
+      "SOL": 0.00331,
+      "BTC": 0.00059,
+      "ETH": 0.00267
     }
   }
 ]
