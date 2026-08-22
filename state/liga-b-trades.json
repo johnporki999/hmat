@@ -15487,82 +15487,6 @@
     }
   },
   {
-    "id": "1787339430233-trend-ARB",
-    "ts": "2026-08-21T19:10:30.234Z",
-    "gracz": "trend",
-    "sym": "ARB",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.0949,
-    "entryPrice": 0.0963,
-    "margin": 33.606891051914126,
-    "notional": 100.82067315574238,
-    "leverage": 3,
-    "pnlUsd": -1.52668442535418,
-    "pnlPct": -0.04542771966010899,
-    "R": -0.04722771966010898,
-    "holdMs": 1201073,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 44.7, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 44.7,
-      "rsiPrev": 52.6,
-      "ext": -1.37,
-      "nadTrendem": 0.0666,
-      "fastNadSlow": 0.0164,
-      "volPct": 0.0084,
-      "er": 0.153,
-      "slope": 0.00891,
-      "volRel": 0.227,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02676,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 0.62,
-    "mae": 1.74,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
-    "id": "1787339430233-trend-CTSI-o",
-    "ts": "2026-08-21T19:10:30.235Z",
-    "gracz": "trend",
-    "sym": "CTSI",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.0272,
-    "margin": 32.95428687021885,
-    "notional": 98.86286061065655,
-    "leverage": 3,
-    "liqPrice": 0.019039999999999998,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 53.0, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 53,
-      "rsiPrev": 61.5,
-      "ext": 0.25,
-      "nadTrendem": 0.0405,
-      "fastNadSlow": 0.0075,
-      "volPct": 0.002,
-      "er": 0.264,
-      "slope": 0.00413,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00649,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1787339430233-smycz-AVA",
     "ts": "2026-08-21T19:10:30.235Z",
     "gracz": "smycz",
@@ -57057,6 +56981,80 @@
       "SOL": null,
       "BTC": null,
       "ETH": null
+    }
+  },
+  {
+    "id": "1787403629533-smycz-HFT",
+    "ts": "2026-08-22T13:00:29.535Z",
+    "gracz": "smycz",
+    "sym": "HFT",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.00653,
+    "entryPrice": 0.00657,
+    "margin": 22.4619892195773,
+    "notional": 67.3859676587319,
+    "leverage": 3,
+    "pnlUsd": 0.36966438314125877,
+    "pnlPct": 0.016457330627648446,
+    "R": 0.014657330627648447,
+    "holdMs": 1501920,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 51.1, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 51.1,
+      "rsiPrev": 55.8,
+      "ext": 0.26,
+      "nadTrendem": -0.004,
+      "fastNadSlow": -0.0035,
+      "volPct": 0.0084,
+      "er": 0.016,
+      "slope": -0.00067,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02682,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "mfe": 1.45,
+    "mae": 0,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1787403629533-smycz-HFT-o",
+    "ts": "2026-08-22T13:00:29.536Z",
+    "gracz": "smycz",
+    "sym": "HFT",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.00653,
+    "margin": 22.464606992566345,
+    "notional": 67.39382097769904,
+    "leverage": 3,
+    "liqPrice": 0.008489,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 47.7, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 47.7,
+      "rsiPrev": 47.7,
+      "ext": -0.4,
+      "nadTrendem": -0.0099,
+      "fastNadSlow": -0.0036,
+      "volPct": 0.0081,
+      "er": 0.079,
+      "slope": -0.00058,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02587,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
