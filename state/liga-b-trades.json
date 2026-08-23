@@ -13174,37 +13174,6 @@
     }
   },
   {
-    "id": "1787364928779-luzny-MASK-o",
-    "ts": "2026-08-22T02:15:28.781Z",
-    "gracz": "luzny",
-    "sym": "MASK",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.437,
-    "margin": 45.19914140597172,
-    "notional": 135.59742421791518,
-    "leverage": 3,
-    "liqPrice": 0.3059,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 53.5, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 53.5,
-      "rsiPrev": 53.5,
-      "ext": 0.5,
-      "nadTrendem": 0.0695,
-      "fastNadSlow": 0.0103,
-      "volPct": 0.0036,
-      "er": 0.07,
-      "slope": 0.00729,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0114,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1787364928779-sjesta-HFT",
     "ts": "2026-08-22T02:15:28.782Z",
     "gracz": "sjesta",
@@ -13276,49 +13245,6 @@
       "spodziewanyRuch": 0.06564,
       "koszt": 0.0012,
       "score": 9
-    }
-  },
-  {
-    "id": "1787364928779-krawiec-AVA",
-    "ts": "2026-08-22T02:15:28.782Z",
-    "gracz": "krawiec",
-    "sym": "AVA",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.2076,
-    "entryPrice": 0.196,
-    "margin": 30.6121046851734,
-    "notional": 91.8363140555202,
-    "leverage": 3,
-    "pnlUsd": 5.358250814304806,
-    "pnlPct": 0.1750369949864966,
-    "R": 0.1732369949864966,
-    "holdMs": 61202747,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 64.9, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 64.9,
-      "rsiPrev": 73.8,
-      "ext": 0.62,
-      "nadTrendem": 0.0576,
-      "fastNadSlow": 0.011,
-      "volPct": 0.017,
-      "er": 0.254,
-      "slope": 0.0055,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.05445,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 3.48,
-    "mae": 0,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
     }
   },
   {
@@ -56989,6 +56915,84 @@
       "SOL": null,
       "BTC": null,
       "ETH": null
+    }
+  },
+  {
+    "id": "1787446527971-smycz-HFT",
+    "ts": "2026-08-23T00:55:27.972Z",
+    "gracz": "smycz",
+    "sym": "HFT",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.00631,
+    "entryPrice": 0.00639,
+    "margin": 22.144438495098075,
+    "notional": 66.43331548529423,
+    "leverage": 3,
+    "pnlUsd": 0.7914241387236874,
+    "pnlPct": 0.035739182951009495,
+    "R": 0.03393918295100949,
+    "holdMs": 3900522,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 54.0, odbicie do sredniej",
+    "warunki": {
+      "rsi": 54,
+      "rsiPrev": 44.5,
+      "ext": 1.07,
+      "nadTrendem": -0.0203,
+      "fastNadSlow": -0.011,
+      "volPct": 0.0071,
+      "er": 0.236,
+      "slope": -0.00333,
+      "volRel": null,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02273,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 2.86,
+    "mae": 0,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1787446527971-smycz-HFT-o",
+    "ts": "2026-08-23T00:55:27.973Z",
+    "gracz": "smycz",
+    "sym": "HFT",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.00631,
+    "margin": 21.99685167888596,
+    "notional": 65.99055503665788,
+    "leverage": 3,
+    "liqPrice": 0.008203,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 46.1, odbicie do sredniej",
+    "warunki": {
+      "rsi": 46.1,
+      "rsiPrev": 40.3,
+      "ext": -0.47,
+      "nadTrendem": -0.0314,
+      "fastNadSlow": -0.0101,
+      "volPct": 0.0085,
+      "er": 0.175,
+      "slope": -0.00324,
+      "volRel": null,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02706,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
