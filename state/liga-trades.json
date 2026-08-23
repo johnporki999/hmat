@@ -10472,82 +10472,6 @@
     }
   },
   {
-    "id": "1787312716599-smycz-JTO-o",
-    "ts": "2026-08-21T11:45:16.602Z",
-    "gracz": "smycz",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.60859,
-    "margin": 30.625963571824215,
-    "notional": 91.87789071547265,
-    "leverage": 3,
-    "liqPrice": 0.426013,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 59.5, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 59.5,
-      "rsiPrev": 59.5,
-      "ext": 1.24,
-      "nadTrendem": 0.0531,
-      "fastNadSlow": 0.018,
-      "volPct": 0.0119,
-      "er": 0.165,
-      "slope": 0.00535,
-      "volRel": 8.645
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.03806,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1787312716599-wybicie-KMNO",
-    "ts": "2026-08-21T11:45:16.603Z",
-    "gracz": "wybicie",
-    "sym": "KMNO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.02244,
-    "entryPrice": 0.02216,
-    "margin": 26.12781764247515,
-    "notional": 78.38345292742545,
-    "leverage": 3,
-    "pnlUsd": 0.9424599981787295,
-    "pnlPct": 0.0360711334974492,
-    "R": 0.034271133497449195,
-    "holdMs": 3000353,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "0.02 nad szczytem 20 świec 0.02",
-    "warunki": {
-      "rsi": 91.8,
-      "rsiPrev": 90,
-      "ext": 6.53,
-      "nadTrendem": 0.091,
-      "fastNadSlow": 0.0169,
-      "volPct": 0.0039,
-      "er": 0.661,
-      "slope": 0.00793,
-      "volRel": null,
-      "knotZa": 0.765,
-      "zamkniecie": 0.941
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0124,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 3.26,
-    "mae": 0,
-    "rynek": {
-      "SOL": -0.01137,
-      "BTC": -0.01279,
-      "ETH": -0.00954
-    }
-  },
-  {
     "id": "1787313016620-kontra-DRIFT",
     "ts": "2026-08-21T11:50:16.621Z",
     "gracz": "kontra",
@@ -57373,6 +57297,84 @@
       "spodziewanyRuch": 0.02568,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1787460916677-smycz-PENGU",
+    "ts": "2026-08-23T04:55:16.679Z",
+    "gracz": "smycz",
+    "sym": "PENGU",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.008134,
+    "entryPrice": 0.008194,
+    "margin": 27.603147917300902,
+    "notional": 82.8094437519027,
+    "leverage": 3,
+    "pnlUsd": 0.556183908381774,
+    "pnlPct": 0.02014929275632266,
+    "R": 0.018349292756322664,
+    "holdMs": 3600103,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, RSI 33.3, odbicie do sredniej",
+    "warunki": {
+      "rsi": 33.3,
+      "rsiPrev": 29.8,
+      "ext": -1.53,
+      "nadTrendem": -0.0021,
+      "fastNadSlow": -0.0101,
+      "volPct": 0.0146,
+      "er": 0.102,
+      "slope": 0.00144,
+      "volRel": 44.868,
+      "knotZa": 0.507,
+      "zamkniecie": 0.507
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.04668,
+      "koszt": 0.0012,
+      "score": 8
+    },
+    "mfe": 1.28,
+    "mae": 0.18,
+    "rynek": {
+      "SOL": -0.01013,
+      "BTC": -0.00329,
+      "ETH": -0.01146
+    }
+  },
+  {
+    "id": "1787460916677-smycz-PENGU-o",
+    "ts": "2026-08-23T04:55:16.680Z",
+    "gracz": "smycz",
+    "sym": "PENGU",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.008134,
+    "margin": 27.512957155022516,
+    "notional": 82.53887146506754,
+    "leverage": 3,
+    "liqPrice": 0.0105742,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, RSI 33.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 33.2,
+      "rsiPrev": 32.8,
+      "ext": -1.49,
+      "nadTrendem": -0.0091,
+      "fastNadSlow": -0.0137,
+      "volPct": 0.0142,
+      "er": 0.193,
+      "slope": 0.00012,
+      "volRel": 0.19,
+      "knotZa": 0.041,
+      "zamkniecie": 0.041
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.04534,
+      "koszt": 0.0012,
+      "score": 8
     }
   }
 ]
