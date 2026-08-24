@@ -8181,72 +8181,6 @@
     }
   },
   {
-    "id": "1787434816981-kontra-DRIFT-o",
-    "ts": "2026-08-22T21:40:16.985Z",
-    "gracz": "kontra",
-    "sym": "DRIFT",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.0118,
-    "margin": 55.43837216704037,
-    "notional": 166.3151165011211,
-    "leverage": 3,
-    "liqPrice": 0.00826,
-    "pnlUsd": null,
-    "reason": "RSI 18.5 — panika, kupuję",
-    "warunki": {
-      "rsi": 18.5,
-      "rsiPrev": 22.5,
-      "ext": -5.91,
-      "nadTrendem": -0.0496,
-      "fastNadSlow": -0.0115,
-      "volPct": 0.0044,
-      "er": 0.3,
-      "slope": -0.0027,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01409,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1787434816981-wybicie-SOL-o",
-    "ts": "2026-08-22T21:40:16.986Z",
-    "gracz": "wybicie",
-    "sym": "SOL",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 93.21,
-    "margin": 27.398142883243516,
-    "notional": 82.19442864973055,
-    "leverage": 3,
-    "liqPrice": 121.173,
-    "pnlUsd": null,
-    "reason": "93.21 pod dołkiem 20 świec 93.50",
-    "warunki": {
-      "rsi": 38.8,
-      "rsiPrev": 45.4,
-      "ext": -1.82,
-      "nadTrendem": 0.0156,
-      "fastNadSlow": 0.001,
-      "volPct": 0.0052,
-      "er": 0.073,
-      "slope": 0.00281,
-      "volRel": 0.631,
-      "knotZa": 0.041,
-      "zamkniecie": 0.877
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01649,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1787435416344-kontra-W-o",
     "ts": "2026-08-22T21:50:16.346Z",
     "gracz": "kontra",
@@ -57229,6 +57163,80 @@
       "spodziewanyRuch": 0.01961,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1787568316070-antytrend-PYTH",
+    "ts": "2026-08-24T10:45:16.071Z",
+    "gracz": "antytrend",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.05029,
+    "entryPrice": 0.0508,
+    "margin": 28.224759053671832,
+    "notional": 84.6742771610155,
+    "leverage": 3,
+    "pnlUsd": -0.9035479899728924,
+    "pnlPct": -0.03201260241955361,
+    "R": -0.033812602419553604,
+    "holdMs": 8099373,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, RSI 45.4, odbicie do sredniej",
+    "warunki": {
+      "rsi": 45.4,
+      "rsiPrev": 45.4,
+      "ext": -0.76,
+      "nadTrendem": -0.0019,
+      "fastNadSlow": -0.0048,
+      "volPct": 0.0079,
+      "er": 0.109,
+      "slope": 0.00062,
+      "volRel": 1.672
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02541,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 1.74,
+    "mae": 1.26,
+    "rynek": {
+      "SOL": 0.01489,
+      "BTC": 0.01056,
+      "ETH": 0.011
+    }
+  },
+  {
+    "id": "1787568316070-antytrend-JUP-o",
+    "ts": "2026-08-24T10:45:16.073Z",
+    "gracz": "antytrend",
+    "sym": "JUP",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.20679,
+    "margin": 28.711053056090396,
+    "notional": 86.13315916827119,
+    "leverage": 3,
+    "liqPrice": 0.144753,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, RSI 43.7, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 43.7,
+      "rsiPrev": 43.7,
+      "ext": -0.75,
+      "nadTrendem": -0.0011,
+      "fastNadSlow": -0.0066,
+      "volPct": 0.0057,
+      "er": 0.196,
+      "slope": 0.00012,
+      "volRel": 0.161
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01821,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
