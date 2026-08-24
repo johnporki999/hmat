@@ -8380,39 +8380,6 @@
     }
   },
   {
-    "id": "1787424916515-trend-PYTH-o",
-    "ts": "2026-08-22T18:55:16.516Z",
-    "gracz": "trend",
-    "sym": "PYTH",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.05191,
-    "margin": 49.20172031171933,
-    "notional": 147.60516093515798,
-    "leverage": 3,
-    "liqPrice": 0.036336999999999994,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 54.3, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 54.3,
-      "rsiPrev": 61.1,
-      "ext": 0.29,
-      "nadTrendem": 0.0711,
-      "fastNadSlow": 0.0152,
-      "volPct": 0.0135,
-      "er": 0.072,
-      "slope": 0.00887,
-      "volRel": 0.487,
-      "knotZa": 0.085,
-      "zamkniecie": 0.085
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.04305,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1787424916515-antytrend-JTO",
     "ts": "2026-08-22T18:55:16.517Z",
     "gracz": "antytrend",
@@ -57233,6 +57200,51 @@
       "spodziewanyRuch": 0.00714,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1787561417316-wybicie-W",
+    "ts": "2026-08-24T08:50:17.318Z",
+    "gracz": "wybicie",
+    "sym": "W",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.00947,
+    "entryPrice": 0.00939,
+    "margin": 24.850458392069456,
+    "notional": 74.55137517620837,
+    "leverage": 3,
+    "pnlUsd": -0.6800725882130664,
+    "pnlPct": -0.027366601351309416,
+    "R": -0.029166601351309416,
+    "holdMs": 1499193,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "0.01 pod dołkiem 20 świec 0.01",
+    "warunki": {
+      "rsi": 32.9,
+      "rsiPrev": 40.7,
+      "ext": -2.86,
+      "nadTrendem": -0.0104,
+      "fastNadSlow": -0.0063,
+      "volPct": 0.0049,
+      "er": 0.372,
+      "slope": 0.00001,
+      "volRel": 1.094,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01562,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0.87,
+    "mae": 1.75,
+    "rynek": {
+      "SOL": 0.0047,
+      "BTC": 0.00222,
+      "ETH": 0.0065
     }
   }
 ]
