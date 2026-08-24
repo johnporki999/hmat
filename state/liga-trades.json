@@ -8985,37 +8985,6 @@
     }
   },
   {
-    "id": "1787479216386-kontra-ORCA-o",
-    "ts": "2026-08-23T10:00:16.388Z",
-    "gracz": "kontra",
-    "sym": "ORCA",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 1.233,
-    "margin": 58.902537599183795,
-    "notional": 176.70761279755138,
-    "leverage": 3,
-    "liqPrice": 1.6029000000000002,
-    "pnlUsd": null,
-    "reason": "RSI 70.5 — euforia, sprzedaję",
-    "warunki": {
-      "rsi": 70.5,
-      "rsiPrev": 70.5,
-      "ext": 4.57,
-      "nadTrendem": 0.0128,
-      "fastNadSlow": -0.0029,
-      "volPct": 0.0029,
-      "er": 0.026,
-      "slope": 0.00039,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00944,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1787479216386-kontraN-ORCA-o",
     "ts": "2026-08-23T10:00:16.388Z",
     "gracz": "kontraN",
@@ -9044,49 +9013,6 @@
       "spodziewanyRuch": 0.00944,
       "koszt": 0.0012,
       "score": null
-    }
-  },
-  {
-    "id": "1787479817539-trend-SOL",
-    "ts": "2026-08-23T10:10:17.540Z",
-    "gracz": "trend",
-    "sym": "SOL",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 93.7,
-    "entryPrice": 92.29,
-    "margin": 47.835314832924965,
-    "notional": 143.5059444987749,
-    "leverage": 3,
-    "pnlUsd": -2.2819496950951086,
-    "pnlPct": -0.04770428924875491,
-    "R": -0.049504289248754905,
-    "holdMs": 14100913,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "SHORT: trend spadkowy, RSI 36.2, odbicie do sredniej",
-    "warunki": {
-      "rsi": 36.2,
-      "rsiPrev": 36.2,
-      "ext": -1.48,
-      "nadTrendem": -0.0014,
-      "fastNadSlow": -0.0049,
-      "volPct": 0.008,
-      "er": 0.127,
-      "slope": 0.00041,
-      "volRel": 1.025
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02572,
-      "koszt": 0.0012,
-      "score": 8
-    },
-    "mfe": 0.18,
-    "mae": 1.9,
-    "rynek": {
-      "SOL": 0.01528,
-      "BTC": 0.00788,
-      "ETH": 0.01485
     }
   },
   {
@@ -57261,6 +57187,82 @@
       "spodziewanyRuch": 0.01077,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1787596816519-smycz-ORCA",
+    "ts": "2026-08-24T18:40:16.521Z",
+    "gracz": "smycz",
+    "sym": "ORCA",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 1.277,
+    "entryPrice": 1.268,
+    "margin": 22.6135847192255,
+    "notional": 67.8407541576765,
+    "leverage": 3,
+    "pnlUsd": 0.4397074043959834,
+    "pnlPct": 0.01944439193765486,
+    "R": 0.017644391937654855,
+    "holdMs": 4198605,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 40.7, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 40.7,
+      "rsiPrev": 40.7,
+      "ext": -2.06,
+      "nadTrendem": 0.0082,
+      "fastNadSlow": 0.0039,
+      "volPct": 0.0052,
+      "er": 0.032,
+      "slope": 0.00216,
+      "volRel": 2.854
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01662,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 2.13,
+    "mae": 0.61,
+    "rynek": {
+      "SOL": 0.01053,
+      "BTC": 0.00361,
+      "ETH": 0.00508
+    }
+  },
+  {
+    "id": "1787596816519-smycz-ORCA-o",
+    "ts": "2026-08-24T18:40:16.522Z",
+    "gracz": "smycz",
+    "sym": "ORCA",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 1.277,
+    "margin": 22.81915782683307,
+    "notional": 68.4574734804992,
+    "leverage": 3,
+    "liqPrice": 0.8938999999999999,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 48.1, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 48.1,
+      "rsiPrev": 49.6,
+      "ext": -0.39,
+      "nadTrendem": 0.0148,
+      "fastNadSlow": 0.0025,
+      "volPct": 0.0052,
+      "er": 0.107,
+      "slope": 0.00166,
+      "volRel": 2.058,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01659,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
