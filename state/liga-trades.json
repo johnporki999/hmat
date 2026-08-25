@@ -2637,82 +2637,6 @@
     }
   },
   {
-    "id": "1787362536908-sjesta-SOL",
-    "ts": "2026-08-22T01:35:36.910Z",
-    "gracz": "sjesta",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 94.25,
-    "entryPrice": 90.15,
-    "margin": 70.04937092617972,
-    "notional": 210.14811277853914,
-    "leverage": 3,
-    "pnlUsd": 9.396075557026432,
-    "pnlPct": 0.13413504550852168,
-    "R": 0.13233504550852168,
-    "holdMs": 43219515,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 44.0, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 44,
-      "rsiPrev": 50.1,
-      "ext": -0.92,
-      "nadTrendem": 0.0428,
-      "fastNadSlow": 0.0077,
-      "volPct": 0.0072,
-      "er": 0.105,
-      "slope": 0.00507,
-      "volRel": 0.433,
-      "knotZa": 0.186,
-      "zamkniecie": 0.186
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02303,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 7.31,
-    "mae": 0,
-    "rynek": {
-      "SOL": 0.04548,
-      "BTC": 0.02087,
-      "ETH": 0.06104
-    }
-  },
-  {
-    "id": "1787362536908-sjesta-KMNO-o",
-    "ts": "2026-08-22T01:35:36.912Z",
-    "gracz": "sjesta",
-    "sym": "KMNO",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.02567,
-    "margin": 82.24959661634195,
-    "notional": 246.74878984902585,
-    "leverage": 3,
-    "liqPrice": 0.017969,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 43.5, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 43.5,
-      "rsiPrev": 43.5,
-      "ext": -1.97,
-      "nadTrendem": 0.1401,
-      "fastNadSlow": 0.0331,
-      "volPct": 0.0061,
-      "er": 0.27,
-      "slope": 0.01657,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01966,
-      "koszt": 0.0012,
-      "score": 10
-    }
-  },
-  {
     "id": "1787373017311-cierpliwy-JUP",
     "ts": "2026-08-22T04:30:17.313Z",
     "gracz": "cierpliwy",
@@ -57325,6 +57249,84 @@
       "spodziewanyRuch": 0.02536,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1787697616503-sjesta-PYTH",
+    "ts": "2026-08-25T22:40:16.505Z",
+    "gracz": "sjesta",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.05036,
+    "entryPrice": 0.05102,
+    "margin": 53.7211081597648,
+    "notional": 161.1633244792944,
+    "leverage": 3,
+    "pnlUsd": -2.208786155318313,
+    "pnlPct": -0.04111579658315044,
+    "R": -0.04291579658315044,
+    "holdMs": 43499234,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, RSI 51.1, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 51.1,
+      "rsiPrev": 52.5,
+      "ext": 0.28,
+      "nadTrendem": 0.0057,
+      "fastNadSlow": 0.0007,
+      "volPct": 0.0082,
+      "er": 0.086,
+      "slope": -0.00005,
+      "volRel": 0.47,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0262,
+      "koszt": 0.0012,
+      "score": 8
+    },
+    "mfe": 5.07,
+    "mae": 3.4,
+    "rynek": {
+      "SOL": -0.02043,
+      "BTC": -0.00612,
+      "ETH": -0.0117
+    }
+  },
+  {
+    "id": "1787697616503-sjesta-SOL-o",
+    "ts": "2026-08-25T22:40:16.507Z",
+    "gracz": "sjesta",
+    "sym": "SOL",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 97.35,
+    "margin": 52.51380436594799,
+    "notional": 157.54141309784399,
+    "leverage": 3,
+    "liqPrice": 126.55499999999999,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, RSI 45.5, odbicie do sredniej",
+    "warunki": {
+      "rsi": 45.5,
+      "rsiPrev": 45.2,
+      "ext": -0.33,
+      "nadTrendem": -0.0001,
+      "fastNadSlow": -0.0061,
+      "volPct": 0.0059,
+      "er": 0.161,
+      "slope": -0.00026,
+      "volRel": 0.693,
+      "knotZa": 0.588,
+      "zamkniecie": 0.588
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01895,
+      "koszt": 0.0012,
+      "score": 8
     }
   }
 ]
