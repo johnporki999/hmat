@@ -10077,94 +10077,6 @@
     }
   },
   {
-    "id": "1787557815749-wybicie-JTO",
-    "ts": "2026-08-24T07:50:15.750Z",
-    "gracz": "wybicie",
-    "sym": "JTO",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.58729,
-    "entryPrice": 0.58088,
-    "margin": 26.157258267753903,
-    "notional": 78.47177480326171,
-    "leverage": 3,
-    "pnlUsd": -0.9138022781654841,
-    "pnlPct": -0.03493494114755902,
-    "R": -0.036734941147559014,
-    "holdMs": 5999428,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "0.58 pod dołkiem 20 świec 0.58",
-    "warunki": {
-      "rsi": 37,
-      "rsiPrev": 44.7,
-      "ext": -2.17,
-      "nadTrendem": -0.0244,
-      "fastNadSlow": -0.0055,
-      "volPct": 0.0062,
-      "er": 0.224,
-      "slope": -0.00139,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01997,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0.08,
-    "mae": 1.77,
-    "rynek": {
-      "SOL": -0.00042,
-      "BTC": 0.00288,
-      "ETH": 0.00306
-    }
-  },
-  {
-    "id": "1787558417571-kontra-TNSR",
-    "ts": "2026-08-24T08:00:17.572Z",
-    "gracz": "kontra",
-    "sym": "TNSR",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.034,
-    "entryPrice": 0.0342,
-    "margin": 58.5019812363051,
-    "notional": 175.5059437089153,
-    "leverage": 3,
-    "pnlUsd": -1.1345217671745327,
-    "pnlPct": -0.019392877697456037,
-    "R": -0.021192877697456036,
-    "holdMs": 4201569,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "RSI 23.1 — panika, kupuję",
-    "warunki": {
-      "rsi": 23.1,
-      "rsiPrev": 40.9,
-      "ext": -5.64,
-      "nadTrendem": -0.018,
-      "fastNadSlow": -0.0054,
-      "volPct": 0.0021,
-      "er": 0.613,
-      "slope": -0.00093,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0067,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0,
-    "mae": 2.79,
-    "rynek": {
-      "SOL": -0.00455,
-      "BTC": -0.00226,
-      "ETH": -0.00254
-    }
-  },
-  {
     "id": "1787558417571-kontra-TNSR-o",
     "ts": "2026-08-24T08:00:17.573Z",
     "gracz": "kontra",
@@ -57279,6 +57191,82 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.02803,
+      "koszt": 0.0012,
+      "score": 9
+    }
+  },
+  {
+    "id": "1787668817755-luzny-JTO",
+    "ts": "2026-08-25T14:40:17.757Z",
+    "gracz": "luzny",
+    "sym": "JTO",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.55492,
+    "entryPrice": 0.55922,
+    "margin": 52.84817265693296,
+    "notional": 158.5445179707989,
+    "leverage": 3,
+    "pnlUsd": 1.1221430317274252,
+    "pnlPct": 0.021233336467693653,
+    "R": 0.019433336467693654,
+    "holdMs": 6901658,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 44.2,
+      "rsiPrev": 44.2,
+      "ext": -0.61,
+      "nadTrendem": -0.0358,
+      "fastNadSlow": -0.0139,
+      "volPct": 0.0075,
+      "er": 0.133,
+      "slope": -0.00414,
+      "volRel": 0.061
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02403,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 3.08,
+    "mae": 0,
+    "rynek": {
+      "SOL": -0.00295,
+      "BTC": 0.00249,
+      "ETH": 0.00174
+    }
+  },
+  {
+    "id": "1787668817755-luzny-JTO-o",
+    "ts": "2026-08-25T14:40:17.759Z",
+    "gracz": "luzny",
+    "sym": "JTO",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.55492,
+    "margin": 51.726197306596674,
+    "notional": 155.17859191979002,
+    "leverage": 3,
+    "liqPrice": 0.721396,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.7, odbicie do sredniej",
+    "warunki": {
+      "rsi": 44.7,
+      "rsiPrev": 43.1,
+      "ext": -0.48,
+      "nadTrendem": -0.0401,
+      "fastNadSlow": -0.0153,
+      "volPct": 0.0082,
+      "er": 0.272,
+      "slope": -0.00443,
+      "volRel": 4.151,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0261,
       "koszt": 0.0012,
       "score": 9
     }
