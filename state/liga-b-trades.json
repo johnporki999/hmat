@@ -15568,82 +15568,6 @@
     }
   },
   {
-    "id": "1787701828149-trend-ASTR-o",
-    "ts": "2026-08-25T23:50:28.152Z",
-    "gracz": "trend",
-    "sym": "ASTR",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.0055,
-    "margin": 25.525877692238446,
-    "notional": 76.57763307671533,
-    "leverage": 3,
-    "liqPrice": 0.0038499999999999997,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 50.2, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 50.2,
-      "rsiPrev": 50.2,
-      "ext": -0.19,
-      "nadTrendem": 0.0131,
-      "fastNadSlow": 0.0044,
-      "volPct": 0.0044,
-      "er": 0.132,
-      "slope": 0.00197,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0142,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1787701828149-krawiec-CTSI",
-    "ts": "2026-08-25T23:50:28.153Z",
-    "gracz": "krawiec",
-    "sym": "CTSI",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.0254,
-    "entryPrice": 0.0256,
-    "margin": 25.037562660162077,
-    "notional": 75.11268798048623,
-    "leverage": 3,
-    "pnlUsd": 0.5416751792911704,
-    "pnlPct": 0.02163450119500026,
-    "R": 0.01983450119500026,
-    "holdMs": 599763,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 42.5, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 42.5,
-      "rsiPrev": 42.5,
-      "ext": -0.99,
-      "nadTrendem": -0.0225,
-      "fastNadSlow": -0.0089,
-      "volPct": 0.0023,
-      "er": 0.265,
-      "slope": -0.0027,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00723,
-      "koszt": 0.0012,
-      "score": 10
-    },
-    "mfe": 3.46,
-    "mae": 0,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
     "id": "1787701828149-krawiec-ASTR-o",
     "ts": "2026-08-25T23:50:28.153Z",
     "gracz": "krawiec",
@@ -56805,6 +56729,82 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.01546,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1787788528562-kontra-ARB",
+    "ts": "2026-08-26T23:55:28.564Z",
+    "gracz": "kontra",
+    "sym": "ARB",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.093,
+    "entryPrice": 0.0925,
+    "margin": 31.333627557351782,
+    "notional": 94.00088267205535,
+    "leverage": 3,
+    "pnlUsd": -0.5647482508468161,
+    "pnlPct": -0.01802371110121623,
+    "R": -0.01982371110121623,
+    "holdMs": 1498988,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "RSI 74.6 — euforia, sprzedaję",
+    "warunki": {
+      "rsi": 74.6,
+      "rsiPrev": 74.6,
+      "ext": 4.2,
+      "nadTrendem": -0.0083,
+      "fastNadSlow": -0.0022,
+      "volPct": 0.0052,
+      "er": 0.02,
+      "slope": -0.00273,
+      "volRel": 87.323
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01679,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 1.03,
+    "mae": 1.03,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1787788528562-kontra-ARB-o",
+    "ts": "2026-08-26T23:55:28.565Z",
+    "gracz": "kontra",
+    "sym": "ARB",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.093,
+    "margin": 31.131520964860965,
+    "notional": 93.39456289458289,
+    "leverage": 3,
+    "liqPrice": 0.12090000000000001,
+    "pnlUsd": null,
+    "reason": "RSI 73.0 — euforia, sprzedaję",
+    "warunki": {
+      "rsi": 73,
+      "rsiPrev": 67.4,
+      "ext": 4.23,
+      "nadTrendem": -0.0029,
+      "fastNadSlow": -0.0009,
+      "volPct": 0.006,
+      "er": 0.049,
+      "slope": -0.00241,
+      "volRel": 17.604,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0191,
       "koszt": 0.0012,
       "score": null
     }
