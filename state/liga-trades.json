@@ -9116,72 +9116,6 @@
     }
   },
   {
-    "id": "1787702116771-kontra-JTO-o",
-    "ts": "2026-08-25T23:55:16.776Z",
-    "gracz": "kontra",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.51715,
-    "margin": 52.10998473157133,
-    "notional": 156.329954194714,
-    "leverage": 3,
-    "liqPrice": 0.36200499999999997,
-    "pnlUsd": null,
-    "reason": "RSI 29.7 — panika, kupuję",
-    "warunki": {
-      "rsi": 29.7,
-      "rsiPrev": 31,
-      "ext": -2.57,
-      "nadTrendem": -0.0804,
-      "fastNadSlow": -0.0221,
-      "volPct": 0.0055,
-      "er": 0.37,
-      "slope": -0.00748,
-      "volRel": 2.627,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01769,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1787702116771-kontra-BONK-o",
-    "ts": "2026-08-25T23:55:16.777Z",
-    "gracz": "kontra",
-    "sym": "BONK",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.000002992,
-    "margin": 52.10998473157133,
-    "notional": 156.329954194714,
-    "leverage": 3,
-    "liqPrice": 0.0000020944,
-    "pnlUsd": null,
-    "reason": "RSI 28.6 — panika, kupuję",
-    "warunki": {
-      "rsi": 28.6,
-      "rsiPrev": 34.1,
-      "ext": -2.97,
-      "nadTrendem": -0.0552,
-      "fastNadSlow": -0.0177,
-      "volPct": 0.0062,
-      "er": 0.257,
-      "slope": -0.00472,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01986,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1787702116771-kontraN-KMNO",
     "ts": "2026-08-25T23:55:16.777Z",
     "gracz": "kontraN",
@@ -57155,6 +57089,80 @@
       "spodziewanyRuch": 0.02052,
       "koszt": 0.0012,
       "score": 10
+    }
+  },
+  {
+    "id": "1787811315891-antytrend-PYTH",
+    "ts": "2026-08-27T06:15:15.891Z",
+    "gracz": "antytrend",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.04704,
+    "entryPrice": 0.04736,
+    "margin": 30.868246386632407,
+    "notional": 92.60473915989722,
+    "leverage": 3,
+    "pnlUsd": -0.6824586122001712,
+    "pnlPct": -0.022108758743603657,
+    "R": -0.023908758743603657,
+    "holdMs": 3299021,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 38.0, odbicie do sredniej",
+    "warunki": {
+      "rsi": 38,
+      "rsiPrev": 38,
+      "ext": -1.59,
+      "nadTrendem": -0.0573,
+      "fastNadSlow": -0.0189,
+      "volPct": 0.0059,
+      "er": 0.183,
+      "slope": -0.00598,
+      "volRel": 0.763
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01879,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 1.73,
+    "mae": 1.15,
+    "rynek": {
+      "SOL": 0.00476,
+      "BTC": 0.00048,
+      "ETH": 0.00144
+    }
+  },
+  {
+    "id": "1787811315891-antytrend-RAY-o",
+    "ts": "2026-08-27T06:15:15.892Z",
+    "gracz": "antytrend",
+    "sym": "RAY",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.798,
+    "margin": 30.73223829670513,
+    "notional": 92.19671489011539,
+    "leverage": 3,
+    "liqPrice": 1.0374,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, trend rosnie, RSI 59.2, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 59.2,
+      "rsiPrev": 59.2,
+      "ext": 0.88,
+      "nadTrendem": 0.0215,
+      "fastNadSlow": 0.0098,
+      "volPct": 0.0062,
+      "er": 0.288,
+      "slope": 0.00227,
+      "volRel": 1.021
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01983,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
