@@ -9383,113 +9383,6 @@
     }
   },
   {
-    "id": "1787817916680-malpa-PYTH",
-    "ts": "2026-08-27T08:05:16.684Z",
-    "gracz": "malpa",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.04815,
-    "entryPrice": 0.04758,
-    "margin": 26.595385426741053,
-    "notional": 79.78615628022317,
-    "leverage": 3,
-    "pnlUsd": -1.0039350520242625,
-    "pnlPct": -0.03774846786069995,
-    "R": -0.039548467860699946,
-    "holdMs": 1799513,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 49.5,
-      "rsiPrev": 49.2,
-      "ext": 0.32,
-      "nadTrendem": -0.048,
-      "fastNadSlow": -0.0172,
-      "volPct": 0.0071,
-      "er": 0.063,
-      "slope": -0.00578,
-      "volRel": 1.36
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02274,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0.3,
-    "mae": 1.69,
-    "rynek": {
-      "SOL": 0.01145,
-      "BTC": 0.00699,
-      "ETH": 0.00818
-    }
-  },
-  {
-    "id": "1787817916680-malpa-RAY-o",
-    "ts": "2026-08-27T08:05:16.685Z",
-    "gracz": "malpa",
-    "sym": "RAY",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.803,
-    "margin": 26.437744018590998,
-    "notional": 79.313232055773,
-    "leverage": 3,
-    "liqPrice": 1.0439,
-    "pnlUsd": null,
-    "reason": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 62.8,
-      "rsiPrev": 59.6,
-      "ext": 1.74,
-      "nadTrendem": 0.0265,
-      "fastNadSlow": 0.0089,
-      "volPct": 0.0054,
-      "er": 0.285,
-      "slope": 0.00203,
-      "volRel": 1.619,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01715,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1787817916680-malpa-KMNO-o",
-    "ts": "2026-08-27T08:05:16.685Z",
-    "gracz": "malpa",
-    "sym": "KMNO",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.02731,
-    "margin": 26.437744018590998,
-    "notional": 79.313232055773,
-    "leverage": 3,
-    "liqPrice": 0.035503,
-    "pnlUsd": null,
-    "reason": "rzut monetą — żadnego powodu",
-    "warunki": {
-      "rsi": 68.3,
-      "rsiPrev": 68.3,
-      "ext": 2.76,
-      "nadTrendem": 0.0711,
-      "fastNadSlow": 0.0247,
-      "volPct": 0.0024,
-      "er": 0.515,
-      "slope": 0.00708,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00763,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1787818216455-trend-SOL",
     "ts": "2026-08-27T08:10:16.455Z",
     "gracz": "trend",
@@ -57267,6 +57160,99 @@
       "spodziewanyRuch": 0.03469,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1787936116677-trend-RAY-o",
+    "ts": "2026-08-28T16:55:16.679Z",
+    "gracz": "trend",
+    "sym": "RAY",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.811,
+    "margin": 29.356445926422413,
+    "notional": 88.06933777926724,
+    "leverage": 3,
+    "liqPrice": 0.5677,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 47.2, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 47.2,
+      "rsiPrev": 43.8,
+      "ext": -0.67,
+      "nadTrendem": 0.0031,
+      "fastNadSlow": 0.0013,
+      "volPct": 0.0089,
+      "er": 0.006,
+      "slope": 0.00172,
+      "volRel": 1.31
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02842,
+      "koszt": 0.0012,
+      "score": 10
+    }
+  },
+  {
+    "id": "1787936116677-antytrend-RAY-o",
+    "ts": "2026-08-28T16:55:16.680Z",
+    "gracz": "antytrend",
+    "sym": "RAY",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.811,
+    "margin": 31.113892102979623,
+    "notional": 93.34167630893887,
+    "leverage": 3,
+    "liqPrice": 1.0543,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, trend rosnie, RSI 47.2, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 47.2,
+      "rsiPrev": 43.8,
+      "ext": -0.67,
+      "nadTrendem": 0.0031,
+      "fastNadSlow": 0.0013,
+      "volPct": 0.0089,
+      "er": 0.006,
+      "slope": 0.00172,
+      "volRel": 1.31
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02842,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1787936116677-krawiec-RAY-o",
+    "ts": "2026-08-28T16:55:16.681Z",
+    "gracz": "krawiec",
+    "sym": "RAY",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.811,
+    "margin": 33.27973668011806,
+    "notional": 99.83921004035419,
+    "leverage": 3,
+    "liqPrice": 0.5677,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 47.2, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 47.2,
+      "rsiPrev": 43.8,
+      "ext": -0.67,
+      "nadTrendem": 0.0031,
+      "fastNadSlow": 0.0013,
+      "volPct": 0.0089,
+      "er": 0.006,
+      "slope": 0.00172,
+      "volRel": 1.31
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02842,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
