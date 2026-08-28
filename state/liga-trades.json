@@ -8541,72 +8541,6 @@
     }
   },
   {
-    "id": "1787821216940-trend-PYTH-o",
-    "ts": "2026-08-27T09:00:16.941Z",
-    "gracz": "trend",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.04879,
-    "margin": 32.20530533347229,
-    "notional": 96.61591600041686,
-    "leverage": 3,
-    "liqPrice": 0.063427,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 59.7, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 59.7,
-      "rsiPrev": 63.5,
-      "ext": 1.86,
-      "nadTrendem": -0.0224,
-      "fastNadSlow": -0.007,
-      "volPct": 0.008,
-      "er": 0.023,
-      "slope": -0.00352,
-      "volRel": 0.451,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0257,
-      "koszt": 0.0012,
-      "score": 10
-    }
-  },
-  {
-    "id": "1787821216940-antytrend-PYTH-o",
-    "ts": "2026-08-27T09:00:16.942Z",
-    "gracz": "antytrend",
-    "sym": "PYTH",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.04879,
-    "margin": 30.858920478422654,
-    "notional": 92.57676143526797,
-    "leverage": 3,
-    "liqPrice": 0.034152999999999996,
-    "pnlUsd": null,
-    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 59.7, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 59.7,
-      "rsiPrev": 63.5,
-      "ext": 1.86,
-      "nadTrendem": -0.0224,
-      "fastNadSlow": -0.007,
-      "volPct": 0.008,
-      "er": 0.023,
-      "slope": -0.00352,
-      "volRel": 0.451,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0257,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1787821216940-luzny-PYTH-o",
     "ts": "2026-08-27T09:00:16.943Z",
     "gracz": "luzny",
@@ -57121,6 +57055,84 @@
       "spodziewanyRuch": 0.0156,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1787958616761-czujny-RENDER",
+    "ts": "2026-08-28T23:10:16.764Z",
+    "gracz": "czujny",
+    "sym": "RENDER",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 1.448,
+    "entryPrice": 1.497,
+    "margin": 63.79163723777035,
+    "notional": 191.37491171331106,
+    "leverage": 3,
+    "pnlUsd": 6.135504820056104,
+    "pnlPct": 0.09618039426057146,
+    "R": 0.09438039426057146,
+    "holdMs": 43200096,
+    "liquidated": false,
+    "reason": "TAKE PROFIT",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 52.4, odbicie do sredniej",
+    "warunki": {
+      "rsi": 52.4,
+      "rsiPrev": 49.6,
+      "ext": 0.85,
+      "nadTrendem": -0.0138,
+      "fastNadSlow": -0.009,
+      "volPct": 0.0038,
+      "er": 0.174,
+      "slope": -0.00216,
+      "volRel": 1.52,
+      "knotZa": 0.6,
+      "zamkniecie": 0.6
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01225,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 11.52,
+    "mae": 1.05,
+    "rynek": {
+      "SOL": -0.02049,
+      "BTC": -0.02455,
+      "ETH": -0.02774
+    }
+  },
+  {
+    "id": "1787958616761-czujny-SOL-o",
+    "ts": "2026-08-28T23:10:16.765Z",
+    "gracz": "czujny",
+    "sym": "SOL",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 104.23,
+    "margin": 63.76898025424946,
+    "notional": 191.30694076274838,
+    "leverage": 3,
+    "liqPrice": 135.49900000000002,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, RSI 52.3, odbicie do sredniej",
+    "warunki": {
+      "rsi": 52.3,
+      "rsiPrev": 51,
+      "ext": 0.45,
+      "nadTrendem": -0.0005,
+      "fastNadSlow": -0.0067,
+      "volPct": 0.0053,
+      "er": 0.135,
+      "slope": -0.00041,
+      "volRel": 0.287,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0169,
+      "koszt": 0.0012,
+      "score": 8
     }
   }
 ]
