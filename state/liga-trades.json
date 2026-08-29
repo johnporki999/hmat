@@ -7405,82 +7405,6 @@
     }
   },
   {
-    "id": "1787843717290-trend-W",
-    "ts": "2026-08-27T15:15:17.291Z",
-    "gracz": "trend",
-    "sym": "W",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.00975,
-    "entryPrice": 0.00964,
-    "margin": 31.972885801403876,
-    "notional": 95.91865740421163,
-    "leverage": 3,
-    "pnlUsd": 1.0353893510415801,
-    "pnlPct": 0.032383356243561784,
-    "R": 0.030583356243561784,
-    "holdMs": 4200771,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 56.8, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 56.8,
-      "rsiPrev": 56.8,
-      "ext": 0.9,
-      "nadTrendem": 0.0141,
-      "fastNadSlow": 0.0058,
-      "volPct": 0.0032,
-      "er": 0.076,
-      "slope": 0.00125,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01013,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 3.61,
-    "mae": 0,
-    "rynek": {
-      "SOL": 0.00714,
-      "BTC": 0.01229,
-      "ETH": 0.00957
-    }
-  },
-  {
-    "id": "1787843717290-trend-PENGU-o",
-    "ts": "2026-08-27T15:15:17.292Z",
-    "gracz": "trend",
-    "sym": "PENGU",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.009766,
-    "margin": 32.04615598774874,
-    "notional": 96.13846796324623,
-    "leverage": 3,
-    "liqPrice": 0.0068362,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 60.0, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 60,
-      "rsiPrev": 61.3,
-      "ext": 1.45,
-      "nadTrendem": 0.0351,
-      "fastNadSlow": 0.0128,
-      "volPct": 0.01,
-      "er": 0.137,
-      "slope": 0.00332,
-      "volRel": 1.683,
-      "knotZa": 0.667,
-      "zamkniecie": 0.667
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.03207,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1787843717290-krawiec-W",
     "ts": "2026-08-27T15:15:17.293Z",
     "gracz": "krawiec",
@@ -57061,6 +56985,84 @@
       "SOL": -0.00087,
       "BTC": 0.00146,
       "ETH": -0.0004
+    }
+  },
+  {
+    "id": "1787990716753-antytrend-BONK",
+    "ts": "2026-08-29T08:05:16.754Z",
+    "gracz": "antytrend",
+    "sym": "BONK",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.000002973,
+    "entryPrice": 0.00000298,
+    "margin": 29.772461464353576,
+    "notional": 89.31738439306073,
+    "leverage": 3,
+    "pnlUsd": -0.2654805203635728,
+    "pnlPct": -0.008916982584104822,
+    "R": -0.010716982584104822,
+    "holdMs": 6000257,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 46.1, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 46.1,
+      "rsiPrev": 53.3,
+      "ext": -0.77,
+      "nadTrendem": -0.0172,
+      "fastNadSlow": -0.0008,
+      "volPct": 0.004,
+      "er": 0.111,
+      "slope": -0.00146,
+      "volRel": 7.379,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01272,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 1.86,
+    "mae": 0.59,
+    "rynek": {
+      "SOL": -0.0001,
+      "BTC": 0.00086,
+      "ETH": 0.00009
+    }
+  },
+  {
+    "id": "1787990716753-antytrend-BONK-o",
+    "ts": "2026-08-29T08:05:16.756Z",
+    "gracz": "antytrend",
+    "sym": "BONK",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.000002973,
+    "margin": 29.706301156536668,
+    "notional": 89.11890346961,
+    "leverage": 3,
+    "liqPrice": 0.0000020811,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 43.0, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 43,
+      "rsiPrev": 53.1,
+      "ext": -1.31,
+      "nadTrendem": -0.0186,
+      "fastNadSlow": -0.0007,
+      "volPct": 0.004,
+      "er": 0.017,
+      "slope": -0.00137,
+      "volRel": 0.011,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01281,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
