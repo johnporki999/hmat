@@ -17,14 +17,14 @@
       }
     },
     "smyczFiltr": {
-      "cash": 44.966744419390764,
+      "cash": 44.54109165894519,
       "positions": {
         "ETH": {
           "sym": "ETH",
           "side": "LONG",
           "entryPrice": 2457.75,
           "entryTs": "2026-08-30T02:20:35.105Z",
-          "lastAccrual": "2026-08-30T08:40:34.464Z",
+          "lastAccrual": "2026-08-30T08:45:35.244Z",
           "qty": 0.026916984682845983,
           "notional": 66.15521910426472,
           "margin": 22.05173970142157,
@@ -36,7 +36,7 @@
           "bestPrice": 2460.7,
           "worstPrice": 2452.68,
           "trailArmed": false,
-          "borrowPaid": 0.005865577011424052,
+          "borrowPaid": 0.005942958513940014,
           "trailAtr": 0.5,
           "bezSmyczy": false,
           "minGodzin": 0,
@@ -68,61 +68,12 @@
             "score": 8
           }
         },
-        "SOL": {
-          "sym": "SOL",
-          "side": "LONG",
-          "entryPrice": 105.14,
-          "entryTs": "2026-08-30T07:25:34.803Z",
-          "lastAccrual": "2026-08-30T08:40:34.465Z",
-          "qty": 0.6327092206613426,
-          "notional": 66.52304746033356,
-          "margin": 22.17434915344452,
-          "leverage": 3,
-          "liqPrice": 73.598,
-          "stopPrice": 104.78436144327483,
-          "takeProfit": 105.85127711345035,
-          "atrAtEntry": 0.22227409795323433,
-          "bestPrice": 105.14,
-          "worstPrice": 104.83,
-          "trailArmed": false,
-          "borrowPaid": 0.001164060715690873,
-          "trailAtr": 0.5,
-          "bezSmyczy": false,
-          "minGodzin": 0,
-          "stopZawsze": false,
-          "karencjaStopH": 0,
-          "maxHoldH": 0,
-          "rynekWejscie": {
-            "SOL": 105.14,
-            "BTC": 78225.4,
-            "ETH": 2457.84
-          },
-          "powodWejscia": "gotowy: trend, trend rosnie, RSI 50.1, cofniecie do sredniej",
-          "warunkiWejscia": {
-            "rsi": 50.1,
-            "rsiPrev": 55.7,
-            "ext": 0.03,
-            "nadTrendem": 0.0052,
-            "fastNadSlow": 0.0008,
-            "volPct": 0.0021,
-            "er": 0.129,
-            "slope": 0.0005,
-            "volRel": 0.667,
-            "knotZa": 0,
-            "zamkniecie": 0
-          },
-          "prognoza": {
-            "spodziewanyRuch": 0.00677,
-            "koszt": 0.0012,
-            "score": 9
-          }
-        },
         "JUP": {
           "sym": "JUP",
           "side": "SHORT",
           "entryPrice": 0.21462,
           "entryTs": "2026-08-30T08:40:34.466Z",
-          "lastAccrual": "2026-08-30T08:40:34.466Z",
+          "lastAccrual": "2026-08-30T08:45:35.245Z",
           "qty": 310.98462815040045,
           "notional": 66.74352089363894,
           "margin": 22.247840297879648,
@@ -131,10 +82,10 @@
           "stopPrice": 0.21533766146102146,
           "takeProfit": 0.2131846770779571,
           "atrAtEntry": 0.0004485384131384097,
-          "bestPrice": 0.21462,
+          "bestPrice": 0.2142,
           "worstPrice": 0.21462,
           "trailArmed": false,
-          "borrowPaid": 0,
+          "borrowPaid": 0.000033458193306376735,
           "trailAtr": 0.5,
           "bezSmyczy": false,
           "minGodzin": 0,
@@ -163,17 +114,64 @@
             "koszt": 0.0012,
             "score": 9
           }
+        },
+        "PENGU": {
+          "sym": "PENGU",
+          "side": "SHORT",
+          "entryPrice": 0.009035,
+          "entryTs": "2026-08-30T08:45:35.246Z",
+          "lastAccrual": "2026-08-30T08:45:35.246Z",
+          "qty": 7382.65822037523,
+          "notional": 66.7023170210902,
+          "margin": 22.23410567369673,
+          "leverage": 3,
+          "liqPrice": 0.0117455,
+          "stopPrice": 0.009083722821092245,
+          "takeProfit": 0.008937554357815508,
+          "atrAtEntry": 0.00003045176318265323,
+          "bestPrice": 0.009035,
+          "worstPrice": 0.009035,
+          "trailArmed": false,
+          "borrowPaid": 0,
+          "trailAtr": 0.5,
+          "bezSmyczy": false,
+          "minGodzin": 0,
+          "stopZawsze": false,
+          "karencjaStopH": 0,
+          "maxHoldH": 0,
+          "rynekWejscie": {
+            "SOL": 104.69,
+            "BTC": 78050.8,
+            "ETH": 2455.19
+          },
+          "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 46.7, odbicie do sredniej, RSI zawraca w dol",
+          "warunkiWejscia": {
+            "rsi": 46.7,
+            "rsiPrev": 52.4,
+            "ext": -0.44,
+            "nadTrendem": -0.0143,
+            "fastNadSlow": -0.0022,
+            "volPct": 0.0034,
+            "er": 0.107,
+            "slope": -0.00128,
+            "volRel": 1.129
+          },
+          "prognoza": {
+            "spodziewanyRuch": 0.01079,
+            "koszt": 0.0012,
+            "score": 10
+          }
         }
       },
       "stats": {
-        "trejdy": 1844,
+        "trejdy": 1845,
         "wygrane": 958,
-        "przegrane": 886,
+        "przegrane": 887,
         "likwidacje": 0,
-        "pnl": -238.16575303376405,
-        "oplaty": 300.6674937157225,
-        "sumaR": -7.1514216937444255,
-        "sumaR2": 1.9861005090006054
+        "pnl": -238.49162788374477,
+        "oplaty": 300.74742893441135,
+        "sumaR": -7.167917721471133,
+        "sumaR2": 1.9863726279313658
       }
     },
     "malpa": {
@@ -220,23 +218,23 @@
     }
   },
   "lastRun": {
-    "ts": "2026-08-30T08:40:34.468Z",
+    "ts": "2026-08-30T08:45:35.248Z",
     "prices": {
-      "SOL": 104.88,
-      "JUP": 0.21462,
+      "SOL": 104.69,
+      "JUP": 0.2142,
       "JTO": 0.4863,
       "PYTH": 0.04729,
       "RAY": 0.778,
       "ORCA": 1.283,
-      "RENDER": 1.457,
+      "RENDER": 1.458,
       "BONK": 0.000002965,
       "W": 0.00917,
       "TNSR": 0.0341,
       "DRIFT": 0.0128,
       "KMNO": 0.02549,
-      "PENGU": 0.009064,
-      "BTC": 78043.8,
-      "ETH": 2455.15
+      "PENGU": 0.009035,
+      "BTC": 78050.8,
+      "ETH": 2455.19
     },
     "ranking": [
       {
@@ -271,15 +269,15 @@
         "id": "smyczFiltr",
         "nazwa": "Smycz czysta",
         "opis": "Smycz, ale nie wchodzi na skraju swiecy bez odrzucenia",
-        "kapital": 111.19915537686204,
-        "roi": -0.7776016892462759,
-        "cash": 44.966744419390764,
-        "otwarty": -0.24151819527446433,
+        "kapital": 111.13050697827097,
+        "roi": -0.777738986043458,
+        "cash": 44.54109165894519,
+        "otwarty": 0.055729646327838694,
         "pozycji": 3,
-        "trejdy": 1844,
+        "trejdy": 1845,
         "wygrane": 958,
         "likwidacje": 0,
-        "oplaty": 300.6674937157225
+        "oplaty": 300.74742893441135
       },
       {
         "id": "smycz",
@@ -338,15 +336,15 @@
         {
           "id": "smyczFiltr",
           "nazwa": "Smycz czysta",
-          "n": 1844,
-          "srednia": -0.003878211330664005,
+          "n": 1845,
+          "srednia": -0.0038850502555399092,
           "nMalpy": 1127,
           "sredniaMalpy": -0.007060411498152192,
-          "roznica": 0.003182200167488187,
-          "d": 0.09260444088977364,
-          "t": 2.420124618372654,
-          "p": 0.015595811688584637,
-          "df": 2197.652160070662,
+          "roznica": 0.003175361242612283,
+          "d": 0.09241500966519087,
+          "t": 2.415327170850538,
+          "p": 0.01580223352646724,
+          "df": 2196.9241825904005,
           "nPotrzebne": 558,
           "postep": 1,
           "werdykt": "remis"
@@ -388,10 +386,10 @@
   },
   "uniwersum": "BONK,BTC,DRIFT,ETH,JTO,JUP,KMNO,ORCA,PENGU,PYTH,RAY,RENDER,SOL,TNSR,W",
   "sejsmo": {
-    "ts": "2026-08-30T08:40:34.463Z",
-    "doba": 0.00594,
+    "ts": "2026-08-30T08:45:35.243Z",
+    "doba": 0.00532,
     "cisza": false,
     "prog": 0.05
   },
-  "updatedAt": "2026-08-30T08:40:34.468Z"
+  "updatedAt": "2026-08-30T08:45:35.248Z"
 }
