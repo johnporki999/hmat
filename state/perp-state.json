@@ -2,7 +2,7 @@
   "version": 1,
   "kind": "perp-sim",
   "createdAt": "2026-07-26T19:59:10.228Z",
-  "updatedAt": "2026-08-30T09:35:09.735Z",
+  "updatedAt": "2026-08-30T09:40:09.701Z",
   "cash": 361.47573844079733,
   "startEquity": 500,
   "peakEquity": 560.9561294415878,
@@ -96,7 +96,7 @@
     }
   },
   "lastRun": {
-    "ts": "2026-08-30T09:35:09.735Z",
+    "ts": "2026-08-30T09:40:09.701Z",
     "action": "HOLD",
     "reason": "bezpiecznik: obsuniecie 40.34%",
     "equityUsd": 361.47573844079733,
@@ -107,7 +107,7 @@
     "limity": {
       "dnia": 0,
       "dniaMax": 0,
-      "resetZaMs": 51890265,
+      "resetZaMs": 51590299,
       "pauzy": [],
       "pauzaMin": 0,
       "obsuniecie": 0.3556078283686217,
@@ -129,6 +129,19 @@
         "costPct": 0.008
       },
       {
+        "sym": "SOL",
+        "price": 104.61,
+        "side": "SHORT",
+        "score": 8,
+        "rsi": 40.145849692786896,
+        "volPct": 0.002337826374491648,
+        "enter": true,
+        "held": null,
+        "reason": "SHORT: trend spadkowy, RSI 40.1, odbicie do sredniej",
+        "expectedMove": 0.007481044398373275,
+        "costPct": 0.0052
+      },
+      {
         "sym": "ORCA",
         "price": 1.287,
         "side": "LONG",
@@ -138,19 +151,6 @@
         "enter": false,
         "held": null,
         "reason": "potencjal 0.46% maly wobec kosztow 0.60%",
-        "expectedMove": null,
-        "costPct": null
-      },
-      {
-        "sym": "JUP",
-        "price": 0.21367,
-        "side": "SHORT",
-        "score": 6,
-        "rsi": 34.685680902528475,
-        "volPct": 0.0023380817443888428,
-        "enter": false,
-        "held": null,
-        "reason": "2.16 ATR pod srednia — za nisko, czekam na odbicie",
         "expectedMove": null,
         "costPct": null
       },
@@ -207,6 +207,19 @@
         "costPct": null
       },
       {
+        "sym": "JUP",
+        "price": 0.2131,
+        "side": "SHORT",
+        "score": 5,
+        "rsi": 25.951638044567233,
+        "volPct": 0.002344335646755345,
+        "enter": false,
+        "held": null,
+        "reason": "RSI 26.0 — wyprzedane, nie gonie dolu",
+        "expectedMove": null,
+        "costPct": null
+      },
+      {
         "sym": "TNSR",
         "price": 0.0341,
         "side": "LONG",
@@ -233,25 +246,12 @@
         "costPct": null
       },
       {
-        "sym": "SOL",
-        "price": 104.66,
-        "side": "LONG",
-        "score": 0,
-        "rsi": 41.64967683956743,
-        "volPct": 0.002336709507314842,
-        "enter": false,
-        "held": null,
-        "reason": "brak trendu wzrostowego",
-        "expectedMove": null,
-        "costPct": null
-      },
-      {
         "sym": "RENDER",
-        "price": 1.454,
+        "price": 1.452,
         "side": "LONG",
         "score": 0,
-        "rsi": 44.705847156731956,
-        "volPct": 0.003233884019218919,
+        "rsi": 42.285590237002936,
+        "volPct": 0.0032383384049203224,
         "enter": false,
         "held": null,
         "reason": "brak trendu wzrostowego",
@@ -286,11 +286,11 @@
       },
       {
         "sym": "BTC",
-        "price": 78000,
+        "price": 78000.2,
         "side": "LONG",
         "score": 0,
-        "rsi": 38.7530328115311,
-        "volPct": 0.0007690504887481526,
+        "rsi": 38.770866436414664,
+        "volPct": 0.000778755451646254,
         "enter": false,
         "held": null,
         "reason": "brak trendu wzrostowego",
@@ -299,11 +299,11 @@
       },
       {
         "sym": "ETH",
-        "price": 2454.09,
+        "price": 2453.01,
         "side": "LONG",
         "score": 0,
-        "rsi": 44.21226906734645,
-        "volPct": 0.0010304032793597396,
+        "rsi": 41.93680467801012,
+        "volPct": 0.00105997568508588,
         "enter": false,
         "held": null,
         "reason": "brak trendu wzrostowego",
@@ -312,21 +312,21 @@
       }
     ],
     "prices": {
-      "SOL": 104.66,
-      "JUP": 0.21367,
+      "SOL": 104.61,
+      "JUP": 0.2131,
       "JTO": 0.48633,
       "PYTH": 0.04728,
       "RAY": 0.778,
       "ORCA": 1.287,
-      "RENDER": 1.454,
+      "RENDER": 1.452,
       "BONK": 0.000002951,
       "W": 0.00918,
       "TNSR": 0.0341,
       "DRIFT": 0.0128,
       "KMNO": 0.02549,
       "PENGU": 0.00903,
-      "BTC": 78000,
-      "ETH": 2454.09
+      "BTC": 78000.2,
+      "ETH": 2453.01
     }
   }
 }
