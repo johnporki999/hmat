@@ -17,14 +17,14 @@
       }
     },
     "smyczFiltr": {
-      "cash": 44.54109165894519,
+      "cash": 22.253056435691096,
       "positions": {
         "ETH": {
           "sym": "ETH",
           "side": "LONG",
           "entryPrice": 2457.75,
           "entryTs": "2026-08-30T02:20:35.105Z",
-          "lastAccrual": "2026-08-30T09:00:33.907Z",
+          "lastAccrual": "2026-08-30T09:05:34.488Z",
           "qty": 0.026916984682845983,
           "notional": 66.15521910426472,
           "margin": 22.05173970142157,
@@ -36,7 +36,7 @@
           "bestPrice": 2460.7,
           "worstPrice": 2452.68,
           "trailArmed": false,
-          "borrowPaid": 0.006174156781337312,
+          "borrowPaid": 0.006251487087064267,
           "trailAtr": 0.5,
           "bezSmyczy": false,
           "minGodzin": 0,
@@ -73,7 +73,7 @@
           "side": "SHORT",
           "entryPrice": 0.21462,
           "entryTs": "2026-08-30T08:40:34.466Z",
-          "lastAccrual": "2026-08-30T09:00:33.907Z",
+          "lastAccrual": "2026-08-30T09:05:34.488Z",
           "qty": 310.98462815040045,
           "notional": 66.74352089363894,
           "margin": 22.247840297879648,
@@ -85,7 +85,7 @@
           "bestPrice": 0.2141,
           "worstPrice": 0.21462,
           "trailArmed": true,
-          "borrowPaid": 0.00013342419163843636,
+          "borrowPaid": 0.0001668604708221197,
           "trailAtr": 0.5,
           "bezSmyczy": false,
           "minGodzin": 0,
@@ -120,7 +120,7 @@
           "side": "SHORT",
           "entryPrice": 0.009035,
           "entryTs": "2026-08-30T08:45:35.246Z",
-          "lastAccrual": "2026-08-30T09:00:33.907Z",
+          "lastAccrual": "2026-08-30T09:05:34.488Z",
           "qty": 7382.65822037523,
           "notional": 66.7023170210902,
           "margin": 22.23410567369673,
@@ -132,7 +132,7 @@
           "bestPrice": 0.009025,
           "worstPrice": 0.009039,
           "trailArmed": false,
-          "borrowPaid": 0.00009990417351203641,
+          "borrowPaid": 0.00013331981092903523,
           "trailAtr": 0.5,
           "bezSmyczy": false,
           "minGodzin": 0,
@@ -161,6 +161,53 @@
             "koszt": 0.0012,
             "score": 10
           }
+        },
+        "PYTH": {
+          "sym": "PYTH",
+          "side": "SHORT",
+          "entryPrice": 0.04741,
+          "entryTs": "2026-08-30T09:05:34.488Z",
+          "lastAccrual": "2026-08-30T09:05:34.488Z",
+          "qty": 1407.8035547354623,
+          "notional": 66.74396653000827,
+          "margin": 22.24798884333609,
+          "leverage": 3,
+          "liqPrice": 0.061633,
+          "stopPrice": 0.047588042021648506,
+          "takeProfit": 0.047053915956702996,
+          "atrAtEntry": 0.00011127626353031431,
+          "bestPrice": 0.04741,
+          "worstPrice": 0.04741,
+          "trailArmed": false,
+          "borrowPaid": 0,
+          "trailAtr": 0.5,
+          "bezSmyczy": false,
+          "minGodzin": 0,
+          "stopZawsze": false,
+          "karencjaStopH": 0,
+          "maxHoldH": 0,
+          "rynekWejscie": {
+            "SOL": 104.86,
+            "BTC": 78079.1,
+            "ETH": 2457.53
+          },
+          "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 42.7, odbicie do sredniej",
+          "warunkiWejscia": {
+            "rsi": 42.7,
+            "rsiPrev": 29.7,
+            "ext": -1.19,
+            "nadTrendem": -0.0097,
+            "fastNadSlow": -0.0028,
+            "volPct": 0.0023,
+            "er": 0.191,
+            "slope": -0.00088,
+            "volRel": 0.169
+          },
+          "prognoza": {
+            "spodziewanyRuch": 0.00751,
+            "koszt": 0.0012,
+            "score": 9
+          }
         }
       },
       "stats": {
@@ -169,7 +216,7 @@
         "przegrane": 887,
         "likwidacje": 0,
         "pnl": -238.49162788374477,
-        "oplaty": 300.74742893441135,
+        "oplaty": 300.78747531432936,
         "sumaR": -7.167917721471133,
         "sumaR2": 1.9863726279313658
       }
@@ -218,23 +265,23 @@
     }
   },
   "lastRun": {
-    "ts": "2026-08-30T09:00:33.910Z",
+    "ts": "2026-08-30T09:05:34.491Z",
     "prices": {
-      "SOL": 104.74,
+      "SOL": 104.86,
       "JUP": 0.21412,
       "JTO": 0.4863,
-      "PYTH": 0.04717,
+      "PYTH": 0.04741,
       "RAY": 0.78,
-      "ORCA": 1.283,
-      "RENDER": 1.453,
+      "ORCA": 1.287,
+      "RENDER": 1.455,
       "BONK": 0.000002957,
-      "W": 0.00916,
+      "W": 0.00917,
       "TNSR": 0.0341,
       "DRIFT": 0.0128,
       "KMNO": 0.02549,
       "PENGU": 0.009032,
-      "BTC": 78072.1,
-      "ETH": 2456.79
+      "BTC": 78079.1,
+      "ETH": 2457.53
     },
     "ranking": [
       {
@@ -269,15 +316,15 @@
         "id": "smyczFiltr",
         "nazwa": "Smycz czysta",
         "opis": "Smycz, ale nie wchodzi na skraju swiecy bez odrzucenia",
-        "kapital": 111.22016983023744,
-        "roi": -0.7775596603395252,
-        "cash": 44.54109165894519,
-        "otwarty": 0.14539249829430168,
-        "pozycji": 3,
+        "kapital": 111.19989783676242,
+        "roi": -0.7776002043264751,
+        "cash": 22.253056435691096,
+        "otwarty": 0.16516688473728644,
+        "pozycji": 4,
         "trejdy": 1845,
         "wygrane": 958,
         "likwidacje": 0,
-        "oplaty": 300.74742893441135
+        "oplaty": 300.78747531432936
       },
       {
         "id": "smycz",
@@ -386,10 +433,10 @@
   },
   "uniwersum": "BONK,BTC,DRIFT,ETH,JTO,JUP,KMNO,ORCA,PENGU,PYTH,RAY,RENDER,SOL,TNSR,W",
   "sejsmo": {
-    "ts": "2026-08-30T09:00:33.905Z",
-    "doba": 0.00546,
+    "ts": "2026-08-30T09:05:34.486Z",
+    "doba": 0.00555,
     "cisza": false,
     "prog": 0.05
   },
-  "updatedAt": "2026-08-30T09:00:33.910Z"
+  "updatedAt": "2026-08-30T09:05:34.491Z"
 }
