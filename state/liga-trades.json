@@ -13040,80 +13040,6 @@
     }
   },
   {
-    "id": "1788054316889-czujny-JTO",
-    "ts": "2026-08-30T01:45:16.891Z",
-    "gracz": "czujny",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.49149,
-    "entryPrice": 0.49486,
-    "margin": 60.20152197313346,
-    "notional": 180.6045659194004,
-    "leverage": 3,
-    "pnlUsd": -1.3420739570396314,
-    "pnlPct": -0.02229302371522381,
-    "R": -0.02409302371522381,
-    "holdMs": 5400308,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "gotowy: trend, RSI 51.9, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 51.9,
-      "rsiPrev": 51.9,
-      "ext": 0.23,
-      "nadTrendem": 0.0004,
-      "fastNadSlow": 0.0035,
-      "volPct": 0.0028,
-      "er": 0.07,
-      "slope": 0.00001,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00894,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 0,
-    "mae": 2.44,
-    "rynek": {
-      "SOL": -0.00152,
-      "BTC": -0.00096,
-      "ETH": 0.00082
-    }
-  },
-  {
-    "id": "1788054316889-czujny-RENDER-o",
-    "ts": "2026-08-30T01:45:16.893Z",
-    "gracz": "czujny",
-    "sym": "RENDER",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 1.462,
-    "margin": 60.144197096576114,
-    "notional": 180.43259128972835,
-    "leverage": 3,
-    "liqPrice": 1.0233999999999999,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, RSI 55.2, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 55.2,
-      "rsiPrev": 55.2,
-      "ext": 0.62,
-      "nadTrendem": 0.0006,
-      "fastNadSlow": 0.0045,
-      "volPct": 0.0031,
-      "er": 0.203,
-      "slope": -0.00018,
-      "volRel": 1.893
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00982,
-      "koszt": 0.0012,
-      "score": 8
-    }
-  },
-  {
     "id": "1788055216449-antytrend-BONK",
     "ts": "2026-08-30T02:00:16.450Z",
     "gracz": "antytrend",
@@ -57083,6 +57009,84 @@
       "spodziewanyRuch": 0.01689,
       "koszt": 0.0012,
       "score": 8
+    }
+  },
+  {
+    "id": "1788204917390-antytrend-JTO",
+    "ts": "2026-08-31T19:35:17.391Z",
+    "gracz": "antytrend",
+    "sym": "JTO",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.43794,
+    "entryPrice": 0.43911,
+    "margin": 30.716094326782855,
+    "notional": 92.14828298034857,
+    "leverage": 3,
+    "pnlUsd": -0.3039341675617208,
+    "pnlPct": -0.009894948372283968,
+    "R": -0.011694948372283968,
+    "holdMs": 8700649,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 44.0, odbicie do sredniej",
+    "warunki": {
+      "rsi": 44,
+      "rsiPrev": 43.9,
+      "ext": -0.85,
+      "nadTrendem": -0.0594,
+      "fastNadSlow": -0.0107,
+      "volPct": 0.0051,
+      "er": 0.092,
+      "slope": -0.00588,
+      "volRel": 1.731,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01627,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2,
+    "mae": 0.52,
+    "rynek": {
+      "SOL": 0.0103,
+      "BTC": 0.00437,
+      "ETH": 0.00519
+    }
+  },
+  {
+    "id": "1788204917390-antytrend-SOL-o",
+    "ts": "2026-08-31T19:35:17.393Z",
+    "gracz": "antytrend",
+    "sym": "SOL",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 103.98,
+    "margin": 31.07218520044377,
+    "notional": 93.21655560133131,
+    "leverage": 3,
+    "liqPrice": 135.174,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, RSI 56.5, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 56.5,
+      "rsiPrev": 58,
+      "ext": 0.72,
+      "nadTrendem": 0.0014,
+      "fastNadSlow": 0.0028,
+      "volPct": 0.0051,
+      "er": 0.087,
+      "slope": 0.0001,
+      "volRel": 1.078,
+      "knotZa": 0.038,
+      "zamkniecie": 0.5
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01627,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
