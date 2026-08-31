@@ -13313,82 +13313,6 @@
     }
   },
   {
-    "id": "1788118227941-krawiec-ASTR-o",
-    "ts": "2026-08-30T19:30:27.945Z",
-    "gracz": "krawiec",
-    "sym": "ASTR",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.00566,
-    "margin": 23.4594891256085,
-    "notional": 70.3784673768255,
-    "leverage": 3,
-    "liqPrice": 0.003962,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 56.7, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 56.7,
-      "rsiPrev": 66.3,
-      "ext": 1.02,
-      "nadTrendem": 0.0092,
-      "fastNadSlow": 0.0039,
-      "volPct": 0.0019,
-      "er": 0.188,
-      "slope": 0.00111,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00621,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1788118828416-luzny-GALA",
-    "ts": "2026-08-30T19:40:28.418Z",
-    "gracz": "luzny",
-    "sym": "GALA",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.00176,
-    "entryPrice": 0.00179,
-    "margin": 35.905749837469806,
-    "notional": 107.71724951240941,
-    "leverage": 3,
-    "pnlUsd": -1.8786186548339576,
-    "pnlPct": -0.05232083060060498,
-    "R": -0.054120830600604984,
-    "holdMs": 20700206,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "gotowy: trend, RSI 58.4, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 58.4,
-      "rsiPrev": 58.4,
-      "ext": 1.54,
-      "nadTrendem": 0.003,
-      "fastNadSlow": 0.0018,
-      "volPct": 0.0032,
-      "er": 0.13,
-      "slope": -0.00003,
-      "volRel": null,
-      "knotZa": 1,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01032,
-      "koszt": 0.0012,
-      "score": 8
-    },
-    "mfe": 0,
-    "mae": 5.2,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
     "id": "1788118828416-luzny-BCH",
     "ts": "2026-08-30T19:40:28.418Z",
     "gracz": "luzny",
@@ -56695,6 +56619,96 @@
       "spodziewanyRuch": 0.01121,
       "koszt": 0.0012,
       "score": 10
+    }
+  },
+  {
+    "id": "1788200128179-trend-GALA",
+    "ts": "2026-08-31T18:15:28.179Z",
+    "gracz": "trend",
+    "sym": "GALA",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.00174,
+    "entryPrice": 0.00175,
+    "margin": 20.680888429879452,
+    "notional": 62.04266528963836,
+    "leverage": 3,
+    "pnlUsd": -0.39255136044386196,
+    "pnlPct": -0.018981358647857185,
+    "R": -0.020781358647857184,
+    "holdMs": 3300138,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, RSI 61.5, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 61.5,
+      "rsiPrev": 68.5,
+      "ext": 1.34,
+      "nadTrendem": 0.0018,
+      "fastNadSlow": 0.0022,
+      "volPct": 0.0083,
+      "er": 0.103,
+      "slope": -0.00076,
+      "volRel": 0.557,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02654,
+      "koszt": 0.0012,
+      "score": 8
+    },
+    "mfe": 1.38,
+    "mae": 0.69,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1788200128179-krawiec-GALA",
+    "ts": "2026-08-31T18:15:28.182Z",
+    "gracz": "krawiec",
+    "sym": "GALA",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.00174,
+    "entryPrice": 0.00175,
+    "margin": 21.2847231162261,
+    "notional": 63.8541693486783,
+    "leverage": 3,
+    "pnlUsd": -0.40401295698137984,
+    "pnlPct": -0.018981358356190522,
+    "R": -0.02078135835619052,
+    "holdMs": 3300136,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, RSI 61.5, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 61.5,
+      "rsiPrev": 68.5,
+      "ext": 1.34,
+      "nadTrendem": 0.0018,
+      "fastNadSlow": 0.0022,
+      "volPct": 0.0083,
+      "er": 0.103,
+      "slope": -0.00076,
+      "volRel": 0.557,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02654,
+      "koszt": 0.0012,
+      "score": 8
+    },
+    "mfe": 1.38,
+    "mae": 0.69,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
     }
   }
 ]
