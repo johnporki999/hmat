@@ -13040,82 +13040,6 @@
     }
   },
   {
-    "id": "1788053416304-trend-SOL-o",
-    "ts": "2026-08-30T01:30:16.306Z",
-    "gracz": "trend",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 105.13,
-    "margin": 27.590642242787677,
-    "notional": 82.77192672836303,
-    "leverage": 3,
-    "liqPrice": 73.591,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 46.4, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 46.4,
-      "rsiPrev": 46.4,
-      "ext": -0.52,
-      "nadTrendem": 0.0064,
-      "fastNadSlow": 0.0028,
-      "volPct": 0.0024,
-      "er": 0.216,
-      "slope": 0.0009,
-      "volRel": 0.298
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00766,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1788053416304-krawiec-SOL",
-    "ts": "2026-08-30T01:30:16.308Z",
-    "gracz": "krawiec",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 105.13,
-    "entryPrice": 105.03,
-    "margin": 31.34234353370314,
-    "notional": 94.02703060110942,
-    "leverage": 3,
-    "pnlUsd": 0.02729418197140027,
-    "pnlPct": 0.000870840495448281,
-    "R": -0.0009291595045517188,
-    "holdMs": 15898987,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 51.4, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 51.4,
-      "rsiPrev": 56.8,
-      "ext": -0.15,
-      "nadTrendem": 0.007,
-      "fastNadSlow": 0.0041,
-      "volPct": 0.0029,
-      "er": 0.229,
-      "slope": 0.00106,
-      "volRel": 0.441,
-      "knotZa": 0.083,
-      "zamkniecie": 0.083
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00942,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 2.39,
-    "mae": 0.45,
-    "rynek": {
-      "SOL": 0.00095,
-      "BTC": -0.00052,
-      "ETH": 0.00173
-    }
-  },
-  {
     "id": "1788053416304-krawiec-SOL-o",
     "ts": "2026-08-30T01:30:16.308Z",
     "gracz": "krawiec",
@@ -57081,6 +57005,80 @@
       "spodziewanyRuch": 0.01714,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1788203716803-luzny-ORCA",
+    "ts": "2026-08-31T19:15:16.804Z",
+    "gracz": "luzny",
+    "sym": "ORCA",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 1.28,
+    "entryPrice": 1.268,
+    "margin": 37.66509582538549,
+    "notional": 112.99528747615648,
+    "leverage": 3,
+    "pnlUsd": -1.1391305999381989,
+    "pnlPct": -0.03024366658242904,
+    "R": -0.03204366658242904,
+    "holdMs": 10499930,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.8, odbicie do sredniej",
+    "warunki": {
+      "rsi": 44.8,
+      "rsiPrev": 44.8,
+      "ext": -1.06,
+      "nadTrendem": -0.0143,
+      "fastNadSlow": -0.0045,
+      "volPct": 0.0025,
+      "er": 0.087,
+      "slope": -0.00147,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00803,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 0,
+    "mae": 3.77,
+    "rynek": {
+      "SOL": 0.01645,
+      "BTC": 0.00597,
+      "ETH": 0.00721
+    }
+  },
+  {
+    "id": "1788203716803-luzny-TNSR-o",
+    "ts": "2026-08-31T19:15:16.805Z",
+    "gracz": "luzny",
+    "sym": "TNSR",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.0364,
+    "margin": 36.41046280744437,
+    "notional": 109.23138842233311,
+    "leverage": 3,
+    "liqPrice": 0.04732,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 46.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 46.2,
+      "rsiPrev": 46.2,
+      "ext": -0.42,
+      "nadTrendem": -0.0122,
+      "fastNadSlow": -0.0136,
+      "volPct": 0.0073,
+      "er": 0.066,
+      "slope": -0.00161,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02326,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
