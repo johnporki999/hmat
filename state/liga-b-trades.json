@@ -10451,37 +10451,6 @@
     }
   },
   {
-    "id": "1788109528993-sejsmograf-ALCX-o",
-    "ts": "2026-08-30T17:05:28.998Z",
-    "gracz": "sejsmograf",
-    "sym": "ALCX",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 2.23,
-    "margin": 35.98514286233393,
-    "notional": 107.95542858700179,
-    "leverage": 3,
-    "liqPrice": 1.561,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, RSI 55.7, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 55.7,
-      "rsiPrev": 55.7,
-      "ext": 1.23,
-      "nadTrendem": 0.0021,
-      "fastNadSlow": 0.0011,
-      "volPct": 0.0024,
-      "er": 0.053,
-      "slope": -0.00024,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00755,
-      "koszt": 0.0012,
-      "score": 8
-    }
-  },
-  {
     "id": "1788110127875-sjesta-QNT-o",
     "ts": "2026-08-30T17:15:27.878Z",
     "gracz": "sjesta",
@@ -10839,49 +10808,6 @@
       "spodziewanyRuch": 0.00828,
       "koszt": 0.0012,
       "score": 9
-    }
-  },
-  {
-    "id": "1788112528336-sejsmograf-ARB",
-    "ts": "2026-08-30T17:55:28.339Z",
-    "gracz": "sejsmograf",
-    "sym": "ARB",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.0893,
-    "entryPrice": 0.0867,
-    "margin": 36.74245392387105,
-    "notional": 110.22736177161315,
-    "leverage": 3,
-    "pnlUsd": -3.3796773817710677,
-    "pnlPct": -0.09198289773387562,
-    "R": -0.09378289773387563,
-    "holdMs": 43500354,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 46.2, odbicie do sredniej",
-    "warunki": {
-      "rsi": 46.2,
-      "rsiPrev": 46.2,
-      "ext": -0.36,
-      "nadTrendem": -0.018,
-      "fastNadSlow": -0.0048,
-      "volPct": 0.0024,
-      "er": 0.182,
-      "slope": -0.00213,
-      "volRel": 0.009
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00775,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 1.9,
-    "mae": 15.71,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
     }
   },
   {
@@ -56763,6 +56689,82 @@
       "spodziewanyRuch": 0.02174,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1788243628153-sejsmograf-VET",
+    "ts": "2026-09-01T06:20:28.156Z",
+    "gracz": "sejsmograf",
+    "sym": "VET",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.006774,
+    "entryPrice": 0.00675,
+    "margin": 32.511994302748484,
+    "notional": 97.53598290824544,
+    "leverage": 3,
+    "pnlUsd": -0.41233881176967613,
+    "pnlPct": -0.012682667446666537,
+    "R": -0.014482667446666537,
+    "holdMs": 43200586,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.0, odbicie do sredniej",
+    "warunki": {
+      "rsi": 44,
+      "rsiPrev": 42.2,
+      "ext": -0.8,
+      "nadTrendem": -0.0175,
+      "fastNadSlow": -0.0067,
+      "volPct": 0.0047,
+      "er": 0.162,
+      "slope": -0.00188,
+      "volRel": 0.03,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0151,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 1.66,
+    "mae": 2.13,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1788243628153-sejsmograf-VET-o",
+    "ts": "2026-09-01T06:20:28.156Z",
+    "gracz": "sejsmograf",
+    "sym": "VET",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.006774,
+    "margin": 32.33534592270192,
+    "notional": 97.00603776810576,
+    "leverage": 3,
+    "liqPrice": 0.0088062,
+    "pnlUsd": null,
+    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 52.8, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 52.8,
+      "rsiPrev": 57.3,
+      "ext": 0.49,
+      "nadTrendem": -0.008,
+      "fastNadSlow": -0.0008,
+      "volPct": 0.0024,
+      "er": 0.047,
+      "slope": -0.00085,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00752,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
