@@ -12487,84 +12487,6 @@
     }
   },
   {
-    "id": "1788143116907-trend-W",
-    "ts": "2026-08-31T02:25:16.907Z",
-    "gracz": "trend",
-    "sym": "W",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.00924,
-    "entryPrice": 0.00916,
-    "margin": 23.571599538383975,
-    "notional": 70.71479861515192,
-    "leverage": 3,
-    "pnlUsd": -0.6608031836089517,
-    "pnlPct": -0.028033871122445483,
-    "R": -0.02983387112244548,
-    "holdMs": 6599568,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 40.6, odbicie do sredniej",
-    "warunki": {
-      "rsi": 40.6,
-      "rsiPrev": 16.6,
-      "ext": -1.31,
-      "nadTrendem": -0.0141,
-      "fastNadSlow": -0.0087,
-      "volPct": 0.0064,
-      "er": 0.148,
-      "slope": -0.00162,
-      "volRel": null,
-      "knotZa": 0.545,
-      "zamkniecie": 0.545
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02054,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 1.87,
-    "mae": 1.36,
-    "rynek": {
-      "SOL": -0.00254,
-      "BTC": -0.00209,
-      "ETH": -0.00725
-    }
-  },
-  {
-    "id": "1788143116907-trend-W-o",
-    "ts": "2026-08-31T02:25:16.908Z",
-    "gracz": "trend",
-    "sym": "W",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.00924,
-    "margin": 24.295108584622252,
-    "notional": 72.88532575386675,
-    "leverage": 3,
-    "liqPrice": 0.012012,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 52.9, odbicie do sredniej",
-    "warunki": {
-      "rsi": 52.9,
-      "rsiPrev": 39,
-      "ext": 1.13,
-      "nadTrendem": -0.0042,
-      "fastNadSlow": -0.0101,
-      "volPct": 0.0059,
-      "er": 0.14,
-      "slope": -0.00212,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01878,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1788143116907-luzny-W",
     "ts": "2026-08-31T02:25:16.909Z",
     "gracz": "luzny",
@@ -57143,6 +57065,82 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.01366,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1788302115958-antytrend-JUP",
+    "ts": "2026-09-01T22:35:15.959Z",
+    "gracz": "antytrend",
+    "sym": "JUP",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.2132,
+    "entryPrice": 0.21589,
+    "margin": 27.484526548269084,
+    "notional": 82.45357964480725,
+    "leverage": 3,
+    "pnlUsd": -1.078867382500754,
+    "pnlPct": -0.039253628058901334,
+    "R": -0.04105362805890133,
+    "holdMs": 6298377,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 48.0, odbicie do sredniej",
+    "warunki": {
+      "rsi": 48,
+      "rsiPrev": 45.6,
+      "ext": -0.09,
+      "nadTrendem": -0.0047,
+      "fastNadSlow": -0.0058,
+      "volPct": 0.0064,
+      "er": 0.009,
+      "slope": -0.00108,
+      "volRel": 0.72,
+      "knotZa": 0,
+      "zamkniecie": 0.433
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02033,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0.7,
+    "mae": 1.96,
+    "rynek": {
+      "SOL": -0.00311,
+      "BTC": -0.00359,
+      "ETH": -0.00384
+    }
+  },
+  {
+    "id": "1788302115958-antytrend-ORCA-o",
+    "ts": "2026-09-01T22:35:15.961Z",
+    "gracz": "antytrend",
+    "sym": "ORCA",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 1.208,
+    "margin": 26.855643635128914,
+    "notional": 80.56693090538674,
+    "leverage": 3,
+    "liqPrice": 0.8455999999999999,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 45.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 45.2,
+      "rsiPrev": 45.2,
+      "ext": -0.35,
+      "nadTrendem": -0.0351,
+      "fastNadSlow": -0.0106,
+      "volPct": 0.0027,
+      "er": 0.209,
+      "slope": -0.00398,
+      "volRel": 132.773
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00859,
       "koszt": 0.0012,
       "score": null
     }
