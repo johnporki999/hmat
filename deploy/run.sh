@@ -175,6 +175,48 @@ STADO_WYGASZANE="smycz trend"
 # Progi (ER >= 0,45, RSI < 25) sa ZAMROZONE regula z Aneksu 4, punkt 3.
 STADO_PRZEJMUJE="panika:SMYCZ panikaLuzna:TREND sitoOstre:SITO5"
 
+# ---- ROZPROSZENIE PER GRACZ ----
+#
+# Format: gracz:miejsc:alloc. Bez wpisu obowiazuja domyslne z realny.mjs
+# (2 miejsca po 40%).
+#
+# 23.08.2026 - Sito ostre z 2 miejsc na 6. Powod: Aneks 79.
+#
+# Sito ostre kupuje glebokie wyprzedanie, ktore na skorelowanych kryptowalutach
+# dzieje sie JEDNOCZESNIE. Przy dwoch miejscach oba sloty wypelniaja sie w krachu
+# praktycznie jedna pozycja - to nie brak dywersyfikacji, tylko jej przeciwienstwo.
+#
+# Zmierzone w KAT 5 (95 okien rocznych, 126 rynkow, dzwignia 3, ten sam bot),
+# mediana kapitalu koncowego ze startu 1000:
+#
+#   miejsc x alloc   mediana   najgorsze okno   pod kreska   najlepsze
+#   2 x 0,40 (bylo)      193     0 (RUINA)          80%        12 375
+#   4 x 0,20             318    13                  82%         5 368
+#   6 x 0,13 (jest)      428    61                  87%         3 791
+#   8 x 0,10             549    93                  82%         4 006
+#
+# Zaangazowanie kapitalu prawie bez zmian (78% wobec 80%) - zmienia sie WYLACZNIE
+# rozproszenie. Mediana ponad dwukrotnie w gore, a podloga przestaje byc zerem.
+#
+# DLACZEGO 6, SKORO 8 WYPADA LEPIEJ: Hyperliquid odrzuca zlecenia ponizej 10 USD
+# nominalu, a nominal to kapital x alloc x dzwignia. Przy dzisiejszych 34,80 USD:
+#   alloc 0,13 -> 13,6 USD, dziala az kapital spadnie do 25,6 USD
+#   alloc 0,10 -> 10,4 USD, przestaje dzialac juz przy 33,3 USD
+# Mediana tej strategii jest ujemna, wiec kapital najpewniej spadnie. Osiem miejsc
+# przestaloby po cichu handlowac i wygladaloby to na awarie bota, a nie na wybor.
+#
+# CENA, ZAPISANA WPROST: gorny ogon sie kurczy (najlepsze okno 12 375 -> 3 791),
+# a odsetek okien pod kreska rosnie z 80% na 87%. Swiadomy wybor: na koncie 35 USD
+# ruina jest nieodwracalna, a loteryjny ogon i tak konta nie odbuduje.
+#
+# CZEGO TA ZMIANA NIE ROBI: nie czyni Sita ostrego botem zarabiajacym. Nawet przy
+# rozproszeniu 40 x 2% mediana wynosi 975, czyli wciaz pod kreska. To poprawa
+# ustawienia z gorszego niz najgorsze testowane do srodka siatki - nic wiecej.
+#
+# Progi wejscia (ER >= 0,45, RSI < 25) sa ZAMROZONE regula z Aneksu 4 punkt 3
+# i ta zmiana ich NIE dotyka. Zmienia sie wylacznie wielkosc i liczba pozycji.
+STADO_ROZPROSZENIE="sitoOstre:6:0.13"
+
 # Zabierz to, co przyszlo z zewnatrz (np. zmiany kodu wypchniete z komputera)
 git fetch origin "$GALAZ" --quiet 2>>"$LOG" || log "fetch nieudany"
 git merge --ff-only "origin/$GALAZ" --quiet 2>>"$LOG" || log "nie moge przewinac galezi (lokalne zmiany?)"
@@ -318,6 +360,17 @@ for bot in $BOTY; do
           log "stado/$gracz: brak KONTO_$DUZE albo AGENT_$DUZE — pomijam tego bota"
           continue
         fi
+        # Rozproszenie: nadpisuje domyslne miejsca/alloc tylko wskazanym graczom.
+        MIEJSC=""; ALLOC=""
+        for wpis in ${STADO_ROZPROSZENIE:-}; do
+          if [ "${wpis%%:*}" = "$gracz" ]; then
+            reszta="${wpis#*:}"
+            MIEJSC="${reszta%%:*}"
+            ALLOC="${reszta#*:}"
+            log "stado/$gracz: rozproszenie $MIEJSC miejsc po $ALLOC"
+          fi
+        done
+
         log "--- stado/$gracz (realny.mjs) ---"
         # Kazdy bot ma WLASNY prefiks stanu, wlasne konto i wlasny klucz agenta.
         # Tak samo jak liga/ligab: jeden plik, kilka konfiguracji.
@@ -336,6 +389,8 @@ for bot in $BOTY; do
             REALNY_MAX_TREJDOW="$LIMIT" \
             REALNY_PO="$POPRZEDNIK" \
             REALNY_STOP_KAPITAL=0 \
+            ${MIEJSC:+REALNY_MIEJSC=$MIEJSC} \
+            ${ALLOC:+REALNY_ALLOC=$ALLOC} \
             node realny.mjs >>"$LOG" 2>&1; then
           log "stado/$gracz OK"
         else
