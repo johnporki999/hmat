@@ -13023,37 +13023,6 @@
     }
   },
   {
-    "id": "1788197416296-kontraN-DRIFT-o",
-    "ts": "2026-08-31T17:30:16.300Z",
-    "gracz": "kontraN",
-    "sym": "DRIFT",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.012,
-    "margin": 97.70479605591908,
-    "notional": 293.1143881677572,
-    "leverage": 3,
-    "liqPrice": 0.0084,
-    "pnlUsd": null,
-    "reason": "RSI 27.2 — panika, kupuję",
-    "warunki": {
-      "rsi": 27.2,
-      "rsiPrev": 27.2,
-      "ext": -4.59,
-      "nadTrendem": -0.0408,
-      "fastNadSlow": -0.0133,
-      "volPct": 0.0026,
-      "er": 0.538,
-      "slope": -0.00337,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00829,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
     "id": "1788197416296-sito5-DRIFT",
     "ts": "2026-08-31T17:30:16.300Z",
     "gracz": "sito5",
@@ -13199,49 +13168,6 @@
       "spodziewanyRuch": 0.01222,
       "koszt": 0.0012,
       "score": 10
-    }
-  },
-  {
-    "id": "1788198317362-trend-SOL",
-    "ts": "2026-08-31T17:45:17.362Z",
-    "gracz": "trend",
-    "sym": "SOL",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 103.56,
-    "entryPrice": 103.47,
-    "margin": 21.612648103715305,
-    "notional": 64.83794431114592,
-    "leverage": 3,
-    "pnlUsd": -0.09646706084690969,
-    "pnlPct": -0.004463454010076933,
-    "R": -0.006263454010076932,
-    "holdMs": 10800426,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 58.9, odbicie do sredniej",
-    "warunki": {
-      "rsi": 58.9,
-      "rsiPrev": 58.7,
-      "ext": 1.03,
-      "nadTrendem": -0.0042,
-      "fastNadSlow": -0.0009,
-      "volPct": 0.0047,
-      "er": 0.216,
-      "slope": -0.00113,
-      "volRel": 3.215
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01493,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 2.05,
-    "mae": 0.19,
-    "rynek": {
-      "SOL": 0.00087,
-      "BTC": 0.00465,
-      "ETH": 0.00148
     }
   },
   {
@@ -57185,6 +57111,80 @@
       "spodziewanyRuch": 0.01244,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1788361817421-antytrend-RAY",
+    "ts": "2026-09-02T15:10:17.422Z",
+    "gracz": "antytrend",
+    "sym": "RAY",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.798,
+    "entryPrice": 0.801,
+    "margin": 25.941903836979375,
+    "notional": 77.82571151093812,
+    "leverage": 3,
+    "pnlUsd": -0.3397212745641261,
+    "pnlPct": -0.013095464261179784,
+    "R": -0.014895464261179783,
+    "holdMs": 5100806,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 54.9, odbicie do sredniej",
+    "warunki": {
+      "rsi": 54.9,
+      "rsiPrev": 54.9,
+      "ext": 1.5,
+      "nadTrendem": -0.0057,
+      "fastNadSlow": -0.0087,
+      "volPct": 0.004,
+      "er": 0.009,
+      "slope": -0.00161,
+      "volRel": 1.626
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01275,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 1.25,
+    "mae": 0.94,
+    "rynek": {
+      "SOL": -0.00714,
+      "BTC": -0.00651,
+      "ETH": -0.01411
+    }
+  },
+  {
+    "id": "1788361817421-antytrend-RAY-o",
+    "ts": "2026-09-02T15:10:17.423Z",
+    "gracz": "antytrend",
+    "sym": "RAY",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.798,
+    "margin": 25.378480067324247,
+    "notional": 76.13544020197274,
+    "leverage": 3,
+    "liqPrice": 0.5586,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 48.6, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 48.6,
+      "rsiPrev": 50,
+      "ext": -0.05,
+      "nadTrendem": -0.0092,
+      "fastNadSlow": -0.006,
+      "volPct": 0.004,
+      "er": 0.2,
+      "slope": -0.0009,
+      "volRel": 4.827
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01274,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
