@@ -12637,84 +12637,6 @@
     }
   },
   {
-    "id": "1788145816878-krawiec-PYTH-o",
-    "ts": "2026-08-31T03:10:16.882Z",
-    "gracz": "krawiec",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.04676,
-    "margin": 27.999120420868447,
-    "notional": 83.99736126260534,
-    "leverage": 3,
-    "liqPrice": 0.06078800000000001,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 40.7, odbicie do sredniej",
-    "warunki": {
-      "rsi": 40.7,
-      "rsiPrev": 30,
-      "ext": -1.04,
-      "nadTrendem": -0.0259,
-      "fastNadSlow": -0.0135,
-      "volPct": 0.0085,
-      "er": 0.204,
-      "slope": -0.00288,
-      "volRel": 9.139,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02721,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1788146416304-kontra-JTO",
-    "ts": "2026-08-31T03:20:16.307Z",
-    "gracz": "kontra",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.44422,
-    "entryPrice": 0.44958,
-    "margin": 57.66628170317529,
-    "notional": 172.99884510952586,
-    "leverage": 3,
-    "pnlUsd": -2.1673414699649034,
-    "pnlPct": -0.037584207026227646,
-    "R": -0.03938420702622765,
-    "holdMs": 1499276,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "RSI 23.5 — panika, kupuję",
-    "warunki": {
-      "rsi": 23.5,
-      "rsiPrev": 27.6,
-      "ext": -4.33,
-      "nadTrendem": -0.0751,
-      "fastNadSlow": -0.0236,
-      "volPct": 0.007,
-      "er": 0.378,
-      "slope": -0.00635,
-      "volRel": 0.123,
-      "knotZa": 0.089,
-      "zamkniecie": 0.089
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02237,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 0,
-    "mae": 1.71,
-    "rynek": {
-      "SOL": 0.00148,
-      "BTC": 0.00179,
-      "ETH": 0.00495
-    }
-  },
-  {
     "id": "1788146416304-kontra-JTO-o",
     "ts": "2026-08-31T03:20:16.308Z",
     "gracz": "kontra",
@@ -57113,6 +57035,80 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.01708,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1788310816283-antytrend-ORCA",
+    "ts": "2026-09-02T01:00:16.284Z",
+    "gracz": "antytrend",
+    "sym": "ORCA",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 1.21,
+    "entryPrice": 1.208,
+    "margin": 26.855643635128914,
+    "notional": 80.56693090538674,
+    "leverage": 3,
+    "pnlUsd": 0.08232286278541448,
+    "pnlPct": 0.0030653840922185483,
+    "R": 0.0012653840922185486,
+    "holdMs": 8700322,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 45.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 45.2,
+      "rsiPrev": 45.2,
+      "ext": -0.35,
+      "nadTrendem": -0.0351,
+      "fastNadSlow": -0.0106,
+      "volPct": 0.0027,
+      "er": 0.209,
+      "slope": -0.00398,
+      "volRel": 132.773
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00859,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2.78,
+    "mae": 0,
+    "rynek": {
+      "SOL": 0.00151,
+      "BTC": 0.00132,
+      "ETH": -0.00005
+    }
+  },
+  {
+    "id": "1788310816283-antytrend-ORCA-o",
+    "ts": "2026-09-02T01:00:16.285Z",
+    "gracz": "antytrend",
+    "sym": "ORCA",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 1.21,
+    "margin": 26.911570046974067,
+    "notional": 80.7347101409222,
+    "leverage": 3,
+    "liqPrice": 0.847,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 47.3, odbicie do sredniej",
+    "warunki": {
+      "rsi": 47.3,
+      "rsiPrev": 47.3,
+      "ext": -0.28,
+      "nadTrendem": -0.0306,
+      "fastNadSlow": -0.0067,
+      "volPct": 0.0024,
+      "er": 0.133,
+      "slope": -0.00305,
+      "volRel": 0.827
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0077,
       "koszt": 0.0012,
       "score": null
     }
