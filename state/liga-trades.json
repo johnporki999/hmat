@@ -12834,82 +12834,6 @@
     }
   },
   {
-    "id": "1788220818045-trend-RENDER",
-    "ts": "2026-09-01T00:00:18.047Z",
-    "gracz": "trend",
-    "sym": "RENDER",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 1.423,
-    "entryPrice": 1.425,
-    "margin": 21.528515139200696,
-    "notional": 64.58554541760209,
-    "leverage": 3,
-    "pnlUsd": 0.04979594067905614,
-    "pnlPct": 0.002313022535789477,
-    "R": 0.000513022535789477,
-    "holdMs": 19500798,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 59.2, odbicie do sredniej",
-    "warunki": {
-      "rsi": 59.2,
-      "rsiPrev": 58.4,
-      "ext": 1.58,
-      "nadTrendem": -0.0062,
-      "fastNadSlow": -0.0001,
-      "volPct": 0.0037,
-      "er": 0.042,
-      "slope": -0.00121,
-      "volRel": 2.145,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0118,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 2.47,
-    "mae": 0.95,
-    "rynek": {
-      "SOL": -0.00876,
-      "BTC": -0.00425,
-      "ETH": -0.00186
-    }
-  },
-  {
-    "id": "1788220818045-trend-JUP-o",
-    "ts": "2026-09-01T00:00:18.050Z",
-    "gracz": "trend",
-    "sym": "JUP",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.22344,
-    "margin": 21.410210414847743,
-    "notional": 64.23063124454323,
-    "leverage": 3,
-    "liqPrice": 0.156408,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 63.7, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 63.7,
-      "rsiPrev": 63.7,
-      "ext": 1.41,
-      "nadTrendem": 0.0393,
-      "fastNadSlow": 0.021,
-      "volPct": 0.0059,
-      "er": 0.292,
-      "slope": 0.00472,
-      "volRel": 10.017
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.0188,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1788220818045-antytrend-PYTH",
     "ts": "2026-09-01T00:00:18.050Z",
     "gracz": "antytrend",
@@ -57191,6 +57115,84 @@
       "SOL": 0.00706,
       "BTC": 0.00394,
       "ETH": 0.00347
+    }
+  },
+  {
+    "id": "1788384317371-czujny-PYTH",
+    "ts": "2026-09-02T21:25:17.373Z",
+    "gracz": "czujny",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.05785,
+    "entryPrice": 0.05401,
+    "margin": 48.830946182634285,
+    "notional": 146.49283854790286,
+    "leverage": 3,
+    "pnlUsd": 10.30283321359716,
+    "pnlPct": 0.21098983368176363,
+    "R": 0.20918983368176364,
+    "holdMs": 43200449,
+    "liquidated": false,
+    "reason": "TAKE PROFIT",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 44.0, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 44,
+      "rsiPrev": 49.7,
+      "ext": -1.37,
+      "nadTrendem": 0.0575,
+      "fastNadSlow": 0.0201,
+      "volPct": 0.0098,
+      "er": 0.172,
+      "slope": 0.00793,
+      "volRel": 0.035,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.03135,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 9.66,
+    "mae": 0.87,
+    "rynek": {
+      "SOL": 0.00667,
+      "BTC": 0.00689,
+      "ETH": 0.00303
+    }
+  },
+  {
+    "id": "1788384317371-czujny-JUP-o",
+    "ts": "2026-09-02T21:25:17.374Z",
+    "gracz": "czujny",
+    "sym": "JUP",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.21813,
+    "margin": 50.538289879283724,
+    "notional": 151.61486963785117,
+    "leverage": 3,
+    "liqPrice": 0.152691,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 62.7, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 62.7,
+      "rsiPrev": 65.3,
+      "ext": 1.53,
+      "nadTrendem": 0.0152,
+      "fastNadSlow": 0.0069,
+      "volPct": 0.0067,
+      "er": 0.076,
+      "slope": 0.00136,
+      "volRel": 1.568,
+      "knotZa": 0.071,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0215,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
