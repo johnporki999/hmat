@@ -139,7 +139,49 @@ async function pobierz(url, tries = 2) {
   return null;
 }
 
+/**
+ * ZRODLO SWIEC — H34.
+ *
+ * Ligi A, B i C pobieraja swiece z Krakena albo Binance (SPOT), a bot na zywo
+ * decyduje na swiecach Hyperliquid (PERPY). Aneks 85 zmierzyl, ze to nie jest
+ * ta sama seria: ATR na HL jest o 5-23% NIZSZY (BTC 1,008, SOL 0,955,
+ * PYTH 0,872, BONK 0,771). Prog Paniki liczy sie wlasnie z ATR, wiec liga
+ * pokazuje inna czestosc sygnalow niz ta, ktora bot moze osiagnac.
+ *
+ * `LIGA_ZRODLO=hl` przelacza na candleSnapshot z Hyperliquid. Domyslnie
+ * WYLACZONE, zeby biegnace ligi zachowaly ciaglosc pomiaru — zmiana zrodla
+ * w trakcie eksperymentu unieważniłaby ich historie.
+ *
+ * BONK figuruje na HL jako kBONK (w tysiacach), ale wszystkie wskazniki sa
+ * wzgledne (ATR/cena, RSI), wiec skala nie ma znaczenia.
+ */
+const ZRODLO = env('LIGA_ZRODLO', 'spot');
+const NAZWA_HL = { BONK: 'kBONK' };
+
+async function swieceHL(sym, minut) {
+  const coin = NAZWA_HL[sym] || sym;
+  const teraz = Date.now();
+  const r = await fetch('https://api.hyperliquid.xyz/info', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'candleSnapshot', req: { coin,
+      interval: `${minut}m`, startTime: teraz - 500 * minut * 60000, endTime: teraz } }),
+    signal: AbortSignal.timeout(15000),
+  }).catch(() => null);
+  if (!r || !r.ok) return null;
+  const j = await r.json().catch(() => null);
+  if (!Array.isArray(j) || j.length < 60) return null;
+  return j.map((x) => ({ t: x.t, o: +x.o, h: +x.h, l: +x.l, c: +x.c, v: +x.v }));
+}
+
 async function swiece(sym, minut) {
+  if (ZRODLO === 'hl') {
+    const h = await swieceHL(sym, minut);
+    if (h) return h;
+    // Bez awaryjnego zejscia na spot: liga HL ma mierzyc WYLACZNIE dane HL.
+    // Ciche podmienienie zrodla zepsuloby caly sens tego eksperymentu.
+    console.error(`  ! ${sym}: Hyperliquid nie oddal swiec — pomijam rynek w tym przebiegu`);
+    return null;
+  }
   const j = await pobierz(`https://api.kraken.com/0/public/OHLC?pair=${UNIVERSE[sym].kraken}&interval=${minut}`);
   if (j && !j.error?.length) {
     const k = Object.keys(j.result).find((x) => x !== 'last');

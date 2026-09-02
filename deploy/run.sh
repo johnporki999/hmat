@@ -83,7 +83,7 @@ stado_otwarte() {
 # dalo sie do niego wrocic jednym slowem, ale domyslnie juz nie chodzi.
 #
 # Zeby dorzucic spot:  run.sh trade perp liga ligab stado
-BOTY="${*:-perp liga ligab ligac stado}"
+BOTY="${*:-perp liga ligab ligac ligahl stado}"
 
 # Uniwersum Ligi A — DOKLADNIE to, na czym liga gra od 27.07.2026 (odczytane
 # z zywego state/liga-state.json, pole lastRun.prices).
@@ -123,6 +123,22 @@ LIGAAB_GRACZE="trend,antytrend,luzny,smycz,cierpliwy,czujny,sjesta,sejsmograf,kr
 # Tu ladują hipotezy, ktore dopiero sprawdzamy. Gdy ktoras wygra przekonujaco,
 # wtedy — i dopiero wtedy — warto rozwazyc dopisanie jej do Ligi A.
 LIGAC_GRACZE="smycz,smyczFiltr,malpa,panika,panikaOstra"
+
+# ---- LIGA HL: forward test na danych, ktorych nikt nie widzial (H34) ----
+#
+# Ligi A, B i C pobieraja swiece z Krakena/Binance (SPOT). Bot na zywo decyduje
+# na swiecach Hyperliquid (PERPY). Aneks 85 zmierzyl, ze to nie jest ta sama
+# seria: ATR na HL jest o 5-23% NIZSZY. Prog Paniki liczy sie wlasnie z ATR,
+# wiec ligi pokazuja inna czestosc sygnalow niz ta, ktora bot moze osiagnac.
+#
+# Ta liga gra na DOKLADNIE tych 11 rynkach co realny.mjs i na DOKLADNIE tych
+# samych swiecach. Kapital 10 000 wirtualnych dolarow, zeby minimum zlecenia
+# nie ograniczalo rozproszenia — to jedyna roznica wobec konta poza zrodlem.
+#
+# Kryterium rozstrzygniecia zapisane w H34 PRZED startem: konczy sie, gdy
+# ktorykolwiek gracz zbierze 40 zamknietych trejdow. Progow nie wolno zmieniac.
+LIGAHL_AKTYWA="SOL,JUP,JTO,PYTH,RENDER,BONK,BTC,ETH,W,TNSR,PENGU"
+LIGAHL_GRACZE="panika,panikaLuzna,sitoOstre,sito5,kontraN,malpa,malpaDluga"
 
 # STADO WYGASZANE — boty na prawdziwych pieniadzach, ktore maja dokonczyc
 # otwarte pozycje i przestac wchodzic w nowe. Decyzja z 03.08.2026: zostaje
@@ -234,6 +250,10 @@ for bot in $BOTY; do
            USTAW="LIGA_PREFIX=liga-c LIGA_ASSETS=$LIGAA_AKTYWA LIGA_GRACZE=$LIGAC_GRACZE" ;;
     # Ta sama liga.mjs, inna konfiguracja — bez drugiej kopii mechaniki,
     # ktora po miesiacu rozjechalaby sie z pierwsza.
+    # Forward test na swiecach Hyperliquid — H34. Zrodlo HL wlacza LIGA_ZRODLO=hl;
+    # bez tej zmiennej liga.mjs zachowuje sie dokladnie jak dotad.
+    ligahl) PLIK="liga.mjs"
+           USTAW="LIGA_ZRODLO=hl LIGA_PREFIX=liga-hl LIGA_START_USD=10000 LIGA_ASSETS=$LIGAHL_AKTYWA LIGA_GRACZE=$LIGAHL_GRACZE" ;;
     ligab) PLIK="liga.mjs"
            USTAW="LIGA_PREFIX=liga-b LIGA_ASSETS=$LIGAB_AKTYWA LIGA_GRACZE=$LIGAAB_GRACZE LIGA_MAX_POZYCJI=10 LIGA_ALLOC_PCT=0.08" ;;
     realny) PLIK="realny.mjs" ;;
