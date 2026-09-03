@@ -12760,84 +12760,6 @@
     }
   },
   {
-    "id": "1788246316117-trend-JUP-o",
-    "ts": "2026-09-01T07:05:16.119Z",
-    "gracz": "trend",
-    "sym": "JUP",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.22027,
-    "margin": 21.397307164171565,
-    "notional": 64.1919214925147,
-    "leverage": 3,
-    "liqPrice": 0.154189,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 45.9, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 45.9,
-      "rsiPrev": 47.4,
-      "ext": -0.75,
-      "nadTrendem": 0.0168,
-      "fastNadSlow": 0.0062,
-      "volPct": 0.0059,
-      "er": 0.066,
-      "slope": 0.00221,
-      "volRel": 2.367,
-      "knotZa": 0,
-      "zamkniecie": 0.85
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01887,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1788246316117-krawiec-JUP",
-    "ts": "2026-09-01T07:05:16.120Z",
-    "gracz": "krawiec",
-    "sym": "JUP",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.22027,
-    "entryPrice": 0.21991,
-    "margin": 25.487286422796437,
-    "notional": 76.4618592683893,
-    "leverage": 3,
-    "pnlUsd": 0.07456576769400047,
-    "pnlPct": 0.0029256063771193417,
-    "R": 0.0011256063771193422,
-    "holdMs": 15899591,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 41.6, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 41.6,
-      "rsiPrev": 45.8,
-      "ext": -1.8,
-      "nadTrendem": 0.0192,
-      "fastNadSlow": 0.0156,
-      "volPct": 0.006,
-      "er": 0.193,
-      "slope": 0.00359,
-      "volRel": 1.835,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01929,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 2.35,
-    "mae": 0.23,
-    "rynek": {
-      "SOL": 0.00408,
-      "BTC": 0.00579,
-      "ETH": 0.00535
-    }
-  },
-  {
     "id": "1788246316117-krawiec-JUP-o",
     "ts": "2026-09-01T07:05:16.120Z",
     "gracz": "krawiec",
@@ -57195,6 +57117,84 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.00258,
+      "koszt": 0.0012,
+      "score": null
+    }
+  },
+  {
+    "id": "1788427216654-antytrend-PYTH",
+    "ts": "2026-09-03T09:20:16.655Z",
+    "gracz": "antytrend",
+    "sym": "PYTH",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.05806,
+    "entryPrice": 0.05699,
+    "margin": 24.56994402080787,
+    "notional": 73.70983206242362,
+    "leverage": 3,
+    "pnlUsd": -1.4298766893803114,
+    "pnlPct": -0.058196172045380856,
+    "R": -0.05999617204538085,
+    "holdMs": 14100222,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "odwrotnie do: gotowy: trend, trend rosnie, RSI 40.1, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 40.1,
+      "rsiPrev": 43,
+      "ext": -1.88,
+      "nadTrendem": 0.0462,
+      "fastNadSlow": 0.0094,
+      "volPct": 0.0097,
+      "er": 0.029,
+      "slope": 0.00759,
+      "volRel": 0.346,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.03093,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0.42,
+    "mae": 1.94,
+    "rynek": {
+      "SOL": 0.0052,
+      "BTC": 0.00761,
+      "ETH": 0.00736
+    }
+  },
+  {
+    "id": "1788427216654-antytrend-JUP-o",
+    "ts": "2026-09-03T09:20:16.656Z",
+    "gracz": "antytrend",
+    "sym": "JUP",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.22352,
+    "margin": 23.63885614318495,
+    "notional": 70.91656842955484,
+    "leverage": 3,
+    "liqPrice": 0.290576,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, trend rosnie, RSI 58.3, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 58.3,
+      "rsiPrev": 61.4,
+      "ext": 1.13,
+      "nadTrendem": 0.0321,
+      "fastNadSlow": 0.0106,
+      "volPct": 0.0092,
+      "er": 0.099,
+      "slope": 0.00317,
+      "volRel": 11.505,
+      "knotZa": 0.313,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02956,
       "koszt": 0.0012,
       "score": null
     }
