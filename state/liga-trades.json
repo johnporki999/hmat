@@ -12764,84 +12764,6 @@
     }
   },
   {
-    "id": "1788226517066-trend-JUP-o",
-    "ts": "2026-09-01T01:35:17.069Z",
-    "gracz": "trend",
-    "sym": "JUP",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.22253,
-    "margin": 21.805158999114198,
-    "notional": 65.4154769973426,
-    "leverage": 3,
-    "liqPrice": 0.155771,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 52.6, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 52.6,
-      "rsiPrev": 58.3,
-      "ext": -0.21,
-      "nadTrendem": 0.0324,
-      "fastNadSlow": 0.0197,
-      "volPct": 0.0063,
-      "er": 0.326,
-      "slope": 0.0043,
-      "volRel": 0.031,
-      "knotZa": 0.219,
-      "zamkniecie": 0.219
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02014,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
-    "id": "1788226517066-luzny-JUP",
-    "ts": "2026-09-01T01:35:17.069Z",
-    "gracz": "luzny",
-    "sym": "JUP",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.22253,
-    "entryPrice": 0.22327,
-    "margin": 37.4412952479413,
-    "notional": 112.3238857438239,
-    "leverage": 3,
-    "pnlUsd": -0.44203632790548075,
-    "pnlPct": -0.01180611741603106,
-    "R": -0.013606117416031061,
-    "holdMs": 5400018,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 62.8, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 62.8,
-      "rsiPrev": 63.7,
-      "ext": 1.23,
-      "nadTrendem": 0.0385,
-      "fastNadSlow": 0.0209,
-      "volPct": 0.0061,
-      "er": 0.287,
-      "slope": 0.00472,
-      "volRel": 10.017,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01962,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 2.15,
-    "mae": 0.54,
-    "rynek": {
-      "SOL": -0.0001,
-      "BTC": -0.00214,
-      "ETH": -0.00233
-    }
-  },
-  {
     "id": "1788226517066-luzny-JUP-o",
     "ts": "2026-09-01T01:35:17.069Z",
     "gracz": "luzny",
@@ -57225,6 +57147,84 @@
       "SOL": -0.00279,
       "BTC": 0.00079,
       "ETH": -0.00103
+    }
+  },
+  {
+    "id": "1788400516648-antytrend-JTO",
+    "ts": "2026-09-03T01:55:16.649Z",
+    "gracz": "antytrend",
+    "sym": "JTO",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.41917,
+    "entryPrice": 0.42069,
+    "margin": 25.089949080150433,
+    "notional": 75.2698472404513,
+    "leverage": 3,
+    "pnlUsd": -0.31905192639523794,
+    "pnlPct": -0.01271632418926077,
+    "R": -0.014516324189260769,
+    "holdMs": 6599067,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 58.7, odbicie do sredniej",
+    "warunki": {
+      "rsi": 58.7,
+      "rsiPrev": 55.3,
+      "ext": 1.66,
+      "nadTrendem": -0.0182,
+      "fastNadSlow": -0.0026,
+      "volPct": 0.0044,
+      "er": 0.014,
+      "slope": -0.00281,
+      "volRel": 0.102,
+      "knotZa": 0.865,
+      "zamkniecie": 0.925
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01413,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 1.41,
+    "mae": 0.82,
+    "rynek": {
+      "SOL": -0.00159,
+      "BTC": 0.0004,
+      "ETH": -0.00206
+    }
+  },
+  {
+    "id": "1788400516648-antytrend-JUP-o",
+    "ts": "2026-09-03T01:55:16.651Z",
+    "gracz": "antytrend",
+    "sym": "JUP",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.21799,
+    "margin": 25.031525324712756,
+    "notional": 75.09457597413827,
+    "leverage": 3,
+    "liqPrice": 0.283387,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, trend rosnie, RSI 48.7, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 48.7,
+      "rsiPrev": 49.2,
+      "ext": -0.51,
+      "nadTrendem": 0.0111,
+      "fastNadSlow": 0.0095,
+      "volPct": 0.0078,
+      "er": 0.124,
+      "slope": 0.00232,
+      "volRel": 1.515,
+      "knotZa": 0.429,
+      "zamkniecie": 0.492
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02482,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
