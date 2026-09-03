@@ -12826,82 +12826,6 @@
     }
   },
   {
-    "id": "1788266417620-antytrend-PYTH-o",
-    "ts": "2026-09-01T12:40:17.624Z",
-    "gracz": "antytrend",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.0505,
-    "margin": 29.217715398933002,
-    "notional": 87.65314619679901,
-    "leverage": 3,
-    "liqPrice": 0.06565,
-    "pnlUsd": null,
-    "reason": "odwrotnie do: gotowy: trend, trend rosnie, RSI 56.6, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 56.6,
-      "rsiPrev": 56.1,
-      "ext": 0.94,
-      "nadTrendem": 0.0347,
-      "fastNadSlow": 0.0074,
-      "volPct": 0.0064,
-      "er": 0.073,
-      "slope": 0.00371,
-      "volRel": 2.735,
-      "knotZa": 0.667,
-      "zamkniecie": 0.667
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02044,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1788266417620-kontra-SOL",
-    "ts": "2026-09-01T12:40:17.625Z",
-    "gracz": "kontra",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 101.51,
-    "entryPrice": 102.09,
-    "margin": 58.61830875872688,
-    "notional": 175.85492627618066,
-    "leverage": 3,
-    "pnlUsd": -1.1148498272548784,
-    "pnlPct": -0.019018798919013567,
-    "R": -0.020818798919013566,
-    "holdMs": 15001361,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "RSI 27.7 — panika, kupuję",
-    "warunki": {
-      "rsi": 27.7,
-      "rsiPrev": 27.9,
-      "ext": -3.2,
-      "nadTrendem": -0.0151,
-      "fastNadSlow": -0.0013,
-      "volPct": 0.0034,
-      "er": 0.194,
-      "slope": -0.00062,
-      "volRel": 5.15
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01099,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 1.74,
-    "mae": 1.65,
-    "rynek": {
-      "SOL": -0.00568,
-      "BTC": -0.00166,
-      "ETH": -0.00547
-    }
-  },
-  {
     "id": "1788266716534-cierpliwy-JTO",
     "ts": "2026-09-01T12:45:16.536Z",
     "gracz": "cierpliwy",
@@ -57317,6 +57241,96 @@
       "SOL": 0.03969,
       "BTC": 0.04264,
       "ETH": 0.03934
+    }
+  },
+  {
+    "id": "1788450616927-trend-PYTH",
+    "ts": "2026-09-03T15:50:16.928Z",
+    "gracz": "trend",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.05692,
+    "entryPrice": 0.05686,
+    "margin": 21.239828545718332,
+    "notional": 63.719485637154996,
+    "leverage": 3,
+    "pnlUsd": 0.027296832510445044,
+    "pnlPct": 0.001285171980164017,
+    "R": -0.0005148280198359827,
+    "holdMs": 6899848,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 39.1, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 39.1,
+      "rsiPrev": 47.2,
+      "ext": -2.13,
+      "nadTrendem": 0.0264,
+      "fastNadSlow": 0.0026,
+      "volPct": 0.0078,
+      "er": 0.064,
+      "slope": 0.00479,
+      "volRel": 0.744,
+      "knotZa": 0.051,
+      "zamkniecie": 0.051
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02511,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 2.2,
+    "mae": 0.36,
+    "rynek": {
+      "SOL": 0.02652,
+      "BTC": 0.02649,
+      "ETH": 0.02764
+    }
+  },
+  {
+    "id": "1788450616927-krawiec-PYTH",
+    "ts": "2026-09-03T15:50:16.932Z",
+    "gracz": "krawiec",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.05692,
+    "entryPrice": 0.05686,
+    "margin": 25.955023977051873,
+    "notional": 77.86507193115563,
+    "leverage": 3,
+    "pnlUsd": 0.033356683186179875,
+    "pnlPct": 0.0012851725051640167,
+    "R": -0.0005148274948359833,
+    "holdMs": 6899846,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 39.1, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 39.1,
+      "rsiPrev": 47.2,
+      "ext": -2.13,
+      "nadTrendem": 0.0264,
+      "fastNadSlow": 0.0026,
+      "volPct": 0.0078,
+      "er": 0.064,
+      "slope": 0.00479,
+      "volRel": 0.744,
+      "knotZa": 0.051,
+      "zamkniecie": 0.051
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02511,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 2.2,
+    "mae": 0.36,
+    "rynek": {
+      "SOL": 0.02652,
+      "BTC": 0.02649,
+      "ETH": 0.02764
     }
   }
 ]
