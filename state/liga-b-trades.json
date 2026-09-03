@@ -14691,84 +14691,6 @@
     }
   },
   {
-    "id": "1788282328400-krawiec-HFT",
-    "ts": "2026-09-01T17:05:28.402Z",
-    "gracz": "krawiec",
-    "sym": "HFT",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.00613,
-    "entryPrice": 0.00642,
-    "margin": 20.101723362160786,
-    "notional": 60.30517008648236,
-    "leverage": 3,
-    "pnlUsd": 2.6871886969900283,
-    "pnlPct": 0.13367951834658892,
-    "R": 0.13187951834658893,
-    "holdMs": 6900138,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 56.6, odbicie do sredniej",
-    "warunki": {
-      "rsi": 56.6,
-      "rsiPrev": 43.2,
-      "ext": 1.85,
-      "nadTrendem": -0.0188,
-      "fastNadSlow": -0.0137,
-      "volPct": 0.0077,
-      "er": 0.148,
-      "slope": -0.00387,
-      "volRel": null,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02451,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 5.9,
-    "mae": 0,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
-    "id": "1788282328400-krawiec-BCH-o",
-    "ts": "2026-09-01T17:05:28.403Z",
-    "gracz": "krawiec",
-    "sym": "BCH",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 246.31,
-    "margin": 20.436651135545695,
-    "notional": 61.309953406637085,
-    "leverage": 3,
-    "liqPrice": 320.20300000000003,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, RSI 41.6, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 41.6,
-      "rsiPrev": 41.9,
-      "ext": -1.25,
-      "nadTrendem": -0.0063,
-      "fastNadSlow": -0.0005,
-      "volPct": 0.0042,
-      "er": 0.085,
-      "slope": -0.00013,
-      "volRel": 0.289,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01339,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1788282628392-kontra-HFT-o",
     "ts": "2026-09-01T17:10:28.395Z",
     "gracz": "kontra",
@@ -56837,6 +56759,82 @@
       "spodziewanyRuch": 0.00482,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1788397237179-luzny-SAND",
+    "ts": "2026-09-03T01:00:37.180Z",
+    "gracz": "luzny",
+    "sym": "SAND",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.0388,
+    "entryPrice": 0.0387,
+    "margin": 30.84173760995809,
+    "notional": 92.52521282987428,
+    "leverage": 3,
+    "pnlUsd": 0.17406550159941644,
+    "pnlPct": 0.005643829274496346,
+    "R": 0.0038438292744963462,
+    "holdMs": 26409422,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 58.5, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 58.5,
+      "rsiPrev": 56.4,
+      "ext": 0.93,
+      "nadTrendem": 0.0187,
+      "fastNadSlow": 0.0086,
+      "volPct": 0.0069,
+      "er": 0.072,
+      "slope": 0.002,
+      "volRel": 0.09,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02221,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "mfe": 2.61,
+    "mae": 0.37,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1788397237179-luzny-QNT-o",
+    "ts": "2026-09-03T01:00:37.181Z",
+    "gracz": "luzny",
+    "sym": "QNT",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 64.4,
+    "margin": 31.49875725367794,
+    "notional": 94.49627176103382,
+    "leverage": 3,
+    "liqPrice": 45.08,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 52.7, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 52.7,
+      "rsiPrev": 52.7,
+      "ext": 0.46,
+      "nadTrendem": 0.0138,
+      "fastNadSlow": 0.0002,
+      "volPct": 0.0036,
+      "er": 0.087,
+      "slope": 0.00135,
+      "volRel": 0.305
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01154,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
