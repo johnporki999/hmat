@@ -12452,51 +12452,6 @@
     }
   },
   {
-    "id": "1788230416521-kontraN-JUP",
-    "ts": "2026-09-01T02:40:16.527Z",
-    "gracz": "kontraN",
-    "sym": "JUP",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.21991,
-    "entryPrice": 0.22523,
-    "margin": 93.93562894241921,
-    "notional": 281.80688682725764,
-    "leverage": 3,
-    "pnlUsd": 6.4791064168128925,
-    "pnlPct": 0.06897389722896798,
-    "R": 0.06717389722896797,
-    "holdMs": 17400367,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "RSI 80.4 — euforia, sprzedaję",
-    "warunki": {
-      "rsi": 80.4,
-      "rsiPrev": 77.6,
-      "ext": 4.76,
-      "nadTrendem": 0.052,
-      "fastNadSlow": 0.0171,
-      "volPct": 0.0069,
-      "er": 0.398,
-      "slope": 0.0027,
-      "volRel": 0.268,
-      "knotZa": 0.355,
-      "zamkniecie": 0.355
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02211,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 3.42,
-    "mae": 1.03,
-    "rynek": {
-      "SOL": -0.00828,
-      "BTC": -0.00857,
-      "ETH": -0.00823
-    }
-  },
-  {
     "id": "1788231016574-sjesta-PYTH",
     "ts": "2026-09-01T02:50:16.576Z",
     "gracz": "sjesta",
@@ -12570,51 +12525,6 @@
       "spodziewanyRuch": 0.01871,
       "koszt": 0.0012,
       "score": 10
-    }
-  },
-  {
-    "id": "1788231016574-kontra-W",
-    "ts": "2026-09-01T02:50:16.578Z",
-    "gracz": "kontra",
-    "sym": "W",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.00935,
-    "entryPrice": 0.00946,
-    "margin": 58.50017973101731,
-    "notional": 175.50053919305194,
-    "leverage": 3,
-    "pnlUsd": 1.9343509291602048,
-    "pnlPct": 0.033065726260232235,
-    "R": 0.03126572626023224,
-    "holdMs": 3598970,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "RSI 81.0 — euforia, sprzedaję",
-    "warunki": {
-      "rsi": 81,
-      "rsiPrev": 75.3,
-      "ext": 6.44,
-      "nadTrendem": 0.0239,
-      "fastNadSlow": 0.0048,
-      "volPct": 0.0034,
-      "er": 0.328,
-      "slope": 0.00071,
-      "volRel": 1.881,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01086,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 3.43,
-    "mae": 0,
-    "rynek": {
-      "SOL": -0.00058,
-      "BTC": -0.00138,
-      "ETH": -0.00123
     }
   },
   {
@@ -57205,6 +57115,82 @@
       "spodziewanyRuch": 0.01419,
       "koszt": 0.0012,
       "score": 8
+    }
+  },
+  {
+    "id": "1788408316861-antytrend-RAY",
+    "ts": "2026-09-03T04:05:16.861Z",
+    "gracz": "antytrend",
+    "sym": "RAY",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.799,
+    "entryPrice": 0.797,
+    "margin": 25.045485089887297,
+    "notional": 75.1364552696619,
+    "leverage": 3,
+    "pnlUsd": 0.13899568879426036,
+    "pnlPct": 0.005549730352413224,
+    "R": 0.0037497303524132238,
+    "holdMs": 15300102,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 48.5, odbicie do sredniej",
+    "warunki": {
+      "rsi": 48.5,
+      "rsiPrev": 37.9,
+      "ext": -0.14,
+      "nadTrendem": -0.0079,
+      "fastNadSlow": -0.0028,
+      "volPct": 0.0036,
+      "er": 0.047,
+      "slope": -0.00105,
+      "volRel": 0.309
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01145,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 3.16,
+    "mae": 1.4,
+    "rynek": {
+      "SOL": 0.00259,
+      "BTC": 0.00639,
+      "ETH": 0.00669
+    }
+  },
+  {
+    "id": "1788408316861-antytrend-SOL-o",
+    "ts": "2026-09-03T04:05:16.862Z",
+    "gracz": "antytrend",
+    "sym": "SOL",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 100.51,
+    "margin": 24.549585598915424,
+    "notional": 73.64875679674627,
+    "leverage": 3,
+    "liqPrice": 130.663,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, RSI 56.1, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 56.1,
+      "rsiPrev": 55.5,
+      "ext": 0.55,
+      "nadTrendem": 0.0006,
+      "fastNadSlow": 0.0042,
+      "volPct": 0.0043,
+      "er": 0.102,
+      "slope": 0.00012,
+      "volRel": 0.289,
+      "knotZa": 0.5,
+      "zamkniecie": 0.5
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01366,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
