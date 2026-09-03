@@ -12760,84 +12760,6 @@
     }
   },
   {
-    "id": "1788244816811-kontra-BONK-o",
-    "ts": "2026-09-01T06:40:16.814Z",
-    "gracz": "kontra",
-    "sym": "BONK",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.000003215,
-    "margin": 57.90720684979237,
-    "notional": 173.7216205493771,
-    "leverage": 3,
-    "liqPrice": 0.0000041795,
-    "pnlUsd": null,
-    "reason": "RSI 76.5 — euforia, sprzedaję",
-    "warunki": {
-      "rsi": 76.5,
-      "rsiPrev": 75.9,
-      "ext": 2.99,
-      "nadTrendem": 0.0798,
-      "fastNadSlow": 0.0235,
-      "volPct": 0.0099,
-      "er": 0.361,
-      "slope": 0.00677,
-      "volRel": 1.332,
-      "knotZa": 0.1,
-      "zamkniecie": 0.2
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.03159,
-      "koszt": 0.0012,
-      "score": null
-    }
-  },
-  {
-    "id": "1788245716908-trend-SOL",
-    "ts": "2026-09-01T06:55:16.909Z",
-    "gracz": "trend",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 103.58,
-    "entryPrice": 103.85,
-    "margin": 21.569142778286228,
-    "notional": 64.70742833485869,
-    "leverage": 3,
-    "pnlUsd": -0.21007729781398604,
-    "pnlPct": -0.009739714738476858,
-    "R": -0.011539714738476857,
-    "holdMs": 12000343,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, RSI 61.6, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 61.6,
-      "rsiPrev": 54.8,
-      "ext": 1.51,
-      "nadTrendem": 0.0014,
-      "fastNadSlow": 0,
-      "volPct": 0.0034,
-      "er": 0.047,
-      "slope": -0.00043,
-      "volRel": 0.828,
-      "knotZa": 0,
-      "zamkniecie": 0.952
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01081,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 1.34,
-    "mae": 0.77,
-    "rynek": {
-      "SOL": -0.0026,
-      "BTC": 0.00059,
-      "ETH": -0.0021
-    }
-  },
-  {
     "id": "1788245716908-trend-JTO-o",
     "ts": "2026-09-01T06:55:16.911Z",
     "gracz": "trend",
@@ -57207,6 +57129,82 @@
       "spodziewanyRuch": 0.02004,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1788423016345-antytrend-W",
+    "ts": "2026-09-03T08:10:16.346Z",
+    "gracz": "antytrend",
+    "sym": "W",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.00973,
+    "entryPrice": 0.00973,
+    "margin": 23.64063625934351,
+    "notional": 70.92190877803053,
+    "leverage": 3,
+    "pnlUsd": -0.04294317994953355,
+    "pnlPct": -0.0018164984849999997,
+    "R": -0.003616498485,
+    "holdMs": 3299710,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: gotowy: trend, trend rosnie, RSI 54.9, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 54.9,
+      "rsiPrev": 54.9,
+      "ext": 1.1,
+      "nadTrendem": 0.0145,
+      "fastNadSlow": 0.0012,
+      "volPct": 0.0032,
+      "er": 0.047,
+      "slope": 0.00084,
+      "volRel": 0.321
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01024,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 2.57,
+    "mae": 0.32,
+    "rynek": {
+      "SOL": -0.00346,
+      "BTC": -0.0017,
+      "ETH": -0.00238
+    }
+  },
+  {
+    "id": "1788423016345-antytrend-W-o",
+    "ts": "2026-09-03T08:10:16.347Z",
+    "gracz": "antytrend",
+    "sym": "W",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.00973,
+    "margin": 23.70852557116268,
+    "notional": 71.12557671348804,
+    "leverage": 3,
+    "liqPrice": 0.012649000000000002,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, trend rosnie, RSI 54.0, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 54,
+      "rsiPrev": 43.7,
+      "ext": 0.89,
+      "nadTrendem": 0.0141,
+      "fastNadSlow": 0.0011,
+      "volPct": 0.0039,
+      "er": 0.046,
+      "slope": 0.001,
+      "volRel": 0.7,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01256,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
