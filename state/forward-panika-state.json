@@ -1,0 +1,451 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-04T14:30:43.131Z",
+  "gracze": {
+    "panika5m": {
+      "cash": 10000,
+      "positions": {},
+      "stats": {
+        "trejdy": 0,
+        "wygrane": 0,
+        "przegrane": 0,
+        "likwidacje": 0,
+        "pnl": 0,
+        "oplaty": 0,
+        "sumaR": 0,
+        "sumaR2": 0
+      }
+    },
+    "panika15m": {
+      "cash": 10000,
+      "positions": {},
+      "stats": {
+        "trejdy": 0,
+        "wygrane": 0,
+        "przegrane": 0,
+        "likwidacje": 0,
+        "pnl": 0,
+        "oplaty": 0,
+        "sumaR": 0,
+        "sumaR2": 0
+      },
+      "ostatniaDecyzja": {
+        "SOL": 1788531300000,
+        "JUP": 1788531300000,
+        "JTO": 1788531300000,
+        "PYTH": 1788531300000,
+        "RENDER": 1788531300000,
+        "BONK": 1788531300000,
+        "BTC": 1788531300000,
+        "ETH": 1788531300000,
+        "W": 1788531300000,
+        "TNSR": 1788529500000,
+        "PENGU": 1788531300000
+      }
+    },
+    "malpa": {
+      "cash": 10000,
+      "positions": {},
+      "stats": {
+        "trejdy": 0,
+        "wygrane": 0,
+        "przegrane": 0,
+        "likwidacje": 0,
+        "pnl": 0,
+        "oplaty": 0,
+        "sumaR": 0,
+        "sumaR2": 0
+      }
+    }
+  },
+  "lastRun": {
+    "ts": "2026-09-04T14:30:43.152Z",
+    "prices": {
+      "SOL": 101.28,
+      "JUP": 0.21592,
+      "JTO": 0.41182,
+      "PYTH": 0.053349,
+      "RENDER": 1.4201,
+      "BONK": 0.003103,
+      "BTC": 79399,
+      "ETH": 2455.1,
+      "W": 0.00941,
+      "TNSR": 0.03508,
+      "PENGU": 0.008301
+    },
+    "ranking": [
+      {
+        "id": "panika5m",
+        "nazwa": "Panika 5m",
+        "opis": "Panika oceniana co przebieg na budowanej świecy 15m",
+        "kapital": 10000,
+        "roi": 0,
+        "cash": 10000,
+        "otwarty": 0,
+        "pozycji": 0,
+        "trejdy": 0,
+        "wygrane": 0,
+        "likwidacje": 0,
+        "oplaty": 0
+      },
+      {
+        "id": "panika15m",
+        "nazwa": "Panika 15m",
+        "opis": "Panika oceniana raz, dopiero po zamknięciu świecy 15m",
+        "kapital": 10000,
+        "roi": 0,
+        "cash": 10000,
+        "otwarty": 0,
+        "pozycji": 0,
+        "trejdy": 0,
+        "wygrane": 0,
+        "likwidacje": 0,
+        "oplaty": 0
+      },
+      {
+        "id": "malpa",
+        "nazwa": "Małpa",
+        "opis": "rzuca monetą — punkt odniesienia dla całej reszty",
+        "kapital": 10000,
+        "roi": 0,
+        "cash": 10000,
+        "otwarty": 0,
+        "pozycji": 0,
+        "trejdy": 0,
+        "wygrane": 0,
+        "likwidacje": 0,
+        "oplaty": 0
+      }
+    ],
+    "leverage": 3,
+    "maxPozycji": 2,
+    "start": 10000,
+    "istotnosc": {
+      "alfa": 0.05,
+      "porownan": 2,
+      "moc": 0.8,
+      "dMin": 0.2,
+      "testy": [
+        {
+          "id": "panika5m",
+          "nazwa": "Panika 5m",
+          "n": 0,
+          "srednia": 0,
+          "nMalpy": 0,
+          "sredniaMalpy": 0,
+          "roznica": 0,
+          "d": null,
+          "t": null,
+          "p": null,
+          "df": null,
+          "nPotrzebne": 476,
+          "postep": 0,
+          "werdykt": "malo"
+        },
+        {
+          "id": "panika15m",
+          "nazwa": "Panika 15m",
+          "n": 0,
+          "srednia": 0,
+          "nMalpy": 0,
+          "sredniaMalpy": 0,
+          "roznica": 0,
+          "d": null,
+          "t": null,
+          "p": null,
+          "df": null,
+          "nPotrzebne": 476,
+          "postep": 0,
+          "werdykt": "malo"
+        }
+      ]
+    }
+  },
+  "uniwersum": "BONK,BTC,ETH,JTO,JUP,PENGU,PYTH,RENDER,SOL,TNSR,W",
+  "forwardTest": {
+    "startAt": "2026-09-04T14:30:43.131Z",
+    "konfiguracja": {
+      "hipoteza": "H38",
+      "ramiona": [
+        "panika5m",
+        "panika15m"
+      ],
+      "kontrola": "malpa",
+      "zrodlo": "hl",
+      "aktywa": [
+        "SOL",
+        "JUP",
+        "JTO",
+        "PYTH",
+        "RENDER",
+        "BONK",
+        "BTC",
+        "ETH",
+        "W",
+        "TNSR",
+        "PENGU"
+      ],
+      "interwalMin": 15,
+      "dzwignia": 3,
+      "miejsca": 2,
+      "alloc": 0.1,
+      "oplataNaStrone": 0.00045,
+      "fundingHL": true,
+      "minimumTrejdowNaRamie": 40,
+      "minimumEpizodow": 15,
+      "przerwaEpizoduH": 72
+    },
+    "postep": {
+      "ts": "2026-09-04T14:30:43.152Z",
+      "zamkniete": {
+        "panika5m": 0,
+        "panika15m": 0
+      },
+      "epizody": 0,
+      "otwarteRazem": 0,
+      "progDanychOsiagniety": false,
+      "gotowyDoRozliczenia": false,
+      "uwaga": "nie wyciągać werdyktu"
+    },
+    "sygnaly": {
+      "pierwszeWTrakcie": 0,
+      "przetrwaly": 0,
+      "zniknely": 0,
+      "tylkoNaZamknieciu": 0
+    },
+    "budowaneSwiece": {
+      "SOL": {
+        "barTs": 1788532200000,
+        "pierwszyOdczytMs": 1788532235697,
+        "mialSygnal": false
+      },
+      "JUP": {
+        "barTs": 1788532200000,
+        "pierwszyOdczytMs": 1788532235697,
+        "mialSygnal": false
+      },
+      "JTO": {
+        "barTs": 1788532200000,
+        "pierwszyOdczytMs": 1788532235697,
+        "mialSygnal": false
+      },
+      "PYTH": {
+        "barTs": 1788532200000,
+        "pierwszyOdczytMs": 1788532235697,
+        "mialSygnal": false
+      },
+      "BONK": {
+        "barTs": 1788532200000,
+        "pierwszyOdczytMs": 1788532235697,
+        "mialSygnal": false
+      },
+      "BTC": {
+        "barTs": 1788532200000,
+        "pierwszyOdczytMs": 1788532235697,
+        "mialSygnal": false
+      },
+      "ETH": {
+        "barTs": 1788532200000,
+        "pierwszyOdczytMs": 1788532235697,
+        "mialSygnal": false
+      },
+      "W": {
+        "barTs": 1788532200000,
+        "pierwszyOdczytMs": 1788532235697,
+        "mialSygnal": false
+      },
+      "PENGU": {
+        "barTs": 1788532200000,
+        "pierwszyOdczytMs": 1788532235697,
+        "mialSygnal": false
+      }
+    },
+    "obserwacje": [],
+    "ostatnieWejscieMs": null
+  },
+  "sejsmo": {
+    "ts": "2026-09-04T14:30:43.150Z",
+    "doba": 0.00419,
+    "cisza": true,
+    "prog": 0.05
+  },
+  "kontekstHL": {
+    "SOL": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": 0.0000125,
+        "openInterest": 5795715.359999999,
+        "markPx": 101.32,
+        "midPx": 101.325,
+        "oraclePx": 101.353,
+        "premium": -0.0002269296,
+        "impactBid": 101.31,
+        "impactAsk": 101.33,
+        "impactSpreadPct": 0.00019738465334316328,
+        "dayNtlVlm": 316154630.7201001
+      }
+    ],
+    "JUP": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": 0.0000125,
+        "openInterest": 47515566,
+        "markPx": 0.21606,
+        "midPx": 0.216105,
+        "oraclePx": 0.216,
+        "premium": 0,
+        "impactBid": 0.215956,
+        "impactAsk": 0.216243,
+        "impactSpreadPct": 0.0013280581198953367,
+        "dayNtlVlm": 3390181.5067499997
+      }
+    ],
+    "JTO": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": 0.0000125,
+        "openInterest": 13516962,
+        "markPx": 0.4121,
+        "midPx": 0.412025,
+        "oraclePx": 0.4124,
+        "premium": -0.0001891368,
+        "impactBid": 0.411766,
+        "impactAsk": 0.412322,
+        "impactSpreadPct": 0.0013494326800558242,
+        "dayNtlVlm": 6204792.6716399975
+      }
+    ],
+    "PYTH": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": 0.0000125,
+        "openInterest": 48956866,
+        "markPx": 0.053386,
+        "midPx": 0.053393,
+        "oraclePx": 0.053374,
+        "premium": 0,
+        "impactBid": 0.053335,
+        "impactAsk": 0.053424,
+        "impactSpreadPct": 0.0016668851722135636,
+        "dayNtlVlm": 3603930.5532530006
+      }
+    ],
+    "RENDER": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": 0.0000125,
+        "openInterest": 1159803.2,
+        "markPx": 1.4199,
+        "midPx": 1.4198,
+        "oraclePx": 1.4205,
+        "premium": 0,
+        "impactBid": 1.41939,
+        "impactAsk": 1.42124,
+        "impactSpreadPct": 0.0013030004225948228,
+        "dayNtlVlm": 547929.43612
+      }
+    ],
+    "BONK": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": 0.0000125,
+        "openInterest": 2185366296,
+        "markPx": 0.003105,
+        "midPx": 0.003105,
+        "oraclePx": 0.003107,
+        "premium": -0.0003218539,
+        "impactBid": 0.003103,
+        "impactAsk": 0.003106,
+        "impactSpreadPct": 0.0009661835748792155,
+        "dayNtlVlm": 3440244.6717209993
+      }
+    ],
+    "BTC": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": 0.0000125,
+        "openInterest": 38263.84978,
+        "markPx": 79399,
+        "midPx": 79399.5,
+        "oraclePx": 79418,
+        "premium": -0.0002266489,
+        "impactBid": 79396,
+        "impactAsk": 79400,
+        "impactSpreadPct": 0.00005037815099591307,
+        "dayNtlVlm": 4617434300.072289
+      }
+    ],
+    "ETH": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": 0.0000125,
+        "openInterest": 932375.4278000001,
+        "markPx": 2455.1,
+        "midPx": 2455.05,
+        "oraclePx": 2455.43,
+        "premium": -0.000134396,
+        "impactBid": 2455,
+        "impactAsk": 2455.1,
+        "impactSpreadPct": 0.00004073236797617525,
+        "dayNtlVlm": 1736124270.35262
+      }
+    ],
+    "W": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": 0.0000125,
+        "openInterest": 197160557.8,
+        "markPx": 0.00941,
+        "midPx": 0.0094,
+        "oraclePx": 0.00942,
+        "premium": -0.0010615711,
+        "impactBid": 0.00939,
+        "impactAsk": 0.00941,
+        "impactSpreadPct": 0.0021276595744679984,
+        "dayNtlVlm": 383090.2525260001
+      }
+    ],
+    "TNSR": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": 0.0000125,
+        "openInterest": 1324710.2,
+        "markPx": 0.03488,
+        "midPx": 0.03491,
+        "oraclePx": 0.03489,
+        "premium": 0,
+        "impactBid": 0.03477,
+        "impactAsk": 0.03499,
+        "impactSpreadPct": 0.006301919220853566,
+        "dayNtlVlm": 20975.618615
+      }
+    ],
+    "PENGU": [
+      {
+        "ts": "2026-09-04T14:30:35.697Z",
+        "tsMs": 1788532235697,
+        "funding": -0.00003314,
+        "openInterest": 1221346860,
+        "markPx": 0.008303,
+        "midPx": 0.008301,
+        "oraclePx": 0.008313,
+        "premium": -0.0008420546,
+        "impactBid": 0.008301,
+        "impactAsk": 0.008306,
+        "impactSpreadPct": 0.0006023370678231294,
+        "dayNtlVlm": 9303585.076582
+      }
+    ]
+  },
+  "updatedAt": "2026-09-04T14:30:43.152Z"
+}
