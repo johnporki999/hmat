@@ -9246,80 +9246,6 @@
     }
   },
   {
-    "id": "1788188416523-sjesta-DRIFT",
-    "ts": "2026-08-31T15:00:16.525Z",
-    "gracz": "sjesta",
-    "sym": "DRIFT",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.0122,
-    "entryPrice": 0.0124,
-    "margin": 50.740000025182326,
-    "notional": 152.22000007554698,
-    "leverage": 3,
-    "pnlUsd": 2.35279355485196,
-    "pnlPct": 0.04636960097919325,
-    "R": 0.044569600979193255,
-    "holdMs": 43499495,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 52.0, odbicie do sredniej",
-    "warunki": {
-      "rsi": 52,
-      "rsiPrev": 52,
-      "ext": 1.18,
-      "nadTrendem": -0.0165,
-      "fastNadSlow": -0.0139,
-      "volPct": 0.0044,
-      "er": 0.263,
-      "slope": -0.00304,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01406,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 7.34,
-    "mae": 9.18,
-    "rynek": {
-      "SOL": 0.02111,
-      "BTC": 0.01527,
-      "ETH": 0.02665
-    }
-  },
-  {
-    "id": "1788188416523-sjesta-RENDER-o",
-    "ts": "2026-08-31T15:00:16.527Z",
-    "gracz": "sjesta",
-    "sym": "RENDER",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 1.421,
-    "margin": 51.843437291458635,
-    "notional": 155.5303118743759,
-    "leverage": 3,
-    "liqPrice": 1.8473000000000002,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 57.1, odbicie do sredniej",
-    "warunki": {
-      "rsi": 57.1,
-      "rsiPrev": 57.1,
-      "ext": 1.34,
-      "nadTrendem": -0.0109,
-      "fastNadSlow": -0.0021,
-      "volPct": 0.0036,
-      "er": 0.179,
-      "slope": -0.00181,
-      "volRel": 0.68
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01142,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1788194116588-sejsmograf-SOL",
     "ts": "2026-08-31T16:35:16.590Z",
     "gracz": "sejsmograf",
@@ -57229,6 +57155,84 @@
       "spodziewanyRuch": 0.0182,
       "koszt": 0.0012,
       "score": null
+    }
+  },
+  {
+    "id": "1788531917737-sjesta-BONK",
+    "ts": "2026-09-04T14:25:17.739Z",
+    "gracz": "sjesta",
+    "sym": "BONK",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.000003106,
+    "entryPrice": 0.000003141,
+    "margin": 51.9664917885482,
+    "notional": 155.8994753656446,
+    "leverage": 3,
+    "pnlUsd": -1.856910921519933,
+    "pnlPct": -0.03573285125876322,
+    "R": -0.037532851258763225,
+    "holdMs": 43201012,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 50.0, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 50,
+      "rsiPrev": 48.8,
+      "ext": 0.03,
+      "nadTrendem": 0.0309,
+      "fastNadSlow": 0.0053,
+      "volPct": 0.007,
+      "er": 0.152,
+      "slope": 0.00311,
+      "volRel": 0.492,
+      "knotZa": 0.389,
+      "zamkniecie": 0.5
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02247,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "mfe": 4.58,
+    "mae": 3.76,
+    "rynek": {
+      "SOL": -0.02041,
+      "BTC": -0.01692,
+      "ETH": -0.01848
+    }
+  },
+  {
+    "id": "1788531917737-sjesta-BONK-o",
+    "ts": "2026-09-04T14:25:17.740Z",
+    "gracz": "sjesta",
+    "sym": "BONK",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.000003106,
+    "margin": 50.818499362163415,
+    "notional": 152.45549808649025,
+    "leverage": 3,
+    "liqPrice": 0.0000021742,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 43.7, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 43.7,
+      "rsiPrev": 50.1,
+      "ext": -0.93,
+      "nadTrendem": 0.0081,
+      "fastNadSlow": 0.0009,
+      "volPct": 0.0118,
+      "er": 0.03,
+      "slope": 0.00157,
+      "volRel": 0.069,
+      "knotZa": 0.25,
+      "zamkniecie": 0.25
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.03768,
+      "koszt": 0.0012,
+      "score": 9
     }
   }
 ]
