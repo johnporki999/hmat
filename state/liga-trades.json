@@ -13480,37 +13480,6 @@
     }
   },
   {
-    "id": "1788309918704-luzny-RAY-o",
-    "ts": "2026-09-02T00:45:18.707Z",
-    "gracz": "luzny",
-    "sym": "RAY",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.811,
-    "margin": 37.57684138743745,
-    "notional": 112.73052416231235,
-    "leverage": 3,
-    "liqPrice": 0.5677,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 41.3, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 41.3,
-      "rsiPrev": 41.3,
-      "ext": -1.9,
-      "nadTrendem": 0.0057,
-      "fastNadSlow": 0.0018,
-      "volPct": 0.0039,
-      "er": 0.02,
-      "slope": 0.00139,
-      "volRel": 6.711
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01247,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1788309918704-cierpliwy-JTO",
     "ts": "2026-09-02T00:45:18.708Z",
     "gracz": "cierpliwy",
@@ -13660,49 +13629,6 @@
       "spodziewanyRuch": 0.01662,
       "koszt": 0.0012,
       "score": 10
-    }
-  },
-  {
-    "id": "1788309918704-krawiec-RAY",
-    "ts": "2026-09-02T00:45:18.708Z",
-    "gracz": "krawiec",
-    "sym": "RAY",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.811,
-    "entryPrice": 0.817,
-    "margin": 25.912521344868793,
-    "notional": 77.73756403460638,
-    "leverage": 3,
-    "pnlUsd": -0.620354423346722,
-    "pnlPct": -0.02394033429207632,
-    "R": -0.02574033429207632,
-    "holdMs": 9300988,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 49.9, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 49.9,
-      "rsiPrev": 49.9,
-      "ext": -0.15,
-      "nadTrendem": 0.0147,
-      "fastNadSlow": 0.0035,
-      "volPct": 0.0049,
-      "er": 0.059,
-      "slope": 0.00202,
-      "volRel": 0.039
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01556,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 1.01,
-    "mae": 1.51,
-    "rynek": {
-      "SOL": -0.0001,
-      "BTC": -0.0006,
-      "ETH": -0.0027
     }
   },
   {
@@ -57207,6 +57133,82 @@
       "spodziewanyRuch": 0.01499,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1788511816603-antytrend-RAY",
+    "ts": "2026-09-04T08:50:16.604Z",
+    "gracz": "antytrend",
+    "sym": "RAY",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.839,
+    "entryPrice": 0.835,
+    "margin": 22.787262642801995,
+    "notional": 68.36178792840599,
+    "leverage": 3,
+    "pnlUsd": -0.36873797161979854,
+    "pnlPct": -0.016181758090029953,
+    "R": -0.017981758090029953,
+    "holdMs": 2100128,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "odwrotnie do: gotowy: trend, trend rosnie, RSI 49.5, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 49.5,
+      "rsiPrev": 49.5,
+      "ext": -0.02,
+      "nadTrendem": 0.0155,
+      "fastNadSlow": 0.0007,
+      "volPct": 0.0025,
+      "er": 0.109,
+      "slope": 0.00144,
+      "volRel": 1.843
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00801,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "mfe": 0,
+    "mae": 1.91,
+    "rynek": {
+      "SOL": 0.00415,
+      "BTC": 0.00417,
+      "ETH": 0.0055
+    }
+  },
+  {
+    "id": "1788511816603-antytrend-JUP-o",
+    "ts": "2026-09-04T08:50:16.606Z",
+    "gracz": "antytrend",
+    "sym": "JUP",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.22299,
+    "margin": 22.540629846173402,
+    "notional": 67.62188953852021,
+    "leverage": 3,
+    "liqPrice": 0.15609299999999998,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: SHORT: trend spadkowy, RSI 43.3, odbicie do sredniej",
+    "warunki": {
+      "rsi": 43.3,
+      "rsiPrev": 38.4,
+      "ext": -0.56,
+      "nadTrendem": -0.003,
+      "fastNadSlow": -0.0106,
+      "volPct": 0.0049,
+      "er": 0.368,
+      "slope": -0.0005,
+      "volRel": 0.195,
+      "knotZa": 0,
+      "zamkniecie": 0.915
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01579,
+      "koszt": 0.0012,
+      "score": null
     }
   }
 ]
