@@ -83,7 +83,7 @@ stado_otwarte() {
 # dalo sie do niego wrocic jednym slowem, ale domyslnie juz nie chodzi.
 #
 # Zeby dorzucic spot:  run.sh trade perp liga ligab stado
-BOTY="${*:-perp liga ligab ligac ligahl stado}"
+BOTY="${*:-perp liga ligab ligac ligahl forwardpanika stado}"
 
 # Uniwersum Ligi A — DOKLADNIE to, na czym liga gra od 27.07.2026 (odczytane
 # z zywego state/liga-state.json, pole lastRun.prices).
@@ -139,6 +139,12 @@ LIGAC_GRACZE="smycz,smyczFiltr,malpa,panika,panikaOstra"
 # ktorykolwiek gracz zbierze 40 zamknietych trejdow. Progow nie wolno zmieniac.
 LIGAHL_AKTYWA="SOL,JUP,JTO,PYTH,RENDER,BONK,BTC,ETH,W,TNSR,PENGU"
 LIGAHL_GRACZE="panika,panikaLuzna,sitoOstre,sito5,kontraN,malpa,malpaDluga"
+
+# H38 — czysty paper A/B momentu wejscia. Oba ramiona czytaja te sama migawke
+# przygotowana przez ligahl: Panika 5m widzi budowana swiece, Panika 15m czeka
+# na jej zamkniecie. Nie ma tu klucza konta ani sciezki skladania zlecen.
+FORWARDPANIKA_GRACZE="panika5m,panika15m,malpa"
+FORWARDPANIKA_SNAPSHOT="$KATALOG/logs/liga-hl-snapshot.json"
 
 # STADO WYGASZANE — boty na prawdziwych pieniadzach, ktore maja dokonczyc
 # otwarte pozycje i przestac wchodzic w nowe. Decyzja z 03.08.2026: zostaje
@@ -253,7 +259,9 @@ for bot in $BOTY; do
     # Forward test na swiecach Hyperliquid — H34. Zrodlo HL wlacza LIGA_ZRODLO=hl;
     # bez tej zmiennej liga.mjs zachowuje sie dokladnie jak dotad.
     ligahl) PLIK="liga.mjs"
-           USTAW="LIGA_ZRODLO=hl LIGA_PREFIX=liga-hl LIGA_START_USD=10000 LIGA_ASSETS=$LIGAHL_AKTYWA LIGA_GRACZE=$LIGAHL_GRACZE" ;;
+           USTAW="LIGA_ZRODLO=hl LIGA_KONTEKST_HL=1 LIGA_SNAPSHOT_OUT=$FORWARDPANIKA_SNAPSHOT LIGA_PREFIX=liga-hl LIGA_START_USD=10000 LIGA_ASSETS=$LIGAHL_AKTYWA LIGA_GRACZE=$LIGAHL_GRACZE" ;;
+    forwardpanika) PLIK="liga.mjs"
+           USTAW="LIGA_ZRODLO=hl LIGA_TEST_CZAS=1 LIGA_FUNDING_HL=1 LIGA_KONTEKST_WYMAGANY=1 LIGA_SNAPSHOT_IN=$FORWARDPANIKA_SNAPSHOT LIGA_SNAPSHOT_MAX_AGE_MS=120000 LIGA_PREFIX=forward-panika LIGA_START_USD=10000 LIGA_ASSETS=$LIGAHL_AKTYWA LIGA_GRACZE=$FORWARDPANIKA_GRACZE LIGA_MAX_POZYCJI=2 LIGA_ALLOC_PCT=0.10 LIGA_MALPA_SZANSA=0.02041389128443849 PERP_OPEN_FEE=0.00045 PERP_BORROW_LONG_H=0 PERP_BORROW_SHORT_H=0" ;;
     ligab) PLIK="liga.mjs"
            USTAW="LIGA_PREFIX=liga-b LIGA_ASSETS=$LIGAB_AKTYWA LIGA_GRACZE=$LIGAAB_GRACZE LIGA_MAX_POZYCJI=10 LIGA_ALLOC_PCT=0.08" ;;
     realny) PLIK="realny.mjs" ;;

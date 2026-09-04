@@ -66,6 +66,11 @@ const P = {
   MALPA_SZANSA: envNum('LIGA_MALPA_SZANSA', 0.06), // na aktywo na przebieg
 };
 
+// H38: dwa papierowe ramiona tej samej Paniki. Tryb jest domyslnie wylaczony
+// i nie zmienia skladu ani historii zadnej istniejacej ligi.
+const TEST_CZAS = envBool('LIGA_TEST_CZAS', false);
+const FUNDING_HL = envBool('LIGA_FUNDING_HL', false);
+
 // SKLAD LIGI. Puste = wszyscy, jak dotad.
 //
 // Bez tego kazdy nowy wariant strategii wchodzil do WSZYSTKICH lig naraz
@@ -77,6 +82,21 @@ const P = {
 // Osobna liga z wlasnym skladem ma wlasne liczenie i nie kosztuje nikogo nic.
 const CHCE = env('LIGA_GRACZE', '').split(',').map((s) => s.trim()).filter(Boolean);
 const WSZYSCY = stworzGraczy({ malpaSzansa: P.MALPA_SZANSA });
+if (TEST_CZAS) {
+  WSZYSCY.panika5m = {
+    ...WSZYSCY.panika,
+    nazwa: 'Panika 5m',
+    opis: 'Panika oceniana co przebieg na budowanej świecy 15m',
+    wariantCzasu: 'srodswiecowy-5m',
+  };
+  WSZYSCY.panika15m = {
+    ...WSZYSCY.panika,
+    nazwa: 'Panika 15m',
+    opis: 'Panika oceniana raz, dopiero po zamknięciu świecy 15m',
+    wariantCzasu: 'zamknieta-15m',
+    tylkoZamknieta: true,
+  };
+}
 if (CHCE.length) {
   const nieznani = CHCE.filter((c) => !WSZYSCY[c]);
   if (nieznani.length) { console.error(`! LIGA_GRACZE: nie znam ${nieznani.join(', ')}`); process.exit(1); }
@@ -91,7 +111,10 @@ const GRACZE = CHCE.length
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const DIR = path.join(ROOT, 'state');
+const katalogStanu = env('LIGA_STATE_DIR', '');
+const DIR = katalogStanu
+  ? (path.isAbsolute(katalogStanu) ? katalogStanu : path.resolve(ROOT, katalogStanu))
+  : path.join(ROOT, 'state');
 
 // Ten sam kod obsluguje DWIE ligi. Rozni je wylacznie konfiguracja podana
 // w zmiennych srodowiskowych: przedrostek plikow stanu i lista aktywow.
@@ -157,20 +180,91 @@ async function pobierz(url, tries = 2) {
  */
 const ZRODLO = env('LIGA_ZRODLO', 'spot');
 const NAZWA_HL = { BONK: 'kBONK' };
+const SNAPSHOT_IN = env('LIGA_SNAPSHOT_IN', '');
+const SNAPSHOT_OUT = env('LIGA_SNAPSHOT_OUT', '');
+const SNAPSHOT_MAX_AGE_MS = envNum('LIGA_SNAPSHOT_MAX_AGE_MS', 120000);
+const KONTEKST_HL = envBool('LIGA_KONTEKST_HL', false) || !!SNAPSHOT_OUT || FUNDING_HL;
+const KONTEKST_WYMAGANY = envBool('LIGA_KONTEKST_WYMAGANY', false);
 
-async function swieceHL(sym, minut) {
-  const coin = NAZWA_HL[sym] || sym;
-  const teraz = Date.now();
+const sciezkaOdRoot = (f) => (path.isAbsolute(f) ? f : path.resolve(ROOT, f));
+let snapshotWejscie = null;
+if (SNAPSHOT_IN) {
+  const f = sciezkaOdRoot(SNAPSHOT_IN);
+  snapshotWejscie = readJSON(f, null);
+  const wiek = snapshotWejscie ? Date.now() - Number(snapshotWejscie.fetchedAt || 0) : Infinity;
+  if (!snapshotWejscie || snapshotWejscie.source !== 'hl'
+      || snapshotWejscie.intervalMin !== CFG.CANDLE_MINUTES
+      || wiek < 0 || wiek > SNAPSHOT_MAX_AGE_MS) {
+    console.error(`! LIGA_SNAPSHOT_IN: brak świeżej migawki HL w ${f} (maks. ${SNAPSHOT_MAX_AGE_MS} ms)`);
+    process.exit(1);
+  }
+}
+
+async function infoHL(body) {
   const r = await fetch('https://api.hyperliquid.xyz/info', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: 'candleSnapshot', req: { coin,
-      interval: `${minut}m`, startTime: teraz - 500 * minut * 60000, endTime: teraz } }),
-    signal: AbortSignal.timeout(15000),
+    body: JSON.stringify(body), signal: AbortSignal.timeout(15000),
   }).catch(() => null);
   if (!r || !r.ok) return null;
-  const j = await r.json().catch(() => null);
+  return r.json().catch(() => null);
+}
+
+async function swieceHL(sym, minut) {
+  if (snapshotWejscie) {
+    const c = snapshotWejscie.candles?.[sym];
+    return Array.isArray(c) && c.length >= 60 ? c : null;
+  }
+  const coin = NAZWA_HL[sym] || sym;
+  const teraz = Date.now();
+  const j = await infoHL({ type: 'candleSnapshot', req: { coin,
+    interval: `${minut}m`, startTime: teraz - 500 * minut * 60000, endTime: teraz } });
   if (!Array.isArray(j) || j.length < 60) return null;
-  return j.map((x) => ({ t: x.t, o: +x.o, h: +x.h, l: +x.l, c: +x.c, v: +x.v }));
+  return j.map((x) => ({ t: x.t, T: x.T, o: +x.o, h: +x.h, l: +x.l, c: +x.c, v: +x.v }));
+}
+
+const liczbaLubNull = (x) => {
+  const n = Number(x);
+  return Number.isFinite(n) ? n : null;
+};
+
+async function kontekstyHL(aktywa) {
+  if (snapshotWejscie) return snapshotWejscie.contexts || {};
+  if (!KONTEKST_HL || ZRODLO !== 'hl') return {};
+  const j = await infoHL({ type: 'metaAndAssetCtxs' });
+  const uni = j?.[0]?.universe;
+  const ctx = j?.[1];
+  if (!Array.isArray(uni) || !Array.isArray(ctx)) return {};
+  const indeks = new Map(uni.map((x, i) => [x.name, i]));
+  const out = {};
+  for (const sym of aktywa) {
+    const i = indeks.get(NAZWA_HL[sym] || sym);
+    const x = i == null ? null : ctx[i];
+    if (!x) continue;
+    const impactBid = liczbaLubNull(x.impactPxs?.[0]);
+    const impactAsk = liczbaLubNull(x.impactPxs?.[1]);
+    const midPx = liczbaLubNull(x.midPx);
+    out[sym] = {
+      funding: liczbaLubNull(x.funding),
+      openInterest: liczbaLubNull(x.openInterest),
+      markPx: liczbaLubNull(x.markPx),
+      midPx,
+      oraclePx: liczbaLubNull(x.oraclePx),
+      premium: liczbaLubNull(x.premium),
+      impactBid,
+      impactAsk,
+      impactSpreadPct: impactBid != null && impactAsk != null && midPx > 0
+        ? (impactAsk - impactBid) / midPx : null,
+      dayNtlVlm: liczbaLubNull(x.dayNtlVlm),
+    };
+  }
+  return out;
+}
+
+function writeJSONAtomic(f, x) {
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  const tmp = `${f}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(x) + '\n', 'utf8');
+  fs.renameSync(tmp, f);
 }
 
 async function swiece(sym, minut) {
@@ -259,17 +353,79 @@ if (!stan.uniwersum) {
   stan.uniwersum = odciskUniwersum;
   stan.uniwersumZmienione = nowISO();
 }
+if (TEST_CZAS) {
+  const konfiguracja = {
+    hipoteza: 'H38',
+    ramiona: ['panika5m', 'panika15m'],
+    kontrola: 'malpa',
+    zrodlo: ZRODLO,
+    aktywa: [...aktywa],
+    interwalMin: CFG.CANDLE_MINUTES,
+    dzwignia: P.LEVERAGE,
+    miejsca: P.MAX_POZ,
+    alloc: P.ALLOC,
+    oplataNaStrone: P.OPEN_FEE,
+    fundingHL: FUNDING_HL,
+    minimumTrejdowNaRamie: 40,
+    minimumEpizodow: 15,
+    przerwaEpizoduH: 72,
+  };
+  if (!stan.forwardTest) {
+    stan.forwardTest = { startAt: nowISO(), konfiguracja, postep: null };
+  } else if (JSON.stringify(stan.forwardTest.konfiguracja) !== JSON.stringify(konfiguracja)) {
+    console.error('! KONFIGURACJA H38 SIE ZMIENILA — zatrzymuje test zamiast mieszać dwa eksperymenty.');
+    console.error('  Nowe ustawienia wymagają nowego prefiksu albo LIGA_RESET=1.');
+    process.exit(1);
+  }
+}
 const rynek = {};
+const czasMigawki = Number(snapshotWejscie?.fetchedAt) || Date.now();
 for (const sym of aktywa) {
   const c = await swiece(sym, CFG.CANDLE_MINUTES);
   if (!c) continue;
   const m = analyze(c, CFG);
-  if (m.emaTrend && m.atr && m.rsi != null) rynek[sym] = { m, c };
-  await sleep(300);
+  const cZamkniete = c.filter((x) => {
+    const koniec = Number.isFinite(Number(x.T)) ? Number(x.T) : Number(x.t) + CFG.CANDLE_MINUTES * 60000 - 1;
+    return koniec <= czasMigawki;
+  });
+  const mZamknieta = cZamkniete.length >= 60 ? analyze(cZamkniete, CFG) : null;
+  if (m.emaTrend && m.atr && m.rsi != null) {
+    rynek[sym] = {
+      m, c,
+      zamkniety: mZamknieta?.emaTrend && mZamknieta?.atr && mZamknieta?.rsi != null
+        ? { m: mZamknieta, c: cZamkniete } : null,
+    };
+  }
+  if (!snapshotWejscie) await sleep(300);
 }
 if (!Object.keys(rynek).length) {
   log('!! brak danych rynkowych');
   process.exit(1);
+}
+const kontekstRynkuHL = await kontekstyHL(Object.keys(rynek));
+if (KONTEKST_WYMAGANY) {
+  const brak = Object.keys(rynek).filter((sym) => !kontekstRynkuHL[sym]);
+  if (brak.length) {
+    console.error(`! brak wymaganego kontekstu HL dla: ${brak.join(', ')}`);
+    process.exit(1);
+  }
+}
+if (SNAPSHOT_OUT) {
+  if (ZRODLO !== 'hl' || snapshotWejscie) {
+    console.error('! LIGA_SNAPSHOT_OUT wymaga bezpośredniego źródła LIGA_ZRODLO=hl');
+    process.exit(1);
+  }
+  const f = sciezkaOdRoot(SNAPSHOT_OUT);
+  writeJSONAtomic(f, {
+    version: 1,
+    source: 'hl',
+    fetchedAt: czasMigawki,
+    intervalMin: CFG.CANDLE_MINUTES,
+    assets: Object.keys(rynek),
+    candles: Object.fromEntries(Object.entries(rynek).map(([sym, r]) => [sym, r.c])),
+    contexts: kontekstRynkuHL,
+  });
+  log(`> wspólna migawka HL: ${f}`);
 }
 log(`> zeskanowano ${Object.keys(rynek).length} aktywów`);
 
@@ -291,7 +447,9 @@ const SEJSMO_PROG = envNum('SEJSMO_PROG', 0.05);
 let rynekTrzasl = false;
 let odczytSejsmo = null;
 {
-  const c = await swiece('BTC', CFG.CANDLE_MINUTES);
+  // BTC jest juz w migawce Ligi HL. Ponowne pobranie kosztowalo jedno wywolanie
+  // API i moglo dac inna ostatnia cene niz ta, na ktorej decydowali gracze.
+  const c = rynek.BTC?.c || await swiece('BTC', CFG.CANDLE_MINUTES);
   if (c && c.length > 192) {
     for (let i = c.length - 96; i < c.length; i++) {
       if (Math.abs(c[i].c / c[i - 96].c - 1) > SEJSMO_PROG) { rynekTrzasl = true; break; }
@@ -319,6 +477,128 @@ const nowe = [];
 const cenyTeraz = Object.fromEntries(Object.entries(rynek).map(([s, r]) => [s, r.m.price]));
 const migawka = migawkaRynku(cenyTeraz);
 
+// W H38 OI, funding i spread sa tylko rejestrowane. Nie wolno im zmieniac
+// sygnalu w trakcie forward testu. Historia 25 przebiegow daje ponad godzine
+// odniesienia przy cronie co okolo 5 minut, z zapasem na opoznienia serwera.
+if (TEST_CZAS) {
+  stan.kontekstHL = stan.kontekstHL || {};
+  for (const [sym, ctx] of Object.entries(kontekstRynkuHL)) {
+    const h = stan.kontekstHL[sym] = stan.kontekstHL[sym] || [];
+    if (h[h.length - 1]?.tsMs !== czasMigawki) {
+      h.push({ ts: new Date(czasMigawki).toISOString(), tsMs: czasMigawki, ...ctx });
+      if (h.length > 25) h.splice(0, h.length - 25);
+    }
+  }
+}
+
+const zmianaWzgledna = (a, b) => (a != null && b > 0 ? a / b - 1 : null);
+function zwrotTla(sym, minuty) {
+  const r = rynek[sym];
+  if (!r) return null;
+  const cel = teraz - minuty * 60000;
+  let poprzednia = null;
+  for (let i = r.c.length - 1; i >= 0; i--) {
+    if (Number(r.c[i].t) <= cel) { poprzednia = r.c[i].c; break; }
+  }
+  return zmianaWzgledna(r.m.price, poprzednia);
+}
+function kontekstDecyzji(sym) {
+  const h = stan.kontekstHL?.[sym] || [];
+  const b = h[h.length - 1] || (kontekstRynkuHL[sym]
+    ? { ts: nowISO(), tsMs: czasMigawki, ...kontekstRynkuHL[sym] } : null);
+  if (!b) return null;
+  const poprzednia = h.length > 1 ? h[h.length - 2] : null;
+  const cel1h = Number(b.tsMs) - 3600000;
+  let godzina = null;
+  for (const x of h.slice(0, -1)) {
+    if (!godzina || Math.abs(Number(x.tsMs) - cel1h) < Math.abs(Number(godzina.tsMs) - cel1h)) godzina = x;
+  }
+  if (godzina && Math.abs(Number(godzina.tsMs) - cel1h) > 20 * 60000) godzina = null;
+  return {
+    ...b,
+    oiZmianaOdPoprzedniej: zmianaWzgledna(b.openInterest, poprzednia?.openInterest),
+    sekundOdPoprzedniej: poprzednia ? (Number(b.tsMs) - Number(poprzednia.tsMs)) / 1000 : null,
+    oiZmiana1h: zmianaWzgledna(b.openInterest, godzina?.openInterest),
+    btcZmiana15m: zwrotTla('BTC', 15),
+    ethZmiana15m: zwrotTla('ETH', 15),
+    btcZmiana1h: zwrotTla('BTC', 60),
+    ethZmiana1h: zwrotTla('ETH', 60),
+  };
+}
+const kosztTrzymania = (p) => (p.borrowPaid || 0) + (p.fundingPaid || 0);
+
+function skrotMetryk(m) {
+  return m ? { price: m.price, atr: m.atr, volPct: m.volPct, rsi: m.rsi, barTs: m.barTs } : null;
+}
+
+// Surowy przyrzad H38, niezalezny od slotow i gotowki portfela. Dzieki temu
+// brak wejscia z powodu zajetego miejsca nie udaje sygnalu, ktory zniknal.
+function obserwujTrwaloscSygnalu() {
+  if (!TEST_CZAS) return;
+  const f = stan.forwardTest;
+  f.sygnaly = f.sygnaly || { pierwszeWTrakcie: 0, przetrwaly: 0, zniknely: 0, tylkoNaZamknieciu: 0 };
+  f.budowaneSwiece = f.budowaneSwiece || {};
+  f.obserwacje = f.obserwacje || [];
+
+  for (const [sym, r] of Object.entries(rynek)) {
+    const oczekujaca = f.budowaneSwiece[sym];
+    if (oczekujaca) {
+      const i = r.c.findIndex((x) => Number(x.t) === Number(oczekujaca.barTs));
+      if (i >= 0) {
+        const x = r.c[i];
+        const koniec = Number.isFinite(Number(x.T)) ? Number(x.T)
+          : Number(x.t) + CFG.CANDLE_MINUTES * 60000 - 1;
+        if (koniec <= czasMigawki) {
+          const mClose = analyze(r.c.slice(0, i + 1), CFG);
+          const close = !!WSZYSCY.panika.wejscie(sym, mClose, r.c.slice(0, i + 1));
+          if (oczekujaca.mialSygnal) {
+            f.sygnaly.pierwszeWTrakcie += 1;
+            if (close) f.sygnaly.przetrwaly += 1;
+            else f.sygnaly.zniknely += 1;
+          } else if (close) {
+            f.sygnaly.tylkoNaZamknieciu += 1;
+          }
+          if (oczekujaca.mialSygnal || close) {
+            f.obserwacje.push({
+              sym,
+              barTs: oczekujaca.barTs,
+              pierwszyOdczytMs: oczekujaca.pierwszyOdczytMs,
+              pierwszySygnalMs: oczekujaca.pierwszySygnalMs || null,
+              sygnalWTrakcie: !!oczekujaca.mialSygnal,
+              sygnalNaZamknieciu: close,
+              metrykiPierwszegoSygnalu: oczekujaca.metrykiPierwszegoSygnalu || null,
+              metrykiZamkniecia: skrotMetryk(mClose),
+            });
+            if (f.obserwacje.length > 1000) f.obserwacje.splice(0, f.obserwacje.length - 1000);
+          }
+          delete f.budowaneSwiece[sym];
+        }
+      }
+    }
+
+    const ostatnia = r.c[r.c.length - 1];
+    const koniec = Number.isFinite(Number(ostatnia?.T)) ? Number(ostatnia.T)
+      : Number(ostatnia?.t) + CFG.CANDLE_MINUTES * 60000 - 1;
+    if (!ostatnia || koniec <= czasMigawki) continue;
+    let b = f.budowaneSwiece[sym];
+    if (!b || Number(b.barTs) !== Number(ostatnia.t)) {
+      b = f.budowaneSwiece[sym] = {
+        barTs: Number(ostatnia.t),
+        pierwszyOdczytMs: czasMigawki,
+        mialSygnal: false,
+      };
+    }
+    const sygnal = !!WSZYSCY.panika.wejscie(sym, r.m, r.c);
+    if (sygnal && !b.mialSygnal) {
+      b.mialSygnal = true;
+      b.pierwszySygnalMs = czasMigawki;
+      b.metrykiPierwszegoSygnalu = skrotMetryk(r.m);
+    }
+  }
+}
+
+obserwujTrwaloscSygnalu();
+
 for (const [id, def] of Object.entries(GRACZE)) {
   const g = stan.gracze[id];
 
@@ -330,7 +610,19 @@ for (const [id, def] of Object.entries(GRACZE)) {
     const px = r.m.price;
 
     const godz = Math.max(0, (teraz - Date.parse(p.lastAccrual || p.entryTs)) / 3600000);
-    p.borrowPaid = (p.borrowPaid || 0) + p.notional * (p.side === 'LONG' ? P.BORROW_L : P.BORROW_S) * godz;
+    if (FUNDING_HL) {
+      const stopa = kontekstRynkuHL[sym]?.funding;
+      if (Number.isFinite(stopa)) {
+        // Na HL dodatni funding placi long, ujemny funding placi short.
+        const koszt = p.notional * stopa * (p.side === 'LONG' ? 1 : -1) * godz;
+        p.fundingPaid = (p.fundingPaid || 0) + koszt;
+        g.stats.funding = (g.stats.funding || 0) + koszt;
+      } else {
+        p.brakiFundingu = (p.brakiFundingu || 0) + 1;
+      }
+    } else {
+      p.borrowPaid = (p.borrowPaid || 0) + p.notional * (p.side === 'LONG' ? P.BORROW_L : P.BORROW_S) * godz;
+    }
     p.lastAccrual = nowISO();
     p.bestPrice = p.side === 'LONG' ? Math.max(p.bestPrice ?? p.entryPrice, px) : Math.min(p.bestPrice ?? p.entryPrice, px);
     p.worstPrice = p.side === 'LONG' ? Math.min(p.worstPrice ?? p.entryPrice, px) : Math.max(p.worstPrice ?? p.entryPrice, px);
@@ -344,7 +636,7 @@ for (const [id, def] of Object.entries(GRACZE)) {
 
     const brutto = zlikwidowany ? -p.margin : pnlAt(p, px);
     const oplata = zlikwidowany ? 0 : p.notional * P.OPEN_FEE;
-    const netto = brutto - oplata - p.borrowPaid;
+    const netto = brutto - oplata - kosztTrzymania(p);
     g.cash += zlikwidowany ? 0 : p.margin + netto;
     g.stats.oplaty += oplata;
     g.stats.trejdy += 1;
@@ -397,6 +689,10 @@ for (const [id, def] of Object.entries(GRACZE)) {
       // i to jego trzeba uzywac w analizach. Bez tego pola latwo policzyc
       // pnlUsd/margin i zawyzyc kazdy wynik o 0,18 pkt proc. (tak sie wlasnie stalo).
       R,
+      entryTs: p.entryTs,
+      fundingUsd: p.fundingPaid || 0,
+      borrowUsd: p.borrowPaid || 0,
+      brakiFundingu: p.brakiFundingu || 0,
       holdMs: teraz - Date.parse(p.entryTs),
       liquidated: zlikwidowany,
       reason: powod,
@@ -404,6 +700,10 @@ for (const [id, def] of Object.entries(GRACZE)) {
       powodWejscia: p.powodWejscia || null,
       warunki: p.warunkiWejscia || null,
       prognoza: p.prognoza || null,
+      wariantCzasu: p.wariantCzasu || null,
+      barDecyzji: p.barDecyzji ?? null,
+      kontekstWejscia: p.kontekstWejscia || null,
+      kontekstWyjscia: kontekstDecyzji(sym),
       // jak daleko cena zaszla w obie strony i co robil w tym czasie caly rynek
       ...wychylenia(p, p.atrAtEntry || r.m.atr),
       rynek: zmianaRynku(p.rynekWejscie, migawka),
@@ -414,9 +714,10 @@ for (const [id, def] of Object.entries(GRACZE)) {
   // ── wejścia ──
   const otwarte = Object.keys(g.positions).length;
   const kapital = g.cash + Object.entries(g.positions).reduce(
-    (a, [s, p]) => a + p.margin + (rynek[s] ? pnlAt(p, rynek[s].m.price) - (p.borrowPaid || 0) : 0), 0
+    (a, [s, p]) => a + p.margin + (rynek[s] ? pnlAt(p, rynek[s].m.price) - kosztTrzymania(p) : 0), 0
   );
   let sloty = P.MAX_POZ - otwarte;
+  if (TEST_CZAS && stan.forwardTest?.freezeNewEntries) sloty = 0;
 
   for (const sym of aktywa) {
     if (sloty <= 0) break;
@@ -428,7 +729,17 @@ for (const [id, def] of Object.entries(GRACZE)) {
       && teraz - g.ostatniaWygrana[sym] < def.pauzaPoWygranejH * 3600000) continue;
     // Sejsmograf: cisza po trzesieniu calego rynku (czujnik liczony wyzej).
     if (def.sejsmograf && rynekTrzasl) continue;
-    const sygnal = def.wejscie(sym, r.m, r.c);
+    let decyzja = r;
+    if (def.tylkoZamknieta) {
+      if (!r.zamkniety) continue;
+      decyzja = r.zamkniety;
+      g.ostatniaDecyzja = g.ostatniaDecyzja || {};
+      // Jedna zamknieta swieca moze byc widoczna w trzech kolejnych przebiegach
+      // crona. Ramie 15m ma ja ocenic raz, a nie dostac trzy losy na wejscie.
+      if (g.ostatniaDecyzja[sym] === decyzja.m.barTs) continue;
+      g.ostatniaDecyzja[sym] = decyzja.m.barTs;
+    }
+    const sygnal = def.wejscie(sym, decyzja.m, decyzja.c);
     if (!sygnal) continue;
     const { kier, powod } = sygnal;
 
@@ -437,9 +748,9 @@ for (const [id, def] of Object.entries(GRACZE)) {
     // Gorny limit ten sam co u wszystkich (ALLOC), zeby spokojny rynek nie
     // rozdmuchal pozycji w nieskonczonosc.
     let margin = Math.min(g.cash, kapital * P.ALLOC);
-    if (def.ryzykoPct && r.m.volPct > 0) {
+    if (def.ryzykoPct && decyzja.m.volPct > 0) {
       const stopA = def.stopAtr ?? CFG.STOP_ATR;
-      const naMiare = (kapital * def.ryzykoPct) / (P.LEVERAGE * stopA * r.m.volPct);
+      const naMiare = (kapital * def.ryzykoPct) / (P.LEVERAGE * stopA * decyzja.m.volPct);
       margin = Math.min(g.cash, kapital * P.ALLOC, naMiare);
     }
     if (margin < P.MIN_MARGIN) break;
@@ -479,10 +790,11 @@ for (const [id, def] of Object.entries(GRACZE)) {
       // ze Luzny istnieje wlasnie po to, zeby zmierzyc wplyw szerokosci stopa.
       stopPrice: (() => {
         const s = def.stopAtr ?? CFG.STOP_ATR;
-        return long ? px - s * r.m.atr : px + s * r.m.atr;
+        return long ? px - s * decyzja.m.atr : px + s * decyzja.m.atr;
       })(),
-      takeProfit: long ? px + CFG.TAKE_PROFIT_ATR * r.m.atr : px - CFG.TAKE_PROFIT_ATR * r.m.atr,
-      atrAtEntry: r.m.atr, bestPrice: px, worstPrice: px, trailArmed: false, borrowPaid: 0,
+      takeProfit: long ? px + CFG.TAKE_PROFIT_ATR * decyzja.m.atr : px - CFG.TAKE_PROFIT_ATR * decyzja.m.atr,
+      atrAtEntry: decyzja.m.atr, bestPrice: px, worstPrice: px, trailArmed: false,
+      borrowPaid: 0, fundingPaid: 0, brakiFundingu: 0,
       trailAtr: def.trailAtr ?? CFG.TRAIL_ATR,
       bezSmyczy: !!def.bezSmyczy,
       minGodzin: def.minGodzin ?? 0,
@@ -490,22 +802,28 @@ for (const [id, def] of Object.entries(GRACZE)) {
       karencjaStopH: def.karencjaStopH ?? 0,
       maxHoldH: def.maxHoldH ?? 0,
       rynekWejscie: migawka,
+      wariantCzasu: def.wariantCzasu || null,
+      barDecyzji: decyzja.m.barTs,
+      kontekstWejscia: kontekstDecyzji(sym),
       // Powod i liczby zostaja PRZY POZYCJI, zeby przy zamknieciu trafily na ten sam
       // wiersz co wynik. Inaczej mielibysmy osobno "dlaczego" i osobno "co z tego wyszlo",
       // a zeby czegokolwiek sie nauczyc, trzeba miec jedno obok drugiego.
       powodWejscia: powod,
       // Ostatnia swieca to ta, na ktorej zapadla decyzja — dorzuca do dziennika
       // jej ksztalt, czyli JAK cena doszla do tego stanu, a nie tylko jaki on jest.
-      warunkiWejscia: warunki(r.m, r.c[r.c.length - 1], long, r.c),
+      warunkiWejscia: warunki(decyzja.m, decyzja.c[decyzja.c.length - 1], long, decyzja.c),
       // Obietnica zlozona przed wynikiem: ile ruchu gracz spodziewa sie zlapac
       // i ile ma za to zaplacic. Wraca na wpisie o zamknieciu, obok rezultatu.
-      prognoza: prognozaWejscia(r.m, 2 * P.OPEN_FEE, sygnal.score ?? null),
+      prognoza: prognozaWejscia(decyzja.m, 2 * P.OPEN_FEE, sygnal.score ?? null),
     };
     nowe.push({
       id: `${teraz}-${id}-${sym}-o`, ts: nowISO(), gracz: id, sym, side: kier, type: 'OPEN',
       price: px, margin, notional, leverage: P.LEVERAGE, liqPrice: g.positions[sym].liqPrice, pnlUsd: null,
       reason: powod, warunki: g.positions[sym].warunkiWejscia,
       prognoza: g.positions[sym].prognoza,
+      wariantCzasu: g.positions[sym].wariantCzasu,
+      barDecyzji: g.positions[sym].barDecyzji,
+      kontekstWejscia: g.positions[sym].kontekstWejscia,
     });
   }
 }
@@ -514,7 +832,7 @@ for (const [id, def] of Object.entries(GRACZE)) {
 const ranking = Object.entries(GRACZE).map(([id, def]) => {
   const g = stan.gracze[id];
   const otwarty = Object.entries(g.positions).reduce(
-    (a, [s, p]) => a + (rynek[s] ? pnlAt(p, rynek[s].m.price) - (p.borrowPaid || 0) : 0), 0
+    (a, [s, p]) => a + (rynek[s] ? pnlAt(p, rynek[s].m.price) - kosztTrzymania(p) : 0), 0
   );
   const zamrozony = Object.values(g.positions).reduce((a, p) => a + p.margin, 0);
   const kapital = g.cash + zamrozony + otwarty;
@@ -543,6 +861,44 @@ stan.lastRun = {
 };
 
 for (const t of nowe) trejdy.push(t);
+if (TEST_CZAS) {
+  const ramiona = ['panika5m', 'panika15m'];
+  const zamkniete = Object.fromEntries(ramiona.map((id) => [id,
+    stan.gracze[id]?.stats?.trejdy || 0]));
+  const noweWejscia = nowe
+    .filter((t) => ramiona.includes(t.gracz) && t.type === 'OPEN')
+    .map((t) => Date.parse(t.ts))
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b);
+  let epizody = stan.forwardTest.postep?.epizody || 0;
+  let poprzedni = stan.forwardTest.ostatnieWejscieMs ?? null;
+  for (const ts of noweWejscia) {
+    if (poprzedni == null || ts - poprzedni > 72 * 3600000) epizody += 1;
+    poprzedni = ts;
+  }
+  stan.forwardTest.ostatnieWejscieMs = poprzedni;
+  const gotowy = ramiona.every((id) => zamkniete[id] >= 40) && epizody >= 15;
+  if (gotowy && !stan.forwardTest.freezeNewEntries) {
+    stan.forwardTest.freezeNewEntries = true;
+    stan.forwardTest.freezeAt = nowISO();
+  }
+  const otwarteRazem = Object.values(stan.gracze)
+    .reduce((n, g) => n + Object.keys(g.positions || {}).length, 0);
+  if (stan.forwardTest.freezeNewEntries && otwarteRazem === 0 && !stan.forwardTest.completeAt) {
+    stan.forwardTest.completeAt = nowISO();
+  }
+  stan.forwardTest.postep = {
+    ts: nowISO(),
+    zamkniete,
+    epizody,
+    otwarteRazem,
+    progDanychOsiagniety: gotowy,
+    gotowyDoRozliczenia: !!stan.forwardTest.completeAt,
+    uwaga: stan.forwardTest.completeAt
+      ? 'próg danych osiągnięty i wszystkie pozycje zamknięte — wolno rozliczyć H38'
+      : gotowy ? 'nowe wejścia zamrożone — czekam na zamknięcie pozycji' : 'nie wyciągać werdyktu',
+  };
+}
 /**
  * PRZYCINANIE DZIENNIKA — Z GWARANCJA DLA GRACZY RZADKICH.
  *
@@ -562,7 +918,7 @@ for (const t of nowe) trejdy.push(t);
  * Gracz rzadki jest wiec widoczny nawet po miesiacach, a plik zostaje
  * ograniczony.
  */
-const MAX_LACZNIE = 1500, MIN_NA_GRACZA = 60;
+const MAX_LACZNIE = 1500, MIN_NA_GRACZA = TEST_CZAS ? 200 : 60;
 if (trejdy.length > MAX_LACZNIE) {
   const wgGracza = new Map();
   for (const t of trejdy) {
