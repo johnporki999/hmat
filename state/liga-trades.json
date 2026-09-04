@@ -9410,80 +9410,6 @@
     }
   },
   {
-    "id": "1788185417416-sjesta-ORCA",
-    "ts": "2026-08-31T14:10:17.419Z",
-    "gracz": "sjesta",
-    "sym": "ORCA",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 1.254,
-    "entryPrice": 1.29,
-    "margin": 50.14497105087142,
-    "notional": 150.43491315261426,
-    "leverage": 3,
-    "pnlUsd": 4.096113617279535,
-    "pnlPct": 0.0816854318875582,
-    "R": 0.0798854318875582,
-    "holdMs": 47100013,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "SHORT: trend spadkowy, RSI 39.5, odbicie do sredniej",
-    "warunki": {
-      "rsi": 39.5,
-      "rsiPrev": 39.5,
-      "ext": -1.59,
-      "nadTrendem": -0.0057,
-      "fastNadSlow": -0.0071,
-      "volPct": 0.0056,
-      "er": 0.088,
-      "slope": -0.00041,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01783,
-      "koszt": 0.0012,
-      "score": 8
-    },
-    "mfe": 5.01,
-    "mae": 0,
-    "rynek": {
-      "SOL": 0.00776,
-      "BTC": 0.00292,
-      "ETH": 0.01015
-    }
-  },
-  {
-    "id": "1788185417416-sjesta-JUP-o",
-    "ts": "2026-08-31T14:10:17.420Z",
-    "gracz": "sjesta",
-    "sym": "JUP",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.20872,
-    "margin": 53.517528804190874,
-    "notional": 160.55258641257262,
-    "leverage": 3,
-    "liqPrice": 0.271336,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 50.4, odbicie do sredniej",
-    "warunki": {
-      "rsi": 50.4,
-      "rsiPrev": 41.8,
-      "ext": -0.07,
-      "nadTrendem": -0.0221,
-      "fastNadSlow": -0.0005,
-      "volPct": 0.0044,
-      "er": 0.107,
-      "slope": -0.00216,
-      "volRel": 1.104
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01404,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1788185717025-sito5-KMNO-o",
     "ts": "2026-08-31T14:15:17.028Z",
     "gracz": "sito5",
@@ -57251,6 +57177,82 @@
       "spodziewanyRuch": 0.02791,
       "koszt": 0.0012,
       "score": 9
+    }
+  },
+  {
+    "id": "1788495616728-sjesta-ORCA",
+    "ts": "2026-09-04T04:20:16.729Z",
+    "gracz": "sjesta",
+    "sym": "ORCA",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 1.27,
+    "entryPrice": 1.271,
+    "margin": 52.48788299642022,
+    "notional": 157.46364898926066,
+    "leverage": 3,
+    "pnlUsd": -0.24500521555353302,
+    "pnlPct": -0.004667843349106743,
+    "R": -0.006467843349106743,
+    "holdMs": 43500057,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 61.3, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 61.3,
+      "rsiPrev": 61.3,
+      "ext": 1.58,
+      "nadTrendem": 0.0218,
+      "fastNadSlow": 0.0072,
+      "volPct": 0.0035,
+      "er": 0.204,
+      "slope": 0.00221,
+      "volRel": 6.342
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01108,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "mfe": 5.68,
+    "mae": 2.05,
+    "rynek": {
+      "SOL": -0.00345,
+      "BTC": 0.00204,
+      "ETH": 0.00445
+    }
+  },
+  {
+    "id": "1788495616728-sjesta-ETH-o",
+    "ts": "2026-09-04T04:20:16.731Z",
+    "gracz": "sjesta",
+    "sym": "ETH",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 2511.14,
+    "margin": 51.49233892523777,
+    "notional": 154.4770167757133,
+    "leverage": 3,
+    "liqPrice": 1757.7979999999998,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 58.1, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 58.1,
+      "rsiPrev": 54.1,
+      "ext": 0.82,
+      "nadTrendem": 0.0249,
+      "fastNadSlow": 0.0054,
+      "volPct": 0.0029,
+      "er": 0.11,
+      "slope": 0.00239,
+      "volRel": 0.307,
+      "knotZa": 0.012,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00912,
+      "koszt": 0.0012,
+      "score": 10
     }
   }
 ]
