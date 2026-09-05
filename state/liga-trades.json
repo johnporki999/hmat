@@ -13720,37 +13720,6 @@
     }
   },
   {
-    "id": "1788411017704-czujny-ORCA-o",
-    "ts": "2026-09-03T04:50:17.706Z",
-    "gracz": "czujny",
-    "sym": "ORCA",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 1.242,
-    "margin": 49.135740772743034,
-    "notional": 147.40722231822912,
-    "leverage": 3,
-    "liqPrice": 0.8694,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 46.6, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 46.6,
-      "rsiPrev": 46.6,
-      "ext": -1.26,
-      "nadTrendem": 0.0044,
-      "fastNadSlow": 0.0065,
-      "volPct": 0.0026,
-      "er": 0.117,
-      "slope": 0.00116,
-      "volRel": 2.322
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00846,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1788411017704-sejsmograf-SOL",
     "ts": "2026-09-03T04:50:17.707Z",
     "gracz": "sejsmograf",
@@ -59641,5 +59610,58 @@
     "wariantCzasu": null,
     "barDecyzji": 1788624900000,
     "kontekstWejscia": null
+  },
+  {
+    "id": "1788625816997-kontra-SOL",
+    "ts": "2026-09-05T16:30:16.999Z",
+    "gracz": "kontra",
+    "sym": "SOL",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 103.2,
+    "entryPrice": 103.17,
+    "margin": 58.449322612672916,
+    "notional": 175.34796783801875,
+    "leverage": 3,
+    "pnlUsd": -0.15996699921512522,
+    "pnlPct": -0.002736849497387355,
+    "R": -0.004536849497387354,
+    "entryTs": "2026-09-05T12:55:16.329Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.0037701499348131414,
+    "brakiFundingu": 0,
+    "holdMs": 12900668,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "RSI 70.7 — euforia, sprzedaję",
+    "warunki": {
+      "rsi": 70.7,
+      "rsiPrev": 65,
+      "ext": 2.92,
+      "nadTrendem": 0.0089,
+      "fastNadSlow": 0.0019,
+      "volPct": 0.0022,
+      "er": 0.256,
+      "slope": 0.00029,
+      "volRel": 3.443,
+      "knotZa": 0.171,
+      "zamkniecie": 0.171
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0072,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788612300000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 2.07,
+    "mae": 0.56,
+    "rynek": {
+      "SOL": 0.00029,
+      "BTC": 0.00199,
+      "ETH": 0.00174
+    }
   }
 ]
