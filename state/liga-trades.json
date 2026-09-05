@@ -13342,49 +13342,6 @@
     }
   },
   {
-    "id": "1788368416505-antytrend-JTO",
-    "ts": "2026-09-02T17:00:16.506Z",
-    "gracz": "antytrend",
-    "sym": "JTO",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.41974,
-    "entryPrice": 0.41909,
-    "margin": 25.122779576274873,
-    "notional": 75.36833872882463,
-    "leverage": 3,
-    "pnlUsd": 0.07035489377220178,
-    "pnlPct": 0.0028004422662945556,
-    "R": 0.0010004422662945555,
-    "holdMs": 4499700,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "odwrotnie do: SHORT: trend spadkowy, trend przyspiesza, RSI 49.4, odbicie do sredniej",
-    "warunki": {
-      "rsi": 49.4,
-      "rsiPrev": 49.4,
-      "ext": 0.1,
-      "nadTrendem": -0.0313,
-      "fastNadSlow": -0.0056,
-      "volPct": 0.0053,
-      "er": 0.135,
-      "slope": -0.00362,
-      "volRel": 1.186
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01681,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 2.58,
-    "mae": 0.05,
-    "rynek": {
-      "SOL": -0.00564,
-      "BTC": -0.00124,
-      "ETH": -0.00379
-    }
-  },
-  {
     "id": "1788368416505-antytrend-JTO-o",
     "ts": "2026-09-02T17:00:16.508Z",
     "gracz": "antytrend",
@@ -58466,5 +58423,58 @@
     "wariantCzasu": null,
     "barDecyzji": 1788590700000,
     "kontekstWejscia": null
+  },
+  {
+    "id": "1788591016202-czujny-SOL",
+    "ts": "2026-09-05T06:50:16.204Z",
+    "gracz": "czujny",
+    "sym": "SOL",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 102.2,
+    "entryPrice": 101.56,
+    "margin": 51.23509878659459,
+    "notional": 153.70529635978377,
+    "leverage": 3,
+    "pnlUsd": -1.071893324900422,
+    "pnlPct": -0.020921074620449013,
+    "R": -0.022721074620449012,
+    "entryTs": "2026-09-04T18:50:17.160Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.011066467779099854,
+    "brakiFundingu": 0,
+    "holdMs": 43199042,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 44.4, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 44.4,
+      "rsiPrev": 45.7,
+      "ext": -0.37,
+      "nadTrendem": -0.0081,
+      "fastNadSlow": -0.0069,
+      "volPct": 0.0039,
+      "er": 0.17,
+      "slope": -0.00085,
+      "volRel": 0.295,
+      "knotZa": 0.222,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01249,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788547500000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 0,
+    "mae": 1.61,
+    "rynek": {
+      "SOL": 0.0063,
+      "BTC": 0.00107,
+      "ETH": 0.00126
+    }
   }
 ]
