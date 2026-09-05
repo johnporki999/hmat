@@ -9466,80 +9466,6 @@
     }
   },
   {
-    "id": "1788275117348-sjesta-RENDER",
-    "ts": "2026-09-01T15:05:17.351Z",
-    "gracz": "sjesta",
-    "sym": "RENDER",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 1.449,
-    "entryPrice": 1.443,
-    "margin": 48.05165370661578,
-    "notional": 144.15496111984734,
-    "leverage": 3,
-    "pnlUsd": 0.48851852445192795,
-    "pnlPct": 0.010166528865679153,
-    "R": 0.008366528865679151,
-    "holdMs": 43498991,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 60.8, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 60.8,
-      "rsiPrev": 60.8,
-      "ext": 1.44,
-      "nadTrendem": 0.0072,
-      "fastNadSlow": 0.0058,
-      "volPct": 0.0034,
-      "er": 0.187,
-      "slope": 0.00074,
-      "volRel": 0.41
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.011,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 4.23,
-    "mae": 3.63,
-    "rynek": {
-      "SOL": -0.01848,
-      "BTC": -0.00755,
-      "ETH": -0.01006
-    }
-  },
-  {
-    "id": "1788275117348-sjesta-ORCA-o",
-    "ts": "2026-09-01T15:05:17.351Z",
-    "gracz": "sjesta",
-    "sym": "ORCA",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 1.233,
-    "margin": 50.16171906230293,
-    "notional": 150.4851571869088,
-    "leverage": 3,
-    "liqPrice": 1.6029000000000002,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 39.8, odbicie do sredniej",
-    "warunki": {
-      "rsi": 39.8,
-      "rsiPrev": 39.8,
-      "ext": -1.59,
-      "nadTrendem": -0.0263,
-      "fastNadSlow": -0.0076,
-      "volPct": 0.0019,
-      "er": 0.19,
-      "slope": -0.0029,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00624,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1788280817222-sejsmograf-SOL",
     "ts": "2026-09-01T16:40:17.226Z",
     "gracz": "sejsmograf",
@@ -59482,6 +59408,93 @@
     },
     "wariantCzasu": null,
     "barDecyzji": 1788617700000,
+    "kontekstWejscia": null
+  },
+  {
+    "id": "1788618616635-sjesta-PENGU",
+    "ts": "2026-09-05T14:30:16.636Z",
+    "gracz": "sjesta",
+    "sym": "PENGU",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.008582,
+    "entryPrice": 0.008323,
+    "margin": 53.45428696356276,
+    "notional": 160.36286089068827,
+    "leverage": 3,
+    "pnlUsd": -5.098029499360136,
+    "pnlPct": -0.09537176134881792,
+    "R": -0.09717176134881791,
+    "entryTs": "2026-09-05T02:30:16.323Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.011546136942258374,
+    "brakiFundingu": 0,
+    "holdMs": 43200312,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 52.3, odbicie do sredniej, RSI zawraca w dol",
+    "warunki": {
+      "rsi": 52.3,
+      "rsiPrev": 54.9,
+      "ext": 0.29,
+      "nadTrendem": -0.0163,
+      "fastNadSlow": -0.0039,
+      "volPct": 0.0043,
+      "er": 0.118,
+      "slope": -0.00163,
+      "volRel": 2.928,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01375,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788575400000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 0,
+    "mae": 10.4,
+    "rynek": {
+      "SOL": 0.0109,
+      "BTC": 0.00238,
+      "ETH": 0.0025
+    }
+  },
+  {
+    "id": "1788618616635-sjesta-RAY-o",
+    "ts": "2026-09-05T14:30:16.637Z",
+    "gracz": "sjesta",
+    "sym": "RAY",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.834,
+    "margin": 49.86146576753331,
+    "notional": 149.58439730259994,
+    "leverage": 3,
+    "liqPrice": 0.5838,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 47.7, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 47.7,
+      "rsiPrev": 47.7,
+      "ext": -0.54,
+      "nadTrendem": 0.009,
+      "fastNadSlow": 0.0037,
+      "volPct": 0.0034,
+      "er": 0.151,
+      "slope": 0.00131,
+      "volRel": 2.067
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01095,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788618600000,
     "kontekstWejscia": null
   }
 ]
