@@ -13418,82 +13418,6 @@
     }
   },
   {
-    "id": "1788403816622-krawiec-PYTH",
-    "ts": "2026-09-03T02:50:16.625Z",
-    "gracz": "krawiec",
-    "sym": "PYTH",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.05887,
-    "entryPrice": 0.05712,
-    "margin": 25.55264015793306,
-    "notional": 76.65792047379918,
-    "leverage": 3,
-    "pnlUsd": 2.3008943444385666,
-    "pnlPct": 0.09004526852088246,
-    "R": 0.08824526852088245,
-    "holdMs": 5699719,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 48.7, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 48.7,
-      "rsiPrev": 48.7,
-      "ext": -0.19,
-      "nadTrendem": 0.0618,
-      "fastNadSlow": 0.0071,
-      "volPct": 0.008,
-      "er": 0.149,
-      "slope": 0.00636,
-      "volRel": 1.081
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02556,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 3.84,
-    "mae": 0,
-    "rynek": {
-      "SOL": 0.00638,
-      "BTC": 0.00589,
-      "ETH": 0.00749
-    }
-  },
-  {
-    "id": "1788403816622-krawiec-BONK-o",
-    "ts": "2026-09-03T02:50:16.625Z",
-    "gracz": "krawiec",
-    "sym": "BONK",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.000002948,
-    "margin": 25.631918228898613,
-    "notional": 76.89575468669584,
-    "leverage": 3,
-    "liqPrice": 0.0000038324,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, trend przyspiesza, RSI 59.5, odbicie do sredniej",
-    "warunki": {
-      "rsi": 59.5,
-      "rsiPrev": 57.2,
-      "ext": 1.53,
-      "nadTrendem": -0.0079,
-      "fastNadSlow": -0.003,
-      "volPct": 0.0059,
-      "er": 0.056,
-      "slope": -0.00174,
-      "volRel": 0.566,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01876,
-      "koszt": 0.0012,
-      "score": 9
-    }
-  },
-  {
     "id": "1788404116622-trend-RAY",
     "ts": "2026-09-03T02:55:16.623Z",
     "gracz": "trend",
@@ -59495,6 +59419,93 @@
     },
     "wariantCzasu": null,
     "barDecyzji": 1788618600000,
+    "kontekstWejscia": null
+  },
+  {
+    "id": "1788621316236-antytrend-RAY",
+    "ts": "2026-09-05T15:15:16.237Z",
+    "gracz": "antytrend",
+    "sym": "RAY",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.838,
+    "entryPrice": 0.84,
+    "margin": 20.762508147973065,
+    "notional": 62.287524443919196,
+    "leverage": 3,
+    "pnlUsd": 0.11015254499098813,
+    "pnlPct": 0.0053053583028571496,
+    "R": 0.0035053583028571505,
+    "entryTs": "2026-09-05T13:10:16.441Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.0007785699710395383,
+    "brakiFundingu": 0,
+    "holdMs": 7499795,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "odwrotnie do: gotowy: trend, trend rosnie, RSI 60.0, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 60,
+      "rsiPrev": 60,
+      "ext": 1.4,
+      "nadTrendem": 0.0169,
+      "fastNadSlow": 0.0051,
+      "volPct": 0.0033,
+      "er": 0.268,
+      "slope": 0.00132,
+      "volRel": 190.173,
+      "knotZa": 1,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01059,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788613200000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 2.88,
+    "mae": 0,
+    "rynek": {
+      "SOL": -0.00271,
+      "BTC": 0.00038,
+      "ETH": 0.00018
+    }
+  },
+  {
+    "id": "1788621316236-antytrend-JTO-o",
+    "ts": "2026-09-05T15:15:16.238Z",
+    "gracz": "antytrend",
+    "sym": "JTO",
+    "side": "SHORT",
+    "type": "OPEN",
+    "price": 0.41943,
+    "margin": 20.74765207805637,
+    "notional": 62.24295623416911,
+    "leverage": 3,
+    "liqPrice": 0.545259,
+    "pnlUsd": null,
+    "reason": "odwrotnie do: gotowy: trend, trend rosnie, RSI 54.8, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 54.8,
+      "rsiPrev": 54.8,
+      "ext": 0.43,
+      "nadTrendem": 0.0034,
+      "fastNadSlow": 0.0101,
+      "volPct": 0.0054,
+      "er": 0.209,
+      "slope": 0.0006,
+      "volRel": 1.163
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01722,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788621300000,
     "kontekstWejscia": null
   }
 ]
