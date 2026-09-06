@@ -13863,51 +13863,6 @@
     }
   },
   {
-    "id": "1788525316689-luzny-JTO",
-    "ts": "2026-09-04T12:35:16.692Z",
-    "gracz": "luzny",
-    "sym": "JTO",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.40774,
-    "entryPrice": 0.42837,
-    "margin": 38.48769214771564,
-    "notional": 115.46307644314692,
-    "leverage": 3,
-    "pnlUsd": 5.491285544884201,
-    "pnlPct": 0.142676404805169,
-    "R": 0.140876404805169,
-    "holdMs": 299962,
-    "liquidated": false,
-    "reason": "TAKE PROFIT",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 40.4, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 40.4,
-      "rsiPrev": 49.9,
-      "ext": -1.43,
-      "nadTrendem": -0.0113,
-      "fastNadSlow": -0.006,
-      "volPct": 0.0047,
-      "er": 0.309,
-      "slope": -0.00061,
-      "volRel": 0.678,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01514,
-      "koszt": 0.0012,
-      "score": 10
-    },
-    "mfe": 10.18,
-    "mae": 0,
-    "rynek": {
-      "SOL": -0.01577,
-      "BTC": -0.00585,
-      "ETH": -0.00673
-    }
-  },
-  {
     "id": "1788525316689-czujny-SOL",
     "ts": "2026-09-04T12:35:16.692Z",
     "gracz": "czujny",
@@ -13950,51 +13905,6 @@
       "SOL": -0.01994,
       "BTC": -0.01561,
       "ETH": -0.0173
-    }
-  },
-  {
-    "id": "1788525316689-krawiec-SOL",
-    "ts": "2026-09-04T12:35:16.692Z",
-    "gracz": "krawiec",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 101.76,
-    "entryPrice": 104.03,
-    "margin": 26.908012383054224,
-    "notional": 80.72403714916267,
-    "leverage": 3,
-    "pnlUsd": -1.8257054030063158,
-    "pnlPct": -0.06784987969442458,
-    "R": -0.06964987969442457,
-    "holdMs": 50399946,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 42.4, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 42.4,
-      "rsiPrev": 45.9,
-      "ext": -1.22,
-      "nadTrendem": 0.0222,
-      "fastNadSlow": 0.0108,
-      "volPct": 0.0055,
-      "er": 0.278,
-      "slope": 0.00325,
-      "volRel": 1.497,
-      "knotZa": 0.493,
-      "zamkniecie": 0.493
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01748,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 0.95,
-    "mae": 4,
-    "rynek": {
-      "SOL": -0.02182,
-      "BTC": -0.0133,
-      "ETH": -0.01229
     }
   },
   {
@@ -63249,6 +63159,95 @@
     },
     "wariantCzasu": null,
     "barDecyzji": 1788723900000,
+    "kontekstWejscia": null
+  },
+  {
+    "id": "1788725116584-trend-SOL",
+    "ts": "2026-09-06T20:05:16.585Z",
+    "gracz": "trend",
+    "sym": "SOL",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 105.4,
+    "entryPrice": 105.9,
+    "margin": 24.601570869772274,
+    "notional": 73.80471260931682,
+    "leverage": 3,
+    "pnlUsd": -0.3986022762185333,
+    "pnlPct": -0.016202309939008498,
+    "R": -0.0180023099390085,
+    "entryTs": "2026-09-06T14:25:16.197Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.0058552720272735705,
+    "brakiFundingu": 0,
+    "holdMs": 20400387,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "gotowy: trend, trend rosnie, RSI 45.3, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 45.3,
+      "rsiPrev": 51.6,
+      "ext": -0.88,
+      "nadTrendem": 0.0182,
+      "fastNadSlow": 0.0064,
+      "volPct": 0.005,
+      "er": 0.128,
+      "slope": 0.00258,
+      "volRel": 1.007,
+      "knotZa": 0.245,
+      "zamkniecie": 0.245
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01605,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788704100000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 1.19,
+    "mae": 1.15,
+    "rynek": {
+      "SOL": -0.00472,
+      "BTC": 0.00176,
+      "ETH": 0.00322
+    }
+  },
+  {
+    "id": "1788725116584-trend-RAY-o",
+    "ts": "2026-09-06T20:05:16.587Z",
+    "gracz": "trend",
+    "sym": "RAY",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 1.258,
+    "margin": 24.56524534030034,
+    "notional": 73.69573602090102,
+    "leverage": 3,
+    "liqPrice": 0.8805999999999999,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 40.0, cofniecie do sredniej, RSI zawraca",
+    "warunki": {
+      "rsi": 40,
+      "rsiPrev": 39.3,
+      "ext": -1.62,
+      "nadTrendem": 0.2004,
+      "fastNadSlow": 0.0567,
+      "volPct": 0.035,
+      "er": 0.135,
+      "slope": 0.03032,
+      "volRel": 0.886,
+      "knotZa": 0.538,
+      "zamkniecie": 0.769
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.11184,
+      "koszt": 0.0012,
+      "score": 10
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788724800000,
     "kontekstWejscia": null
   }
 ]
