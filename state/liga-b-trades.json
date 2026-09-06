@@ -17969,49 +17969,6 @@
     }
   },
   {
-    "id": "1788492027171-sejsmograf-QNT",
-    "ts": "2026-09-04T03:20:27.174Z",
-    "gracz": "sejsmograf",
-    "sym": "QNT",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 65.47,
-    "entryPrice": 65.66,
-    "margin": 32.280452039897234,
-    "notional": 96.84135611969171,
-    "leverage": 3,
-    "pnlUsd": -0.35471576925719633,
-    "pnlPct": -0.010988562639048025,
-    "R": -0.012788562639048024,
-    "holdMs": 43498465,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 58.5, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 58.5,
-      "rsiPrev": 58.5,
-      "ext": 1.07,
-      "nadTrendem": 0.0235,
-      "fastNadSlow": 0.0054,
-      "volPct": 0.0042,
-      "er": 0.164,
-      "slope": 0.00213,
-      "volRel": 6.793
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01338,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 1.38,
-    "mae": 2.4,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
-    }
-  },
-  {
     "id": "1788494427847-sejsmograf-HFT",
     "ts": "2026-09-04T04:00:27.849Z",
     "gracz": "sejsmograf",
@@ -18502,51 +18459,6 @@
       "spodziewanyRuch": 0.02042,
       "koszt": 0.0012,
       "score": null
-    }
-  },
-  {
-    "id": "1788510628680-sito5-AVA",
-    "ts": "2026-09-04T08:30:28.684Z",
-    "gracz": "sito5",
-    "sym": "AVA",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.1802,
-    "entryPrice": 0.1821,
-    "margin": 46.96787763261652,
-    "notional": 140.90363289784955,
-    "leverage": 3,
-    "pnlUsd": -1.555035883609931,
-    "pnlPct": -0.03310849802014573,
-    "R": -0.03490849802014573,
-    "holdMs": 601316,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "prosty zjazd (ER 0.70), RSI 5.2 — kupuję",
-    "warunki": {
-      "rsi": 5.2,
-      "rsiPrev": 7.5,
-      "ext": -8.85,
-      "nadTrendem": -0.0556,
-      "fastNadSlow": -0.0092,
-      "volPct": 0.0064,
-      "er": 0.704,
-      "slope": -0.00074,
-      "volRel": null,
-      "knotZa": 0.167,
-      "zamkniecie": 0.167
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02042,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 1.12,
-    "mae": 1.64,
-    "rynek": {
-      "SOL": null,
-      "BTC": null,
-      "ETH": null
     }
   },
   {
@@ -62252,6 +62164,93 @@
     },
     "prognoza": {
       "spodziewanyRuch": 0.01005,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788703200000,
+    "kontekstWejscia": null
+  },
+  {
+    "id": "1788703828623-sejsmograf-AVA",
+    "ts": "2026-09-06T14:10:28.626Z",
+    "gracz": "sejsmograf",
+    "sym": "AVA",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.1651,
+    "entryPrice": 0.1721,
+    "margin": 37.24692753124495,
+    "notional": 111.74078259373485,
+    "leverage": 3,
+    "pnlUsd": 4.469857742569349,
+    "pnlPct": 0.1200060793959385,
+    "R": 0.1182060793959385,
+    "entryTs": "2026-09-06T02:10:27.977Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.008045365771821663,
+    "brakiFundingu": 0,
+    "holdMs": 43200646,
+    "liquidated": false,
+    "reason": "TAKE PROFIT",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 60.3, odbicie do sredniej",
+    "warunki": {
+      "rsi": 60.3,
+      "rsiPrev": 60.3,
+      "ext": 2.44,
+      "nadTrendem": -0.0172,
+      "fastNadSlow": -0.0008,
+      "volPct": 0.002,
+      "er": 0.15,
+      "slope": -0.00242,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.00642,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788660000000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 20.26,
+    "mae": 7.53,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1788703828623-sito5-AVA-o",
+    "ts": "2026-09-06T14:10:28.628Z",
+    "gracz": "sito5",
+    "sym": "AVA",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.1651,
+    "margin": 48.20497388464357,
+    "notional": 144.6149216539307,
+    "leverage": 3,
+    "liqPrice": 0.11556999999999999,
+    "pnlUsd": null,
+    "reason": "prosty zjazd (ER 0.36), RSI 20.2 — kupuję",
+    "warunki": {
+      "rsi": 20.2,
+      "rsiPrev": 27.7,
+      "ext": -5.66,
+      "nadTrendem": -0.0465,
+      "fastNadSlow": -0.0085,
+      "volPct": 0.0033,
+      "er": 0.361,
+      "slope": -0.00346,
+      "volRel": null,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01062,
       "koszt": 0.0012,
       "score": null
     },
