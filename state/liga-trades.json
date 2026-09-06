@@ -14377,125 +14377,6 @@
     }
   },
   {
-    "id": "1788507915886-krawiec-PYTH",
-    "ts": "2026-09-04T07:45:15.889Z",
-    "gracz": "krawiec",
-    "sym": "PYTH",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 0.05531,
-    "entryPrice": 0.05461,
-    "margin": 26.210442384727372,
-    "notional": 78.63132715418212,
-    "leverage": 3,
-    "pnlUsd": -1.056739279634554,
-    "pnlPct": -0.04031749117864215,
-    "R": -0.04211749117864214,
-    "holdMs": 12599234,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 50.8, odbicie do sredniej",
-    "warunki": {
-      "rsi": 50.8,
-      "rsiPrev": 50.8,
-      "ext": 0.55,
-      "nadTrendem": -0.0143,
-      "fastNadSlow": -0.0171,
-      "volPct": 0.0087,
-      "er": 0.143,
-      "slope": -0.00317,
-      "volRel": 12.429
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.02791,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "mfe": 1.07,
-    "mae": 1.47,
-    "rynek": {
-      "SOL": -0.00039,
-      "BTC": -0.00261,
-      "ETH": -0.00048
-    }
-  },
-  {
-    "id": "1788507915886-krawiec-JUP-o",
-    "ts": "2026-09-04T07:45:15.890Z",
-    "gracz": "krawiec",
-    "sym": "JUP",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.22312,
-    "margin": 25.823392215631625,
-    "notional": 77.47017664689487,
-    "leverage": 3,
-    "liqPrice": 0.29005600000000004,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, RSI 39.2, odbicie do sredniej",
-    "warunki": {
-      "rsi": 39.2,
-      "rsiPrev": 39.2,
-      "ext": -1.15,
-      "nadTrendem": -0.0027,
-      "fastNadSlow": -0.01,
-      "volPct": 0.0048,
-      "er": 0.376,
-      "slope": -0.00037,
-      "volRel": 3.565
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01547,
-      "koszt": 0.0012,
-      "score": 8
-    }
-  },
-  {
-    "id": "1788509416698-kontra-JUP",
-    "ts": "2026-09-04T08:10:16.700Z",
-    "gracz": "kontra",
-    "sym": "JUP",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 0.22145,
-    "entryPrice": 0.22237,
-    "margin": 60.515529688560605,
-    "notional": 181.54658906568181,
-    "leverage": 3,
-    "pnlUsd": -0.8659622861657044,
-    "pnlPct": -0.01430975306045118,
-    "R": -0.01610975306045118,
-    "holdMs": 8400721,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "RSI 29.8 — panika, kupuję",
-    "warunki": {
-      "rsi": 29.8,
-      "rsiPrev": 32.9,
-      "ext": -3.12,
-      "nadTrendem": -0.0063,
-      "fastNadSlow": -0.0085,
-      "volPct": 0.0052,
-      "er": 0.333,
-      "slope": 0.00041,
-      "volRel": 5.098,
-      "knotZa": 0,
-      "zamkniecie": 0
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01653,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "mfe": 1.27,
-    "mae": 0.8,
-    "rynek": {
-      "SOL": -0.00019,
-      "BTC": -0.00241,
-      "ETH": 0.00106
-    }
-  },
-  {
     "id": "1788509416698-kontraN-JUP",
     "ts": "2026-09-04T08:10:16.701Z",
     "gracz": "kontraN",
@@ -62405,5 +62286,126 @@
       "BTC": -0.00035,
       "ETH": -0.00062
     }
+  },
+  {
+    "id": "1788696915910-trend-PYTH",
+    "ts": "2026-09-06T12:15:15.911Z",
+    "gracz": "trend",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.05615,
+    "entryPrice": 0.05493,
+    "margin": 22.60193823851023,
+    "notional": 67.80581471553069,
+    "leverage": 3,
+    "pnlUsd": 1.462837061703779,
+    "pnlPct": 0.06472175289866643,
+    "R": 0.06292175289866643,
+    "entryTs": "2026-09-06T09:40:15.564Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.002452395997894181,
+    "brakiFundingu": 0,
+    "holdMs": 9300346,
+    "liquidated": false,
+    "reason": "TAKE PROFIT",
+    "powodWejscia": "gotowy: trend, RSI 45.5, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 45.5,
+      "rsiPrev": 52.4,
+      "ext": -0.86,
+      "nadTrendem": 0.0008,
+      "fastNadSlow": 0.0006,
+      "volPct": 0.0059,
+      "er": 0.009,
+      "slope": 0.00044,
+      "volRel": 1.625,
+      "knotZa": 0,
+      "zamkniecie": 0
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01894,
+      "koszt": 0.0012,
+      "score": 8
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788687000000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 3.75,
+    "mae": 0.25,
+    "rynek": {
+      "SOL": 0.00028,
+      "BTC": 0.0003,
+      "ETH": 0.00231
+    }
+  },
+  {
+    "id": "1788696915910-trend-JTO-o",
+    "ts": "2026-09-06T12:15:15.912Z",
+    "gracz": "trend",
+    "sym": "JTO",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.45083,
+    "margin": 23.26273131989395,
+    "notional": 69.78819395968185,
+    "leverage": 3,
+    "liqPrice": 0.315581,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 61.6, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 61.6,
+      "rsiPrev": 62.6,
+      "ext": 1.21,
+      "nadTrendem": 0.0592,
+      "fastNadSlow": 0.0214,
+      "volPct": 0.0084,
+      "er": 0.284,
+      "slope": 0.00649,
+      "volRel": 0.788
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02676,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788696900000,
+    "kontekstWejscia": null
+  },
+  {
+    "id": "1788696915910-krawiec-JTO-o",
+    "ts": "2026-09-06T12:15:15.913Z",
+    "gracz": "krawiec",
+    "sym": "JTO",
+    "side": "LONG",
+    "type": "OPEN",
+    "price": 0.45083,
+    "margin": 27.404661736581183,
+    "notional": 82.21398520974356,
+    "leverage": 3,
+    "liqPrice": 0.315581,
+    "pnlUsd": null,
+    "reason": "gotowy: trend, trend rosnie, RSI 61.6, cofniecie do sredniej",
+    "warunki": {
+      "rsi": 61.6,
+      "rsiPrev": 62.6,
+      "ext": 1.21,
+      "nadTrendem": 0.0592,
+      "fastNadSlow": 0.0214,
+      "volPct": 0.0084,
+      "er": 0.284,
+      "slope": 0.00649,
+      "volRel": 0.788
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02676,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788696900000,
+    "kontekstWejscia": null
   }
 ]
