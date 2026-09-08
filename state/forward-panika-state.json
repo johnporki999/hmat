@@ -51,7 +51,7 @@
           "side": "LONG",
           "entryPrice": 0.01036,
           "entryTs": "2026-09-08T00:35:41.464Z",
-          "lastAccrual": "2026-09-08T01:15:41.735Z",
+          "lastAccrual": "2026-09-08T01:20:41.229Z",
           "qty": 290056.9326636154,
           "notional": 3004.989822395055,
           "margin": 1001.663274131685,
@@ -64,7 +64,7 @@
           "worstPrice": 0.01031,
           "trailArmed": false,
           "borrowPaid": 0,
-          "fundingPaid": 0.025044169483416964,
+          "fundingPaid": 0.028169077180911974,
           "brakiFundingu": 0,
           "trailAtr": 2,
           "bezSmyczy": false,
@@ -125,7 +125,7 @@
           "side": "LONG",
           "entryPrice": 1.5728,
           "entryTs": "2026-09-08T01:10:41.378Z",
-          "lastAccrual": "2026-09-08T01:15:41.736Z",
+          "lastAccrual": "2026-09-08T01:20:41.229Z",
           "qty": 1906.3196299299307,
           "notional": 2998.259513953795,
           "margin": 999.4198379845983,
@@ -134,11 +134,11 @@
           "stopPrice": 1.5564956852893537,
           "takeProfit": 1.6054086294212924,
           "atrAtEntry": 0.010190196694153901,
-          "bestPrice": 1.5728,
+          "bestPrice": 1.5751,
           "worstPrice": 1.5719,
           "trailArmed": false,
           "borrowPaid": 0,
-          "fundingPaid": 0.014647323262441178,
+          "fundingPaid": 0.030724155238791122,
           "brakiFundingu": 0,
           "trailAtr": 2,
           "bezSmyczy": false,
@@ -204,26 +204,40 @@
         "oplaty": 139.0425051351845,
         "sumaR": 0.010727559882591504,
         "sumaR2": 0.0778622888997347,
-        "funding": 1.617342253128933
+        "funding": 1.636543992802778
       }
     }
   },
   "lastRun": {
-    "ts": "2026-09-08T01:15:41.736Z",
+    "ts": "2026-09-08T01:20:41.230Z",
     "prices": {
-      "SOL": 104.12,
-      "JUP": 0.25436,
-      "JTO": 0.45443,
-      "PYTH": 0.054366,
-      "RENDER": 1.5719,
-      "BONK": 0.003148,
-      "BTC": 79278,
-      "ETH": 2496.5,
+      "SOL": 104.05,
+      "JUP": 0.25454,
+      "JTO": 0.45306,
+      "PYTH": 0.054303,
+      "RENDER": 1.5751,
+      "BONK": 0.003147,
+      "BTC": 79297,
+      "ETH": 2498.3,
       "W": 0.01034,
       "TNSR": 0.0365,
-      "PENGU": 0.008553
+      "PENGU": 0.008554
     },
     "ranking": [
+      {
+        "id": "malpa",
+        "nazwa": "Małpa",
+        "opis": "rzuca monetą — punkt odniesienia dla całej reszty",
+        "kapital": 10002.99785393338,
+        "roi": 0.00029978539333797016,
+        "cash": 8003.39023855395,
+        "otwarty": -1.4754967368529925,
+        "pozycji": 2,
+        "trejdy": 50,
+        "wygrane": 15,
+        "likwidacje": 0,
+        "oplaty": 139.0425051351845
+      },
       {
         "id": "panika5m",
         "nazwa": "Panika 5m",
@@ -251,20 +265,6 @@
         "wygrane": 0,
         "likwidacje": 0,
         "oplaty": 0
-      },
-      {
-        "id": "malpa",
-        "nazwa": "Małpa",
-        "opis": "rzuca monetą — punkt odniesienia dla całej reszty",
-        "kapital": 9996.91683285728,
-        "roi": -0.0003083167142720056,
-        "cash": 8003.39023855395,
-        "otwarty": -7.556517812954677,
-        "pozycji": 2,
-        "trejdy": 50,
-        "wygrane": 15,
-        "likwidacje": 0,
-        "oplaty": 139.0425051351845
       }
     ],
     "leverage": 3,
@@ -346,7 +346,7 @@
       "przerwaEpizoduH": 72
     },
     "postep": {
-      "ts": "2026-09-08T01:15:41.737Z",
+      "ts": "2026-09-08T01:20:41.230Z",
       "zamkniete": {
         "panika5m": 0,
         "panika15m": 0
@@ -403,33 +403,29 @@
         "barTs": 1788830100000,
         "pierwszyOdczytMs": 1788830134671,
         "mialSygnal": false
+      },
+      "BONK": {
+        "barTs": 1788830100000,
+        "pierwszyOdczytMs": 1788830434742,
+        "mialSygnal": false
+      },
+      "W": {
+        "barTs": 1788830100000,
+        "pierwszyOdczytMs": 1788830434742,
+        "mialSygnal": false
       }
     },
     "obserwacje": [],
     "ostatnieWejscieMs": null
   },
   "sejsmo": {
-    "ts": "2026-09-08T01:15:41.730Z",
-    "doba": 0.00767,
+    "ts": "2026-09-08T01:20:41.228Z",
+    "doba": 0.00744,
     "cisza": false,
     "prog": 0.05
   },
   "kontekstHL": {
     "SOL": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": 0.0000043452,
-        "openInterest": 5770352.239999998,
-        "markPx": 103.912,
-        "midPx": 103.775,
-        "oraclePx": 103.965,
-        "premium": -0.001779445,
-        "impactBid": 103.77,
-        "impactAsk": 103.78,
-        "impactSpreadPct": 0.00009636232233201749,
-        "dayNtlVlm": 146251357.32530004
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -765,23 +761,23 @@
         "impactAsk": 104.13,
         "impactSpreadPct": 0.00009603841536605911,
         "dayNtlVlm": 141025883.7879
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": 0.0000092234,
+        "openInterest": 5772487.34,
+        "markPx": 104.03,
+        "midPx": 104.035,
+        "oraclePx": 104.09,
+        "premium": -0.0004803535,
+        "impactBid": 104.03,
+        "impactAsk": 104.04,
+        "impactSpreadPct": 0.00009612149757298136,
+        "dayNtlVlm": 140321782.1188
       }
     ],
     "JUP": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": 0.0000125,
-        "openInterest": 56623900,
-        "markPx": 0.254794,
-        "midPx": 0.25437,
-        "oraclePx": 0.2546,
-        "premium": -0.0004673998,
-        "impactBid": 0.254049,
-        "impactAsk": 0.254481,
-        "impactSpreadPct": 0.0016983134803632031,
-        "dayNtlVlm": 18556214.390270006
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -1117,23 +1113,23 @@
         "impactAsk": 0.254633,
         "impactSpreadPct": 0.0008251473477406207,
         "dayNtlVlm": 16018251.862109995
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": 0.0000125,
+        "openInterest": 57185578,
+        "markPx": 0.254357,
+        "midPx": 0.25437,
+        "oraclePx": 0.25415,
+        "premium": 0.0003501869,
+        "impactBid": 0.254239,
+        "impactAsk": 0.254464,
+        "impactSpreadPct": 0.0008845382710226471,
+        "dayNtlVlm": 15884897.842719994
       }
     ],
     "JTO": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": 0.0000125,
-        "openInterest": 11182744,
-        "markPx": 0.444808,
-        "midPx": 0.444125,
-        "oraclePx": 0.44485,
-        "premium": -0.0009463864,
-        "impactBid": 0.443904,
-        "impactAsk": 0.444429,
-        "impactSpreadPct": 0.001182099634112013,
-        "dayNtlVlm": 2409194.0022299993
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -1469,23 +1465,23 @@
         "impactAsk": 0.454992,
         "impactSpreadPct": 0.0016538558814150814,
         "dayNtlVlm": 2237429.3551099994
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": 0.0000125,
+        "openInterest": 11089398,
+        "markPx": 0.45306,
+        "midPx": 0.453145,
+        "oraclePx": 0.453,
+        "premium": 0,
+        "impactBid": 0.452877,
+        "impactAsk": 0.453605,
+        "impactSpreadPct": 0.0016065497798717992,
+        "dayNtlVlm": 2208020.5295899995
       }
     ],
     "PYTH": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": 0.0000125,
-        "openInterest": 47176046,
-        "markPx": 0.054187,
-        "midPx": 0.054106,
-        "oraclePx": 0.05417,
-        "premium": 0,
-        "impactBid": 0.054044,
-        "impactAsk": 0.054174,
-        "impactSpreadPct": 0.0024026910139355743,
-        "dayNtlVlm": 889722.219125
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -1821,23 +1817,23 @@
         "impactAsk": 0.05441,
         "impactSpreadPct": 0.0020600353148911305,
         "dayNtlVlm": 817889.3916099998
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": 0.0000125,
+        "openInterest": 47068106,
+        "markPx": 0.054285,
+        "midPx": 0.054285,
+        "oraclePx": 0.054285,
+        "premium": 0,
+        "impactBid": 0.054241,
+        "impactAsk": 0.054332,
+        "impactSpreadPct": 0.0016763378465506273,
+        "dayNtlVlm": 811234.7665559998
       }
     ],
     "RENDER": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": 0.0000367163,
-        "openInterest": 2150235.6,
-        "markPx": 1.5514,
-        "midPx": 1.5499,
-        "oraclePx": 1.5493,
-        "premium": 0,
-        "impactBid": 1.54888,
-        "impactAsk": 1.55133,
-        "impactSpreadPct": 0.001580747144977136,
-        "dayNtlVlm": 1883194.3847200002
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -2173,23 +2169,23 @@
         "impactAsk": 1.57336,
         "impactSpreadPct": 0.001373696260493616,
         "dayNtlVlm": 1812104.4882100003
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": 0.0000644538,
+        "openInterest": 2161422.4,
+        "markPx": 1.574,
+        "midPx": 1.5737,
+        "oraclePx": 1.571,
+        "premium": 0.001024825,
+        "impactBid": 1.57261,
+        "impactAsk": 1.57544,
+        "impactSpreadPct": 0.001798309715955956,
+        "dayNtlVlm": 1805379.6098900004
       }
     ],
     "BONK": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": 0.0000125,
-        "openInterest": 2590158134,
-        "markPx": 0.003139,
-        "midPx": 0.003135,
-        "oraclePx": 0.003137,
-        "premium": -0.0003187759,
-        "impactBid": 0.003133,
-        "impactAsk": 0.003136,
-        "impactSpreadPct": 0.0009569377990430508,
-        "dayNtlVlm": 3988378.4453819995
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -2525,23 +2521,23 @@
         "impactAsk": 0.003149,
         "impactSpreadPct": 0.0009532888465204844,
         "dayNtlVlm": 3883892.6815279997
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": 0.0000125,
+        "openInterest": 2577770676,
+        "markPx": 0.003146,
+        "midPx": 0.003146,
+        "oraclePx": 0.003143,
+        "premium": 0.0003181674,
+        "impactBid": 0.003144,
+        "impactAsk": 0.003147,
+        "impactSpreadPct": 0.0009535918626827606,
+        "dayNtlVlm": 3837933.130341999
       }
     ],
     "BTC": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": -0.0000069387,
-        "openInterest": 34454.68396,
-        "markPx": 79095.6,
-        "midPx": 79054.5,
-        "oraclePx": 79140,
-        "premium": -0.001074046,
-        "impactBid": 79046.6,
-        "impactAsk": 79055,
-        "impactSpreadPct": 0.00010625581086458303,
-        "dayNtlVlm": 1647966830.9154308
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -2877,23 +2873,23 @@
         "impactAsk": 79285.6,
         "impactSpreadPct": 0.00010847970735714195,
         "dayNtlVlm": 1586934457.5841212
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": -0.0000023725,
+        "openInterest": 34292.89302,
+        "markPx": 79294,
+        "midPx": 79296.5,
+        "oraclePx": 79333,
+        "premium": -0.0004537834,
+        "impactBid": 79296,
+        "impactAsk": 79297,
+        "impactSpreadPct": 0.000012610897076163514,
+        "dayNtlVlm": 1574317521.1494515
       }
     ],
     "ETH": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": 0.0000125,
-        "openInterest": 975831.7914000001,
-        "markPx": 2487.7,
-        "midPx": 2486.35,
-        "oraclePx": 2489.06,
-        "premium": -0.0010686765,
-        "impactBid": 2486.3,
-        "impactAsk": 2486.4,
-        "impactSpreadPct": 0.00004021959901056129,
-        "dayNtlVlm": 809730700.98039
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -3229,23 +3225,23 @@
         "impactAsk": 2496.9,
         "impactSpreadPct": 0.00004005046358407956,
         "dayNtlVlm": 728323640.2686497
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": 0.0000125,
+        "openInterest": 974903.5954000001,
+        "markPx": 2498.13,
+        "midPx": 2498.25,
+        "oraclePx": 2498.94,
+        "premium": -0.000224095,
+        "impactBid": 2498.2,
+        "impactAsk": 2498.38,
+        "impactSpreadPct": 0.0000720504353048298,
+        "dayNtlVlm": 720315134.9871094
       }
     ],
     "W": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": 0.0000125,
-        "openInterest": 180723608.4,
-        "markPx": 0.01025,
-        "midPx": 0.01023,
-        "oraclePx": 0.01027,
-        "premium": -0.0019474197,
-        "impactBid": 0.01021,
-        "impactAsk": 0.01025,
-        "impactSpreadPct": 0.003910068426197469,
-        "dayNtlVlm": 415511.3247180003
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -3581,23 +3577,23 @@
         "impactAsk": 0.01035,
         "impactSpreadPct": 0.0029041626331075036,
         "dayNtlVlm": 384286.9464990001
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": 0.0000125,
+        "openInterest": 181364575.4,
+        "markPx": 0.01033,
+        "midPx": 0.01033,
+        "oraclePx": 0.01035,
+        "premium": 0,
+        "impactBid": 0.01032,
+        "impactAsk": 0.01035,
+        "impactSpreadPct": 0.0029041626331075036,
+        "dayNtlVlm": 383943.6888090002
       }
     ],
     "TNSR": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": 0.0000125,
-        "openInterest": 1471152.6,
-        "markPx": 0.03645,
-        "midPx": 0.03647,
-        "oraclePx": 0.03644,
-        "premium": 0,
-        "impactBid": 0.03631,
-        "impactAsk": 0.03659,
-        "impactSpreadPct": 0.007677543186180299,
-        "dayNtlVlm": 9733.169665
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -3933,23 +3929,23 @@
         "impactAsk": 0.03673,
         "impactSpreadPct": 0.005725190839694708,
         "dayNtlVlm": 11685.258223
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": 0.0000125,
+        "openInterest": 1558818.6,
+        "markPx": 0.03662,
+        "midPx": 0.03663,
+        "oraclePx": 0.0366,
+        "premium": 0,
+        "impactBid": 0.03646,
+        "impactAsk": 0.03671,
+        "impactSpreadPct": 0.006825006825006831,
+        "dayNtlVlm": 11685.258223
       }
     ],
     "PENGU": [
-      {
-        "ts": "2026-09-07T23:15:36.296Z",
-        "tsMs": 1788822936296,
-        "funding": -0.0000327683,
-        "openInterest": 1070154222,
-        "markPx": 0.008437,
-        "midPx": 0.008427,
-        "oraclePx": 0.008445,
-        "premium": -0.0020130255,
-        "impactBid": 0.008423,
-        "impactAsk": 0.008428,
-        "impactSpreadPct": 0.000593330960009469,
-        "dayNtlVlm": 3958965.9721199987
-      },
       {
         "ts": "2026-09-07T23:20:34.387Z",
         "tsMs": 1788823234387,
@@ -4285,8 +4281,22 @@
         "impactAsk": 0.008559,
         "impactSpreadPct": 0.0004673989249825346,
         "dayNtlVlm": 4099329.5353429997
+      },
+      {
+        "ts": "2026-09-08T01:20:34.742Z",
+        "tsMs": 1788830434742,
+        "funding": 0.0000125,
+        "openInterest": 1032739640,
+        "markPx": 0.008556,
+        "midPx": 0.008556,
+        "oraclePx": 0.00856,
+        "premium": -0.0003504673,
+        "impactBid": 0.008554,
+        "impactAsk": 0.008557,
+        "impactSpreadPct": 0.00035063113604482597,
+        "dayNtlVlm": 4051944.5467029996
       }
     ]
   },
-  "updatedAt": "2026-09-08T01:15:41.736Z"
+  "updatedAt": "2026-09-08T01:20:41.230Z"
 }
