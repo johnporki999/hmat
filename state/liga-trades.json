@@ -14538,59 +14538,6 @@
     "kontekstWejscia": null
   },
   {
-    "id": "1788732616359-trend-SOL",
-    "ts": "2026-09-06T22:10:16.360Z",
-    "gracz": "trend",
-    "sym": "SOL",
-    "side": "LONG",
-    "type": "CLOSE",
-    "price": 105.25,
-    "entryPrice": 105.8,
-    "margin": 24.459345167344903,
-    "notional": 73.3780355020347,
-    "leverage": 3,
-    "pnlUsd": -0.4268515146613181,
-    "pnlPct": -0.017451469437996137,
-    "R": -0.019251469437996136,
-    "entryTs": "2026-09-06T20:50:15.808Z",
-    "fundingUsd": 0,
-    "borrowUsd": 0.0013698774232458687,
-    "brakiFundingu": 0,
-    "holdMs": 4800551,
-    "liquidated": false,
-    "reason": "TRAILING STOP",
-    "powodWejscia": "gotowy: trend, trend rosnie, RSI 47.4, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 47.4,
-      "rsiPrev": 43.8,
-      "ext": -0.22,
-      "nadTrendem": 0.013,
-      "fastNadSlow": 0.0006,
-      "volPct": 0.0034,
-      "er": 0.055,
-      "slope": 0.00129,
-      "volRel": 1.574,
-      "knotZa": 0.214,
-      "zamkniecie": 0.929
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01085,
-      "koszt": 0.0012,
-      "score": 10
-    },
-    "wariantCzasu": null,
-    "barDecyzji": 1788727500000,
-    "kontekstWejscia": null,
-    "kontekstWyjscia": null,
-    "mfe": 1.14,
-    "mae": 1.53,
-    "rynek": {
-      "SOL": -0.0052,
-      "BTC": -0.00282,
-      "ETH": -0.00015
-    }
-  },
-  {
     "id": "1788732616359-trend-PYTH-o",
     "ts": "2026-09-06T22:10:16.361Z",
     "gracz": "trend",
@@ -64307,5 +64254,58 @@
     "wariantCzasu": null,
     "barDecyzji": 1788970500000,
     "kontekstWejscia": null
+  },
+  {
+    "id": "1788972616065-krawiec-JTO",
+    "ts": "2026-09-09T16:50:16.066Z",
+    "gracz": "krawiec",
+    "sym": "JTO",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.44781,
+    "entryPrice": 0.44028,
+    "margin": 23.888289172260713,
+    "notional": 71.66486751678214,
+    "leverage": 3,
+    "pnlUsd": -1.2691670560618205,
+    "pnlPct": -0.053129257056030124,
+    "R": -0.05492925705603013,
+    "entryTs": "2026-09-09T15:40:16.308Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.0005016224206343218,
+    "brakiFundingu": 0,
+    "holdMs": 4199757,
+    "liquidated": false,
+    "reason": "STOP LOSS",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 38.1, odbicie do sredniej",
+    "warunki": {
+      "rsi": 38.1,
+      "rsiPrev": 29.8,
+      "ext": -1.57,
+      "nadTrendem": -0.0151,
+      "fastNadSlow": -0.0062,
+      "volPct": 0.0083,
+      "er": 0.096,
+      "slope": -0.00089,
+      "volRel": 1.51,
+      "knotZa": 0.096,
+      "zamkniecie": 0.096
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.02667,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788967800000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 0.68,
+    "mae": 2.05,
+    "rynek": {
+      "SOL": 0.00039,
+      "BTC": 0.00125,
+      "ETH": 0.00144
+    }
   }
 ]
