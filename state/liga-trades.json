@@ -12774,40 +12774,6 @@
     "kontekstWejscia": null
   },
   {
-    "id": "1788753617743-czujny-ORCA-o",
-    "ts": "2026-09-07T04:00:17.748Z",
-    "gracz": "czujny",
-    "sym": "ORCA",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 1.568,
-    "margin": 54.69703573156048,
-    "notional": 164.09110719468146,
-    "leverage": 3,
-    "liqPrice": 1.0976,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, trend rosnie, RSI 53.0, cofniecie do sredniej, RSI zawraca",
-    "warunki": {
-      "rsi": 53,
-      "rsiPrev": 53,
-      "ext": 0.02,
-      "nadTrendem": 0.1324,
-      "fastNadSlow": 0.0482,
-      "volPct": 0.0228,
-      "er": 0.164,
-      "slope": 0.01869,
-      "volRel": 0.369
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.07292,
-      "koszt": 0.0012,
-      "score": 10
-    },
-    "wariantCzasu": null,
-    "barDecyzji": 1788753600000,
-    "kontekstWejscia": null
-  },
-  {
     "id": "1788753617743-czujny-RENDER-o",
     "ts": "2026-09-07T04:00:17.748Z",
     "gracz": "czujny",
@@ -64304,5 +64270,56 @@
     "wariantCzasu": null,
     "barDecyzji": 1789029000000,
     "kontekstWejscia": null
+  },
+  {
+    "id": "1789029916408-kontra-PYTH",
+    "ts": "2026-09-10T08:45:16.410Z",
+    "gracz": "kontra",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.05174,
+    "entryPrice": 0.05159,
+    "margin": 55.27925570950727,
+    "notional": 165.83776712852182,
+    "leverage": 3,
+    "pnlUsd": 0.35829913895071347,
+    "pnlPct": 0.006481620172919422,
+    "R": 0.004681620172919423,
+    "entryTs": "2026-09-09T22:15:16.106Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.024378178854728007,
+    "brakiFundingu": 0,
+    "holdMs": 37800302,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "RSI 25.1 — panika, kupuję",
+    "warunki": {
+      "rsi": 25.1,
+      "rsiPrev": 25.1,
+      "ext": -3.8,
+      "nadTrendem": -0.0528,
+      "fastNadSlow": -0.0118,
+      "volPct": 0.0114,
+      "er": 0.178,
+      "slope": -0.00269,
+      "volRel": 7.268
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.03643,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1788992100000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 2.35,
+    "mae": 0.32,
+    "rynek": {
+      "SOL": -0.0003,
+      "BTC": 0.00313,
+      "ETH": 0.00953
+    }
   }
 ]
