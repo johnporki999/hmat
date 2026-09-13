@@ -14827,42 +14827,6 @@
     "kontekstWejscia": null
   },
   {
-    "id": "1788966317389-krawiec-SOL-o",
-    "ts": "2026-09-09T15:05:17.392Z",
-    "gracz": "krawiec",
-    "sym": "SOL",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 103.34,
-    "margin": 23.228768432171265,
-    "notional": 69.6863052965138,
-    "leverage": 3,
-    "liqPrice": 134.342,
-    "pnlUsd": null,
-    "reason": "SHORT: trend spadkowy, RSI 37.8, odbicie do sredniej, RSI zawraca w dol",
-    "warunki": {
-      "rsi": 37.8,
-      "rsiPrev": 39.7,
-      "ext": -1.28,
-      "nadTrendem": -0.0054,
-      "fastNadSlow": -0.0002,
-      "volPct": 0.0047,
-      "er": 0.032,
-      "slope": 0.00003,
-      "volRel": 0.637,
-      "knotZa": 0.637,
-      "zamkniecie": 0.755
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.015,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "wariantCzasu": null,
-    "barDecyzji": 1788966000000,
-    "kontekstWejscia": null
-  },
-  {
     "id": "1788966317389-kontra-DRIFT",
     "ts": "2026-09-09T15:05:17.392Z",
     "gracz": "kontra",
@@ -64482,5 +64446,56 @@
     "wariantCzasu": null,
     "barDecyzji": 1789276500000,
     "kontekstWejscia": null
+  },
+  {
+    "id": "1789277717351-krawiec-JTO",
+    "ts": "2026-09-13T05:35:17.352Z",
+    "gracz": "krawiec",
+    "sym": "JTO",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.43507,
+    "entryPrice": 0.43402,
+    "margin": 25.16947363109168,
+    "notional": 75.50842089327504,
+    "leverage": 3,
+    "pnlUsd": -0.22869570941311215,
+    "pnlPct": -0.009086233298522615,
+    "R": -0.010886233298522617,
+    "entryTs": "2026-09-13T04:00:16.673Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.0007174115475806779,
+    "brakiFundingu": 0,
+    "holdMs": 5700678,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "SHORT: trend spadkowy, RSI 38.8, odbicie do sredniej",
+    "warunki": {
+      "rsi": 38.8,
+      "rsiPrev": 38.8,
+      "ext": -1.56,
+      "nadTrendem": -0.0003,
+      "fastNadSlow": -0.0051,
+      "volPct": 0.0027,
+      "er": 0.183,
+      "slope": -0.00002,
+      "volRel": 3.879
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0086,
+      "koszt": 0.0012,
+      "score": 8
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1789272000000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 1.14,
+    "mae": 1.17,
+    "rynek": {
+      "SOL": 0.00266,
+      "BTC": 0.00119,
+      "ETH": 0.0011
+    }
   }
 ]
