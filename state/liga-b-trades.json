@@ -20022,42 +20022,6 @@
     }
   },
   {
-    "id": "1789421728531-sjesta-SAND-o",
-    "ts": "2026-09-14T21:35:28.536Z",
-    "gracz": "sjesta",
-    "sym": "SAND",
-    "side": "LONG",
-    "type": "OPEN",
-    "price": 0.0358,
-    "margin": 32.91680811376433,
-    "notional": 98.750424341293,
-    "leverage": 3,
-    "liqPrice": 0.02506,
-    "pnlUsd": null,
-    "reason": "gotowy: trend, RSI 49.8, cofniecie do sredniej",
-    "warunki": {
-      "rsi": 49.8,
-      "rsiPrev": 49.8,
-      "ext": -0.27,
-      "nadTrendem": 0.0012,
-      "fastNadSlow": 0.0039,
-      "volPct": 0.0041,
-      "er": 0.105,
-      "slope": 0.00042,
-      "volRel": 0.571,
-      "knotZa": 0,
-      "zamkniecie": 1
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.013,
-      "koszt": 0.0012,
-      "score": 8
-    },
-    "wariantCzasu": null,
-    "barDecyzji": 1789421400000,
-    "kontekstWejscia": null
-  },
-  {
     "id": "1789422628624-luzny-SUPER",
     "ts": "2026-09-14T21:50:28.625Z",
     "gracz": "luzny",
@@ -20644,40 +20608,6 @@
       "BTC": null,
       "ETH": null
     }
-  },
-  {
-    "id": "1789440328451-kontra-JST-o",
-    "ts": "2026-09-15T02:45:28.454Z",
-    "gracz": "kontra",
-    "sym": "JST",
-    "side": "SHORT",
-    "type": "OPEN",
-    "price": 0.11548,
-    "margin": 37.461747669272064,
-    "notional": 112.3852430078162,
-    "leverage": 3,
-    "liqPrice": 0.150124,
-    "pnlUsd": null,
-    "reason": "RSI 72.7 — euforia, sprzedaję",
-    "warunki": {
-      "rsi": 72.7,
-      "rsiPrev": 72.7,
-      "ext": 5.06,
-      "nadTrendem": 0.0272,
-      "fastNadSlow": 0.0043,
-      "volPct": 0.0021,
-      "er": 0.298,
-      "slope": 0.00216,
-      "volRel": null
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.00672,
-      "koszt": 0.0012,
-      "score": null
-    },
-    "wariantCzasu": null,
-    "barDecyzji": 1789440300000,
-    "kontekstWejscia": null
   },
   {
     "id": "1789440628160-kontra-ASTR",
@@ -62795,5 +62725,109 @@
     "wariantCzasu": null,
     "barDecyzji": 1789579800000,
     "kontekstWejscia": null
+  },
+  {
+    "id": "1789580128835-sjesta-HFT",
+    "ts": "2026-09-16T17:35:28.836Z",
+    "gracz": "sjesta",
+    "sym": "HFT",
+    "side": "SHORT",
+    "type": "CLOSE",
+    "price": 0.0055,
+    "entryPrice": 0.00559,
+    "margin": 31.403417764746393,
+    "notional": 94.21025329423918,
+    "leverage": 3,
+    "pnlUsd": 1.4534925508935006,
+    "pnlPct": 0.046284533797630055,
+    "R": 0.04448453379763006,
+    "entryTs": "2026-09-16T05:35:27.997Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.006783228522011296,
+    "brakiFundingu": 0,
+    "holdMs": 43200838,
+    "liquidated": false,
+    "reason": "TAKE PROFIT",
+    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 49.2, odbicie do sredniej",
+    "warunki": {
+      "rsi": 49.2,
+      "rsiPrev": 49.2,
+      "ext": 0.23,
+      "nadTrendem": -0.033,
+      "fastNadSlow": -0.009,
+      "volPct": 0.004,
+      "er": 0.118,
+      "slope": -0.00395,
+      "volRel": null
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01268,
+      "koszt": 0.0012,
+      "score": 9
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1789536600000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 12.19,
+    "mae": 8.12,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
+  },
+  {
+    "id": "1789580128835-kontra-VET",
+    "ts": "2026-09-16T17:35:28.837Z",
+    "gracz": "kontra",
+    "sym": "VET",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.006915,
+    "entryPrice": 0.00695,
+    "margin": 41.214515529129095,
+    "notional": 123.64354658738728,
+    "leverage": 3,
+    "pnlUsd": -0.7024768474654712,
+    "pnlPct": -0.017044403857397843,
+    "R": -0.018844403857397843,
+    "entryTs": "2026-09-16T14:20:29.578Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.00562537698663792,
+    "brakiFundingu": 0,
+    "holdMs": 11699257,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "RSI 29.3 — panika, kupuję",
+    "warunki": {
+      "rsi": 29.3,
+      "rsiPrev": 30,
+      "ext": -3.27,
+      "nadTrendem": -0.0512,
+      "fastNadSlow": -0.0053,
+      "volPct": 0.0059,
+      "er": 0.131,
+      "slope": -0.00398,
+      "volRel": 0.385,
+      "knotZa": 0,
+      "zamkniecie": 1
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.01886,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1789568100000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 1.22,
+    "mae": 1.34,
+    "rynek": {
+      "SOL": null,
+      "BTC": null,
+      "ETH": null
+    }
   }
 ]
