@@ -18750,57 +18750,6 @@
     "kontekstWejscia": null
   },
   {
-    "id": "1789906516349-czujny-RENDER",
-    "ts": "2026-09-20T12:15:16.351Z",
-    "gracz": "czujny",
-    "sym": "RENDER",
-    "side": "SHORT",
-    "type": "CLOSE",
-    "price": 1.53,
-    "entryPrice": 1.517,
-    "margin": 59.14301589987187,
-    "notional": 177.4290476996156,
-    "leverage": 3,
-    "pnlUsd": -1.6304036278034724,
-    "pnlPct": -0.02756713709973327,
-    "R": -0.029367137099733265,
-    "entryTs": "2026-09-20T09:00:15.960Z",
-    "fundingUsd": 0,
-    "borrowUsd": 0.0034599631289734998,
-    "brakiFundingu": 0,
-    "holdMs": 11700389,
-    "liquidated": false,
-    "reason": "STOP LOSS",
-    "powodWejscia": "SHORT: trend spadkowy, trend przyspiesza, RSI 38.0, odbicie do sredniej",
-    "warunki": {
-      "rsi": 38,
-      "rsiPrev": 38,
-      "ext": -1.52,
-      "nadTrendem": -0.0116,
-      "fastNadSlow": -0.0104,
-      "volPct": 0.0051,
-      "er": 0.114,
-      "slope": -0.00082,
-      "volRel": 0.448
-    },
-    "prognoza": {
-      "spodziewanyRuch": 0.01617,
-      "koszt": 0.0012,
-      "score": 9
-    },
-    "wariantCzasu": null,
-    "barDecyzji": 1789894800000,
-    "kontekstWejscia": null,
-    "kontekstWyjscia": null,
-    "mfe": 1.04,
-    "mae": 1.7,
-    "rynek": {
-      "SOL": 0.00518,
-      "BTC": 0.00295,
-      "ETH": 0.00222
-    }
-  },
-  {
     "id": "1789906516349-czujny-PYTH-o",
     "ts": "2026-09-20T12:15:16.351Z",
     "gracz": "czujny",
@@ -64593,6 +64542,59 @@
       "SOL": 0.00551,
       "BTC": 0.00467,
       "ETH": 0.01124
+    }
+  },
+  {
+    "id": "1790208921906-kontra-PYTH",
+    "ts": "2026-09-24T00:15:21.908Z",
+    "gracz": "kontra",
+    "sym": "PYTH",
+    "side": "LONG",
+    "type": "CLOSE",
+    "price": 0.06224,
+    "entryPrice": 0.06172,
+    "margin": 27.124203665650068,
+    "notional": 81.3726109969502,
+    "leverage": 3,
+    "pnlUsd": 0.6271628291144693,
+    "pnlPct": 0.023121889101161138,
+    "R": 0.02132188910116114,
+    "entryTs": "2026-09-23T15:50:17.554Z",
+    "fundingUsd": 0,
+    "borrowUsd": 0.00958971767708956,
+    "brakiFundingu": 0,
+    "holdMs": 30304352,
+    "liquidated": false,
+    "reason": "TRAILING STOP",
+    "powodWejscia": "RSI 29.6 — panika, kupuję",
+    "warunki": {
+      "rsi": 29.6,
+      "rsiPrev": 31.3,
+      "ext": -2.85,
+      "nadTrendem": -0.0493,
+      "fastNadSlow": -0.0164,
+      "volPct": 0.0166,
+      "er": 0.237,
+      "slope": -0.00238,
+      "volRel": 2.41,
+      "knotZa": 0.034,
+      "zamkniecie": 0.034
+    },
+    "prognoza": {
+      "spodziewanyRuch": 0.0531,
+      "koszt": 0.0012,
+      "score": null
+    },
+    "wariantCzasu": null,
+    "barDecyzji": 1790178300000,
+    "kontekstWejscia": null,
+    "kontekstWyjscia": null,
+    "mfe": 2.57,
+    "mae": 0.6,
+    "rynek": {
+      "SOL": 0.01009,
+      "BTC": 0.00167,
+      "ETH": 0.01082
     }
   }
 ]
