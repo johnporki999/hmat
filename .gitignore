@@ -68,6 +68,12 @@ yarn-error.*
 # pliki tymczasowe zapisu stanu (bot pisze do .tmp i podmienia nazwe) — gdyby
 # proces zginal miedzy zapisem a podmiana, `git add state` nie ma ich zabierac
 /state/*.tmp
+# Historie badawcze zostaja na serwerze, poza publikacja dla aplikacji.
+# deploy/prywatne-historie.mjs najpierw tworzy sprawdzona kopie, potem
+# usuwa je WYLACZNIE z indeksu Git. dane-info.json nadal jest publiczny.
+/state/dane/
+/state/liga-*.json
+/state/forward-panika-*.json
 wallet.json
 wallet-*.json
 *.secret

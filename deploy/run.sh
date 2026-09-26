@@ -83,7 +83,9 @@ stado_otwarte() {
 # dalo sie do niego wrocic jednym slowem, ale domyslnie juz nie chodzi.
 #
 # Zeby dorzucic spot:  run.sh trade perp liga ligab stado
-BOTY="${*:-perp liga ligab ligac ligahl forwardpanika stado}"
+# Ligi A/B/C zamkniete; HL nadal dostarcza migawke do forwardpanika.
+# Nie zmieniamy zadnych ustawien ani limitow handlu prawdziwymi pieniedzmi.
+BOTY="${*:-perp ligahl forwardpanika stado}"
 
 # Uniwersum Ligi A — DOKLADNIE to, na czym liga gra od 27.07.2026 (odczytane
 # z zywego state/liga-state.json, pole lastRun.prices).
@@ -442,6 +444,14 @@ if [ "${KOLEKTOR:-1}" = "1" ]; then
   if node kolektor.mjs >>"$LOG" 2>&1; then :; else log "kolektor zakonczyl sie bledem"; fi
 fi
 cd "$KATALOG"
+
+# Wycofanie historii z Git dopiero PO weryfikacji kopii poza repo.
+# Pliki zostaja w state/ i obie symulacje HL kontynuuja ten sam stan.
+# Uruchamia sie pod blokada calego run.sh, przed git add/commit.
+if ! node "$KATALOG/deploy/prywatne-historie.mjs" >>"$LOG" 2>&1; then
+  log "BLAD archiwizacji historii - nie publikuje stanu, dane zostaja na dysku"
+  exit 1
+fi
 
 # Zapis stanu do repo — apka czyta go wlasnie stamtad
 if [ -z "$(git status --porcelain -- state 2>/dev/null)" ]; then
