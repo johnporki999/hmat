@@ -85,7 +85,7 @@ stado_otwarte() {
 # Zeby dorzucic spot:  run.sh trade perp liga ligab stado
 # Ligi A/B/C zamkniete; HL nadal dostarcza migawke do forwardpanika.
 # Nie zmieniamy zadnych ustawien ani limitow handlu prawdziwymi pieniedzmi.
-BOTY="${*:-winnerpaper perp ligahl forwardpanika stado}"
+BOTY="${*:-arena winnerpaper perp ligahl forwardpanika stado}"
 
 # Uniwersum Ligi A — DOKLADNIE to, na czym liga gra od 27.07.2026 (odczytane
 # z zywego state/liga-state.json, pole lastRun.prices).
@@ -249,6 +249,17 @@ cd "$KATALOG/bot"
 for bot in $BOTY; do
   USTAW=""
   case "$bot" in
+    # Nowa liga: piec niezaleznych WIRTUALNYCH portfeli po 1000 USD.
+    # Celowo bez zmiennych z deploy/.env, kluczy, tokenow ani podpisywania.
+    # Poprzednie eksperymenty i konta realne pozostaja nietkniete.
+    arena)
+      log "--- arena (PAPER ONLY) ---"
+      if env -i PATH="$PATH" node arena.mjs >>"$LOG" 2>&1; then
+        log "arena PAPER OK"
+      else
+        log "arena PAPER zakonczona bledem (kod $?)"
+      fi
+      continue ;;
     # Osobny test wylacznie papierowy, bez kluczy i endpointu zlecen.
     winnerpaper) PLIK="winner-paper.mjs" ;;
     trade) PLIK="trade.mjs" ;;
