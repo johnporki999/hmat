@@ -254,6 +254,10 @@ for bot in $BOTY; do
     # Poprzednie eksperymenty i konta realne pozostaja nietkniete.
     arena)
       log "--- arena (PAPER ONLY) ---"
+      # ETH-55 ma oddzielny dziennik i zamrozenie. Minutowy worker konczy sie
+      # przed nastepnym cyklem 5m; nie publikuje Git i nie widzi sekretow.
+      # Zamkniecie fd 9 zapobiega dziedziczeniu globalnej blokady pipeline'u.
+      env -i PATH="$PATH" node arena-eth55.mjs --window 9>&- >>"$LOGI/eth55-paper.log" 2>&1 &
       if env -i PATH="$PATH" node arena.mjs >>"$LOG" 2>&1; then
         log "arena PAPER OK"
       else

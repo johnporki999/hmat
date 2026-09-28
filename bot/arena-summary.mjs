@@ -1,5 +1,6 @@
 /** Bounded public view. No wallet addresses, raw private state or credentials. */
 import {PROTOCOL,PLAYERS} from './arena-core.mjs';
+import {mergeEth55,safeRead,ETH55_PUBLIC_PATH} from './arena-eth55-merge.mjs';
 const META={
   panika:{color:'#efaa61',description:'Kupuje głębokie wyprzedanie podczas dużej zmienności. Stop 1,6 ATR, cel 3,2 ATR i smycz.',minutes:15,
     source:'Hyperliquid · zamknięte świece 15m. Papierowy wariant; konta realne obserwują także świecę w budowie.'},
@@ -40,9 +41,9 @@ export function rememberPresentation(state,events,markets){
   ui.marks=Object.fromEntries(Object.entries(markets).map(([s,m])=>[s,m.mark]));
   state.presentation=ui;
 }
-export function summary(state,now){
+export function summary(state,now,{eth55Path=ETH55_PUBLIC_PATH}={}){
   const ui=state.presentation??{history:{},recentTrades:[],lastActions:{},marks:{}};
-  return {schema:1,kind:'hajsomat-paper-arena',protocol:PROTOCOL.id,paper:true,ordersEnabled:false,updatedAt:now,
+  const base={schema:1,kind:'hajsomat-paper-arena',protocol:PROTOCOL.id,paper:true,ordersEnabled:false,updatedAt:now,
     status:'running',error:null,startedAt:state.startedAt,lastObservedAt:state.lastObservedAt,initial:1000,
     players:PLAYERS.map(def=>{
       const a=state.accounts[def.id],meta=META[def.id];
@@ -62,4 +63,7 @@ export function summary(state,now){
     }),recentTrades:[...ui.recentTrades].reverse(),quality:state.quality,
     costs:{feeBps:4.5,slipBps:5,funding:'rzeczywiste stawki HL, ostatni obserwowany oracle sprzed rozliczenia'},
     note:'Nowa liga papierowa: po 1000 USD, bez prawdziwych zleceń. Saldo i ROI po prowizji, poślizgu i fundingu; P&L otwartej pozycji przed kosztami. Warunki i dźwignie graczy są różne. Wykonanie: obserwowana księga + 5 pb poślizgu; wolumen godzinowy/4 to przybliżenie. Brak ścieżki intrabar i gwarancji realizacji. Wykres: ostatnie 48 godzin obserwacji. To test forward, nie dowód przyszłych zysków.'};
+  let extra;
+  try{extra=safeRead(eth55Path,now);}catch(error){extra=error;}
+  return mergeEth55(base,extra,now);
 }
