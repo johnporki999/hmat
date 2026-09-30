@@ -479,6 +479,7 @@ for bot in $BOTY; do
             REALNY_PO="$POPRZEDNIK" \
             REALNY_STOP_KAPITAL=0 \
             REALNY_LOWCA_CONFIRM="${STADO_LOWCA_CONFIRM:-}" \
+            REALNY_LOWCA_ACCOUNT_CONFIRM="${STADO_LOWCA_ACCOUNT_CONFIRM:-}" \
             ${MIEJSC:+REALNY_MIEJSC=$MIEJSC} \
             ${ALLOC:+REALNY_ALLOC=$ALLOC} \
             node "$WYKONAWCA" >>"$LOG" 2>&1; then

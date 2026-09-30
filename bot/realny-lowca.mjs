@@ -7,7 +7,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {lowcaIndicators} from './lowca-policy.mjs';
-import {CONFIRM,STEP,WINDOW,assertActivation,account,initialize,validate,reconcile,plan,
+import {CONFIRM,ACCOUNT_CONFIRM,STEP,WINDOW,assertActivation,account,initialize,validate,reconcile,plan,
   acceptReceipt,funding,publicState} from './lowca-live-core.mjs';
 const here=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(here,'..');
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');
@@ -42,7 +42,28 @@ export async function market(now,reader=info){
 export function makeReaders(user,reader=info){
   return {
     market:now=>market(now,reader),
-    async snapshot(){const [p,o]=await Promise.all([reader({type:'clearinghouseState',user}),reader({type:'openOrders',user})]);return account(p,o);},
+    async snapshot(){
+      const abstraction=await reader({type:'userAbstraction',user});
+      ensure(['disabled','default','unifiedAccount'].includes(abstraction),'UNSUPPORTED_ACCOUNT_MODE');
+      const [p,o]=await Promise.all([reader({type:'clearinghouseState',user}),reader({type:'openOrders',user})]);
+      let spot,otherDexs;
+      if(abstraction==='unifiedAccount'){
+        // Re-discover shared DEXs each snapshot; failure never means "none".
+        const [s,dexs]=await Promise.all([reader({type:'spotClearinghouseState',user}),reader({type:'perpDexs'})]);
+        ensure(Array.isArray(dexs)&&dexs[0]===null&&dexs.length<=100&&
+          dexs.slice(1).every(d=>d&&typeof d.name==='string'&&d.name!==''), 'INVALID_SHARED_DEX_LIST');
+        const names=dexs.slice(1).map(d=>d.name);
+        ensure(new Set(names).size===names.length,'INVALID_SHARED_DEX_LIST');
+        spot=s;otherDexs=[];
+        // Bound concurrency and API pressure, never CPU workers or exchange writes.
+        for(let i=0;i<names.length;i+=4)otherDexs.push(...await Promise.all(names.slice(i,i+4).map(async dex=>{
+          const [state,orders]=await Promise.all([reader({type:'clearinghouseState',user,dex}),reader({type:'openOrders',user,dex})]);
+          return {dex,state,orders};
+        })));
+      }
+      ensure(await reader({type:'userAbstraction',user})===abstraction,'ACCOUNT_MODE_CHANGED_DURING_READ');
+      return {...account(p,o,{abstraction,spot,otherDexs}),abstraction};
+    },
     async taker(){const f=await reader({type:'userFees',user});return Number(f?.userCrossRate);},
     status:c=>reader({type:'orderStatus',user,oid:c}),
     fills:(from,to)=>reader({type:'userFillsByTime',user,startTime:from,endTime:to,aggregateByTime:false}),
@@ -62,11 +83,17 @@ function publish(base,s,a){
 }
 export async function runOnce(base,env,readers,exchange,clock=Date.now){
   assertActivation(env);const identity=sha(env.REALNY_KONTO.toLowerCase());
+  const snapshot=async()=>{
+    const a=await readers.snapshot();
+    ensure(a.abstraction!=='unifiedAccount'||env.REALNY_LOWCA_ACCOUNT_CONFIRM===ACCOUNT_CONFIRM,
+      'UNIFIED_ACCOUNT_REQUIRES_CONFIRMATION');
+    return a;
+  };
   const dir=path.join(base,'logs','lowca-real-v1'),file=path.join(dir,'state.json');fs.mkdirSync(dir,{recursive:true});
   const lock=path.join(dir,'running.lock');let fd;
   try{fd=fs.openSync(lock,'wx',0o600);fs.writeFileSync(fd,String(process.pid));}catch{throw Error('LOWCA_LOCKED');}
   try{
-    const now=clock();let s=read(file,true),a=await readers.snapshot();
+    const now=clock();let s=read(file,true),a=await snapshot();
     if(!s){
       ensure(!fs.existsSync(path.join(base,'state','stado-lowcaSOL-state.json')),'LIVE_JOURNAL_MISSING_NO_RESET');
       const prior=read(path.join(base,'state','stado-sitoOstre-state.json'));
@@ -82,7 +109,7 @@ export async function runOnce(base,env,readers,exchange,clock=Date.now){
     if(s.pending){
       // A lost acknowledgement NEVER causes a blind re-submission.
       const [status,rows]=await Promise.all([readers.status(s.pending.c),readers.fills(s.pending.at-1000,clock())]);
-      a=await readers.snapshot();s=acceptReceipt(s,{status,rows,snapshot:a,decimals:m.decimals,now:clock()});atomic(file,s);
+      a=await snapshot();s=acceptReceipt(s,{status,rows,snapshot:a,decimals:m.decimals,now:clock()});atomic(file,s);
     }
     reconcile(s,a,m.decimals);
     const auditNow=clock();const [money,transfers,allFills]=await Promise.all([
@@ -91,7 +118,7 @@ export async function runOnce(base,env,readers,exchange,clock=Date.now){
     ensure(Array.isArray(allFills)&&allFills.length<2000&&allFills.every(f=>s.ledger.some(l=>l.tid===f.tid)),
       'EXTERNAL_OR_UNRECORDED_FILL');
     s=funding(s,money,s.fundingTo+1,auditNow);s.auditTo=auditNow;atomic(file,s);
-    a=await readers.snapshot();reconcile(s,a,m.decimals);
+    a=await snapshot();reconcile(s,a,m.decimals);
     const current=clock();ensure(current-now<60000,'DATA_CYCLE_STALE');
     ensure(Math.floor(current/STEP)*STEP===m.slot,'DECISION_BOUNDARY_CROSSED');
     const r=plan(s,{...m,now:current,snapshot:a,taker:await readers.taker()});s=r.state;
@@ -105,7 +132,7 @@ export async function runOnce(base,env,readers,exchange,clock=Date.now){
       }catch{throw Error('SUBMISSION_UNCERTAIN_RECEIPT_REQUIRED');}
       const receiptAt=clock();
       const [status,rows]=await Promise.all([readers.status(r.intent.c),readers.fills(r.intent.at-1000,receiptAt)]);
-      a=await readers.snapshot();s=acceptReceipt(s,{status,rows,snapshot:a,decimals:m.decimals,now:clock()});atomic(file,s);
+      a=await snapshot();s=acceptReceipt(s,{status,rows,snapshot:a,decimals:m.decimals,now:clock()});atomic(file,s);
     }
     s.lastRun=new Date(clock()).toISOString();s.kapital=a.equity;s.szczyt=Math.max(s.szczyt,a.equity);
     s.equity.push({ts:clock(),equityUsd:a.equity});
@@ -115,7 +142,20 @@ export async function runOnce(base,env,readers,exchange,clock=Date.now){
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
   try{
-    if(process.argv.includes('--check')){
+    if(process.argv.includes('--account-check')){
+      // No key/SDK, activation, journal writes, leverage changes or orders.
+      ensure(/^0x[0-9a-f]{40}$/i.test(process.env.REALNY_KONTO??''),'INVALID_ACCOUNT');
+      const a=await makeReaders(process.env.REALNY_KONTO).snapshot();
+      const file=path.join(root,'logs','lowca-real-v1','state.json');
+      let journal='not-created';
+      if(fs.existsSync(file)){
+        validate(read(file),FREEZE,sha(process.env.REALNY_KONTO.toLowerCase()));
+        journal='compatible';
+      }
+      console.log(JSON.stringify({readOnly:true,ordersEnabled:false,abstraction:a.abstraction,
+        equityUsd:a.equity,availableUsd:a.available,solQuantity:a.q,journal,
+        accountConfirmationRequired:a.abstraction==='unifiedAccount'}));
+    }else if(process.argv.includes('--check')){
       const m=await market(Date.now());console.log(JSON.stringify({readOnly:true,ordersEnabled:false,
         source:CONFIRM,clockHours:6,featuresMinutes:15,mark:m.mark,features:m.features}));
     }else{

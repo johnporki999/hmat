@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import {LOWCA_SOURCE,makeLowca,lowcaDecide,lowcaFill} from './lowca-policy.mjs';
 import {makeGraph,graphDecide,graphFill} from './lowca-graph.mjs';
 export const CONFIRM=LOWCA_SOURCE.signature;
+export const ACCOUNT_CONFIRM='unified-usdc-v1';
 export const STEP=6*3600000,WINDOW=900000;
 const ok=(c,m)=>{if(!c)throw Error(m);},num=Number,finite=Number.isFinite;
 export function assertActivation(env){
@@ -10,15 +11,65 @@ export function assertActivation(env){
   ok(/^0x[0-9a-f]{40}$/i.test(env.REALNY_KONTO??''),'INVALID_ACCOUNT');
   ok(/^(0x)?[0-9a-f]{64}$/i.test(env.REALNY_AGENT_KEY??''),'INVALID_AGENT');
 }
-export function account(perp,orders){
+export function account(perp,orders,{abstraction='disabled',spot,otherDexs}={}){
+  const decimal=v=>typeof v==='string'&&/^-?\d+(\.\d+)?$/.test(v)&&finite(num(v));
   ok(perp&&Array.isArray(perp.assetPositions)&&Array.isArray(orders),'MISSING_EXCHANGE_ACCOUNT');
   ok(orders.length===0,'ACCOUNT_HAS_OPEN_ORDERS');
+  ok(perp.assetPositions.every(x=>x?.position&&typeof x.position.coin==='string'&&
+    decimal(x.position.szi)),'INVALID_EXCHANGE_POSITION');
   const positions=perp.assetPositions.map(x=>x.position).filter(p=>num(p.szi)!==0);
   ok(positions.every(p=>p.coin==='SOL'&&finite(num(p.szi))&&num(p.szi)>0),'FOREIGN_OR_SHORT_POSITION');
   ok(positions.length<=1,'DUPLICATE_POSITION');
-  const equity=num(perp.marginSummary?.accountValue),available=num(perp.withdrawable);
-  ok(finite(equity)&&equity>0&&finite(available)&&available>=0,'UNSUPPORTED_OR_EMPTY_ACCOUNT');
   const p=positions[0];
+  ok(!p||(decimal(p.entryPx)&&num(p.entryPx)>0),'INVALID_EXCHANGE_POSITION');
+  let equity,available;
+  if(abstraction==='unifiedAccount'){
+    // Unified USDC is ONE pool. Never add perp accountValue/unrealizedPnl
+    // to this balance, or count other stablecoins/escrows as SOL collateral.
+    // https://hyperliquid.gitbook.io/hyperliquid-docs/trading/account-abstraction-modes
+    ok(spot&&Array.isArray(spot.balances)&&spot.portfolioMarginEnabled!==true,'INVALID_UNIFIED_BALANCE');
+    ok(Array.isArray(otherDexs),'MISSING_SHARED_COLLATERAL_CHECK');
+    const seen=new Set();
+    for(const d of otherDexs){
+      ok(d&&typeof d.dex==='string'&&d.dex!==''&&!seen.has(d.dex)&&
+        Array.isArray(d.state?.assetPositions)&&Array.isArray(d.orders),'INVALID_SHARED_COLLATERAL_CHECK');
+      seen.add(d.dex);
+      ok(d.orders.length===0,'ACCOUNT_HAS_OPEN_ORDERS');
+      ok(d.state.assetPositions.every(x=>x?.position&&decimal(x.position.szi)&&num(x.position.szi)===0),
+        'FOREIGN_DEX_POSITION');
+    }
+    const usdc=spot.balances.filter(b=>b?.token===0||b?.coin==='USDC');
+    ok(usdc.length===1&&usdc[0].token===0&&usdc[0].coin==='USDC','MISSING_OR_DUPLICATE_USDC');
+    const b=usdc[0];
+    ok(decimal(b.total)&&decimal(b.hold)&&num(b.total)>=0&&num(b.hold)>=0,'INVALID_UNIFIED_BALANCE');
+    for(const name of ['borrowed','supplied'])if(b[name]!==undefined)
+      ok(decimal(b[name])&&num(b[name])===0,'UNSUPPORTED_BORROW_LEND');
+    // A unified account must hold SOL in cross margin at the bot's leverage.
+    ok(!p||(p.leverage?.type==='cross'&&p.leverage.value===3&&decimal(p.marginUsed)&&num(p.marginUsed)>=0),
+      'UNSUPPORTED_SOL_MARGIN');
+    equity=num(b.total);
+    // hold contains shared reservations. Also reserve the owned position's
+    // initial margin conservatively; maintenance headroom is not initial margin.
+    available=Math.max(0,equity-Math.max(num(b.hold),p?num(p.marginUsed):0));
+    if(b.spotHold!==undefined){
+      ok(decimal(b.spotHold)&&num(b.spotHold)>=0,'INVALID_UNIFIED_BALANCE');
+      available=Math.min(available,Math.max(0,equity-num(b.spotHold)-(p?num(p.marginUsed):0)));
+    }
+    if(spot.tokenToAvailableAfterMaintenance!==undefined){
+      const list=spot.tokenToAvailableAfterMaintenance;
+      ok(Array.isArray(list)&&list.every(v=>Array.isArray(v)&&v.length===2&&Number.isSafeInteger(v[0])&&
+        decimal(v[1])),'INVALID_UNIFIED_HEADROOM');
+      const head=list.filter(v=>v[0]===0);
+      ok(head.length===1,'INVALID_UNIFIED_HEADROOM');
+      available=Math.min(available,Math.max(0,num(head[0][1])));
+    }
+  }else{
+    ok(abstraction==='disabled'||abstraction==='default','UNSUPPORTED_ACCOUNT_MODE');
+    // Standard mode: spot is a SEPARATE wallet and must not fund this bot.
+    ok(decimal(perp.marginSummary?.accountValue)&&decimal(perp.withdrawable),'UNSUPPORTED_OR_EMPTY_ACCOUNT');
+    equity=num(perp.marginSummary?.accountValue);available=num(perp.withdrawable);
+  }
+  ok(finite(equity)&&equity>0&&finite(available)&&available>=0,'UNSUPPORTED_OR_EMPTY_ACCOUNT');
   return {equity,available,q:p?num(p.szi):0,entry:p?num(p.entryPx):null,
     liquidation:p&&finite(num(p.liquidationPx))&&num(p.liquidationPx)>0?num(p.liquidationPx):null};
 }
@@ -30,6 +81,7 @@ export function predecessor(s){
 export function initialize({now,snapshot,prior,freeze,identity}){
   predecessor(prior);ok(snapshot.q===0,'EXCHANGE_NOT_FLAT');
   return {schema:1,gracz:'lowcaSOL',suchy:false,source:LOWCA_SOURCE,freeze,identity,przejalPo:'sitoOstre',
+    accountMode:snapshot.abstraction??'disabled',
     utworzony:new Date(now).toISOString(),start:snapshot.equity,szczyt:snapshot.equity,kapital:snapshot.equity,
     quantity:0,cycle:null,closed:0,fees:0,funding:0,policy:makeLowca(),
     nextSlot:(Math.floor(now/STEP)+1)*STEP,pending:null,serial:0,lastRun:null,ledger:[],equity:[],finishedCycles:[]};
@@ -39,6 +91,7 @@ export function validate(s,freeze,identity){
   ok(finite(s.quantity)&&s.quantity>=0&&Array.isArray(s.ledger)&&s.policy&&Number.isSafeInteger(s.nextSlot),'CORRUPT_LIVE_STATE');
 }
 export function reconcile(s,a,decimals){
+  ok(a.abstraction===undefined||s.accountMode===a.abstraction,'ACCOUNT_MODE_CHANGED_REQUIRES_REVIEW');
   ok(Math.abs(s.quantity-a.q)<Math.max(1e-12,.01*10**-decimals),'EXTERNAL_POSITION_CHANGE');
 }
 const px=(v,d)=>num(num(v.toPrecision(5)).toFixed(Math.max(0,6-d)));
