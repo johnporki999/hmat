@@ -7,9 +7,10 @@ import {makeState,advance,PROTOCOL,indicators} from './eth55-core.mjs';
 import {collectEth55} from './arena-eth55-data.mjs';
 import {rememberEth55,publicEth55} from './arena-eth55-summary.mjs';
 import {atomic,digest,recover,commit} from './arena-store.mjs';
+import {recoverMigrated,OLD_ETH} from './arena-migration.mjs';
 const here=path.dirname(fileURLToPath(import.meta.url)),project=path.resolve(here,'..');
 const files=['arena-eth55.mjs','arena-eth55-data.mjs','arena-eth55-summary.mjs','eth55-core.mjs','eth55-spec.mjs',
-  'arena-data.mjs','arena-store.mjs','winner-paper-core.mjs','strategy.mjs'];
+  'arena-data.mjs','arena-store.mjs','winner-paper-core.mjs','strategy.mjs','arena-migration.mjs'];
 export const FREEZE=digest(files.map(n=>n+'\n'+fs.readFileSync(path.join(here,n),'utf8').replace(/\r\n/g,'\n')).join('\n'));
 export async function runEth55(base=project,{collect=collectEth55,clock=Date.now,deadline=Infinity}={}){
   const dir=path.join(base,'logs','eth55-paper-v1'),pub=path.join(dir,'public.json');
@@ -19,7 +20,8 @@ export async function runEth55(base=project,{collect=collectEth55,clock=Date.now
   catch{throw Error('ETH55 already running or stale lock: inspect logs/eth55-paper-v1/running.lock');}
   let state=null,prior=null;
   try{
-    prior=recover(dir,FREEZE);state=prior?.state??null;
+    prior=recoverMigrated(dir,FREEZE,{predecessor:OLD_ETH,protocol:PROTOCOL,now:clock(),migrate:()=>{}});
+    state=prior?.state??null;
     if(!state&&fs.existsSync(pub)){
       const old=JSON.parse(fs.readFileSync(pub,'utf8'));
       if(old.startedAt)throw Error('ETH55 public account exists without its journal: refusing reset');

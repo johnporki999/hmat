@@ -6,10 +6,12 @@ import {SYMBOLS,HOUR,QUARTER,mapLimited,fetchClosed15m,fetchMarket,fetchWinner,f
 import {makeState,advance,PROTOCOL} from './arena-core.mjs';
 import {summary,rememberPresentation} from './arena-summary.mjs';
 import {atomic,digest,recover,commit} from './arena-store.mjs';
+import {recoverMigrated,OLD_MAIN} from './arena-migration.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const root=path.resolve(here,'..');
-const sources=['arena.mjs','arena-core.mjs','arena-skoczek-spec.mjs','arena-data.mjs','arena-store.mjs','winner-paper-core.mjs','gracze.mjs','strategy.mjs'];
+const sources=['arena.mjs','arena-core.mjs','arena-skoczek-spec.mjs','arena-data.mjs','arena-store.mjs','winner-paper-core.mjs','gracze.mjs','strategy.mjs',
+  'arena-migration.mjs'];
 export const FREEZE=digest(sources.map(name=>name+'\n'+fs.readFileSync(path.join(here,name),'utf8').replace(/\r\n/g,'\n')).join('\n'));
 const ensure=(ok,message)=>{if(!ok)throw Error(message);};
 
@@ -58,7 +60,7 @@ export async function run(base=root,dependencies={collect}){
   catch {throw Error('Arena already running or stale lock: inspect logs/arena-v1/running.lock');}
   let prior=null,state=null;
   try{
-    prior=recover(dir,FREEZE);state=prior?.state??null;
+    prior=recoverMigrated(dir,FREEZE,{predecessor:OLD_MAIN,protocol:PROTOCOL,now:Date.now(),migrate:()=>{}});state=prior?.state??null;
     if(!state&&fs.existsSync(pub)){
       const old=JSON.parse(fs.readFileSync(pub,'utf8'));
       ensure(!old.startedAt,'Published Arena already started but private journal is absent; refusing reset');

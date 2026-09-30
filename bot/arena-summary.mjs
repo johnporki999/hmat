@@ -61,9 +61,11 @@ export function summary(state,now,{eth55Path=ETH55_PUBLIC_PATH}={}){
         realized:n(a.realized),maxPositions:def.maxPositions,targetAllocation:def.allocation,
         pendingExecution:def.id==='winnerBTC30'&&state.pending.winner?state.pending.winner.slot+900000:null};
     }),recentTrades:[...ui.recentTrades].reverse(),quality:state.quality,
-    costs:{feeBps:4.5,slipBps:5,funding:'rzeczywiste stawki HL, ostatni obserwowany oracle sprzed rozliczenia'},
+    costs:{feeBps:4.5,slipBps:5,funding:'rzeczywiste stawki HL; baza: ostatni oracle sprzed godziny. Po przerwie stara cena jest jawnym przybliżeniem.'},
     note:'Nowa liga papierowa: po 1000 USD, bez prawdziwych zleceń. Saldo i ROI po prowizji, poślizgu i fundingu; P&L otwartej pozycji przed kosztami. Warunki i dźwignie graczy są różne. Wykonanie: obserwowana księga + 5 pb poślizgu; wolumen godzinowy/4 to przybliżenie. Brak ścieżki intrabar i gwarancji realizacji. Wykres: ostatnie 48 godzin obserwacji. To test forward, nie dowód przyszłych zysków.'};
   let extra;
+  if(state.quality.staleFundingEvents)base.note+=' UWAGA: '+state.quality.staleFundingEvents+
+    ' rozliczeń fundingu po przerwie oparto na starej, wcześniej zaobserwowanej cenie oracle. Wynik dotkniętego rachunku jest przybliżony.';
   try{extra=safeRead(eth55Path,now);}catch(error){extra=error;}
   return mergeEth55(base,extra,now);
 }

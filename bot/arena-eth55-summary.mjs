@@ -27,7 +27,8 @@ export function publicEth55(state,now,{error=null,cycleMs=null,decisionLagMs=nul
     startedAt:state.startedAt,lastObservedAt:state.lastObservedAt,updatedAt:now,status:error?'blocked':'running',error,
     cycleMs,decisionLagMs,seq:state.seq,
     player:{id:'eth55',name:'ETH-55',color:'#7da8f7',
-      description:`Rzadko aktywny kandydat ETH. Oryginalne etapy: wejście, ponowne ustawienie alokacji i redukcja o 25%. Osobny start PAPER: ${start}.`,
+      description:`Rzadko aktywny kandydat ETH. Oryginalne etapy: wejście, ponowne ustawienie alokacji i redukcja o 25%. Osobny start PAPER: ${start}.`+
+        (state.fundingGapEvents?' UWAGA: funding po przerwie przybliżony starą ceną oracle.':''),
       capital:a.equity,roi:a.equity/1000-1,drawdown:a.maxDD,fees:a.fees,funding:a.funding,
       closed:a.closed,wins:a.wins,fills:a.fills,status:error||a.status!=='running'?'blocked':positions.length?'holding':'waiting',
       nextDecision:state.nextSlot,positions,history:ui.history,lastAction:error?`Zatrzymany: ${error}`:ui.lastAction,

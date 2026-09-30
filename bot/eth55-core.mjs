@@ -200,17 +200,20 @@ function observe(a,m){
 }
 function settleFunding(s,rows,now,events){
   ensure(Array.isArray(rows),'funding must be an array');const map=new Map();
-  for(const row of rows){safeTime(row.time,'funding');ensure(row.time%HOUR===0&&row.time<=now&&finite(row.rate)&&Math.abs(row.rate)<=.04,'invalid/future funding');
-    ensure(!map.has(row.time),'duplicate funding hour');map.set(row.time,row.rate);}
+  for(const row of rows){safeTime(row.time,'funding');ensure(row.time<=now&&finite(row.rate)&&Math.abs(row.rate)<=.04,'invalid/future funding');
+    const hour=Math.floor(row.time/HOUR)*HOUR;
+    ensure(!map.has(hour),'duplicate funding hour');map.set(hour,row);}
   const hour=Math.floor(now/HOUR)*HOUR,a=s.accounts.eth55,q=a.qty.ETH;
   if(q>0)for(let t=s.lastFundingHour+HOUR;t<=hour;t+=HOUR){
     ensure(map.has(t),'missing funding hour '+t);
     const oracle=s.oracleBefore.filter(o=>o.at<t).sort((a,b)=>a.at-b.at).at(-1);
-    ensure(oracle&&t-oracle.at<=PROTOCOL.maxPreOracleAgeMs,'missing persisted pre-hour oracle '+t);
-    const rate=map.get(t),payment=q*oracle.price*rate;
+    ensure(oracle&&t-oracle.at<=14*24*HOUR,'missing persisted pre-hour oracle '+t);
+    const stale=t-oracle.at>PROTOCOL.maxPreOracleAgeMs;
+    const rate=map.get(t).rate,payment=q*oracle.price*rate;
     a.cash-=payment;a.funding+=payment;a.positions.ETH.costs+=payment;s.quality.fundingApproxEvents++;
-    events.push({kind:'funding',at:t,observedAt:now,player:'eth55',symbol:'ETH',rate,payment,
-      oracle:oracle.price,oracleAt:oracle.at,approximation:'persisted-pre-hour-oracle',quantity:q,cash:a.cash});
+    if(stale)s.fundingGapEvents=(s.fundingGapEvents??0)+1;
+    events.push({kind:'funding',at:t,reportedAt:map.get(t).time,observedAt:now,player:'eth55',symbol:'ETH',rate,payment,
+      oracle:oracle.price,oracleAt:oracle.at,approximation:stale?'stale-causal-oracle-after-gap':'persisted-pre-hour-oracle',quantity:q,cash:a.cash});
   }
   s.lastFundingHour=hour;
 }

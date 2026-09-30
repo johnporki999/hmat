@@ -56,7 +56,7 @@ export function validateBook(book,symbol,now=Date.now()) {
   return {bids,asks,observedAt:book.time};
 }
 export async function fetchMarket(symbols=SYMBOLS,volumes={},request=fetch) {
-  const begin=Date.now(),response=await info({type:'metaAndAssetCtxs'},request);
+  const begin=Date.now(),response=await info({type:'metaAndAssetCtxs'},request),receivedAt=Date.now();
   check(Array.isArray(response)&&response.length===2,'Invalid market context');
   const [meta,contexts]=response;
   check(Array.isArray(meta.universe)&&Array.isArray(contexts),'Invalid market metadata');
@@ -66,7 +66,7 @@ export async function fetchMarket(symbols=SYMBOLS,volumes={},request=fetch) {
     check(i>=0&&!meta.universe[i].isDelisted,`${symbol}: unavailable market`);
     const mark=Number(contexts[i].markPx),oracle=Number(contexts[i].oraclePx),decimals=meta.universe[i].szDecimals;
     check(positive(mark)&&positive(oracle)&&Number.isInteger(decimals)&&decimals>=0&&decimals<=8,`${symbol}: invalid market context`);
-    markets[symbol]={mark,oracle,decimals,volume:volumes[symbol],contextAt:begin};
+    markets[symbol]={mark,oracle,decimals,volume:volumes[symbol],contextAt:receivedAt};
   }
   await mapLimited(symbols,async symbol=>{
     Object.assign(markets[symbol],validateBook(await info({type:'l2Book',coin:alias(symbol)},request),symbol));

@@ -42,7 +42,7 @@ export const PLAYERS=deepFreeze([
   {id:'skoczekSOL',name:'Skoczek SOL',maxPositions:1,allocation:.30,leverage:1},
 ]);
 export const SKOCZEK_SPEC=deepFreeze(clone(sourceSpec));
-const legacyIds=PLAYERS.slice(0,3).map(p=>p.id);
+const legacyIds=['panika','panikaLuzna','sitoOstre'];
 // Do not enumerate the returned dictionary into the league: the source may
 // contain unrelated experiments (including uncommitted panikaWzgledna).
 const definitions=stworzGraczy({los:()=>{throw Error('Random player forbidden');}});
@@ -57,8 +57,8 @@ export function makeGraph(){
   return {state:null,since:null,goal:null,start_q:null,first_price:null,entry_atr:null,
     entry_equity:null,peak_move:0,last_atr:null,last_equity:null,last_flat:null};
 }
-function enterGraph(g,name,x){
-  const action=SKOCZEK_SPEC.params.states[name].action;
+function enterGraph(g,name,x,p=SKOCZEK_SPEC.params){
+  const action=p.states[name].action;
   g.state=name;g.since=x.now;g.start_q=x.quantity;
   g.goal=action.kind==='allocate'?action.weight*x.equity/x.mark:
     action.kind==='trim'?x.quantity*action.keep:action.kind==='flat'?0:null;
@@ -77,11 +77,10 @@ function guard(rule,x,metrics){
   return finite(left)&&finite(right)&&comparisons[rule.op](left,right);
 }
 /** Low-level parity seam, mutates ONLY supplied graph memory like StateGraph. */
-export function graphDecide(g,x){
-  const p=SKOCZEK_SPEC.params;
+export function graphDecide(g,x,p=SKOCZEK_SPEC.params){
   ensure(finite(x.equity)&&x.equity>0&&x.quantity>=0&&x.mark>0,'Invalid graph account');
   g.last_atr=finite(x.features.atr14)?x.features.atr14:null;g.last_equity=x.equity;
-  if(g.state===null){g.last_flat=x.now;enterGraph(g,p.initial,x);}
+  if(g.state===null){g.last_flat=x.now;enterGraph(g,p.initial,x,p);}
   const previous=g.state,action=p.states[g.state].action;
   let ready=g.goal!==null?Math.abs(x.quantity-g.goal)<=Math.max(1e-12,.05*Math.abs(g.goal-g.start_q)):x.quantity!==0;
   if(action.kind==='flat')ready=x.quantity===0;
@@ -93,11 +92,11 @@ export function graphDecide(g,x){
     move_atr:move,giveback_atr:g.peak_move-move,peak_move_atr:finite(move)?g.peak_move:NaN};
   let trigger=null;const checked=[];
   const valid=x.features.valid===true&&finite(x.features.atr14)&&x.features.atr14>0;
-  if(!valid){if(g.state!==p.exit)enterGraph(g,p.exit,x);trigger='invalid-data';}
+  if(!valid){if(g.state!==p.exit)enterGraph(g,p.exit,x,p);trigger='invalid-data';}
   else if(action.kind!=='flat'||x.quantity===0){
     for(const e of p.states[g.state].next){
       const passed=guard(e.when,x,metrics);checked.push({label:e.label,passed});
-      if(passed){trigger=e.label;enterGraph(g,e.to,x);break;}
+      if(passed){trigger=e.label;enterGraph(g,e.to,x,p);break;}
     }
   }
   const kind=p.states[g.state].action.kind;
@@ -183,12 +182,18 @@ function settleFunding(s,funding,now,events){
       const rows=(funding[symbol]??[]).filter(r=>Math.floor(r.time/HOUR)*HOUR===t);
       ensure(rows.length===1&&finite(rows[0].rate)&&Number.isSafeInteger(rows[0].time)&&rows[0].time<=now,`${symbol}: missing/duplicate/invalid funding hour ${t}`);
       const oracle=s.oracleBefore.filter(o=>o.at<t&&symbol in o.prices).at(-1);
-      ensure(oracle&&t-oracle.at<=PROTOCOL.maxPreOracleAgeMs,`${symbol}: missing pre-settlement oracle ${t}`);
+      ensure(oracle&&finite(oracle.prices[symbol])&&oracle.prices[symbol]>0&&t-oracle.at<=14*24*HOUR,
+        `${symbol}: missing causal pre-settlement oracle ${t}`);
+      const stale=t-oracle.at>PROTOCOL.maxPreOracleAgeMs;
       for(const a of Object.values(s.accounts)){
         const q=quantity(a,symbol);if(!q)continue;
         const payment=q*oracle.prices[symbol]*rows[0].rate;
         a.cash-=payment;a.funding+=payment;a.positions[symbol].costs+=payment;s.quality.fundingApproxEvents++;
-        events.push({kind:'funding',at:t,player:a.id,symbol,rate:rows[0].rate,oracle:oracle.prices[symbol],oracleAt:oracle.at,payment});
+        if(stale){s.quality.staleFundingEvents=(s.quality.staleFundingEvents??0)+1;
+          a.estimatedFunding=(a.estimatedFunding??0)+payment;}
+        events.push({kind:'funding',at:t,reportedAt:rows[0].time,observedAt:now,player:a.id,symbol,rate:rows[0].rate,
+          oracle:oracle.prices[symbol],oracleAt:oracle.at,payment,
+          approximation:stale?'stale-causal-oracle-after-gap':'persisted-pre-hour-oracle',oracleAgeMs:t-oracle.at});
       }
     }
   }

@@ -342,6 +342,42 @@ for bot in $BOTY; do
         fi
       done
 
+      # HUMAN-ONLY activation. Shipping this code does NOT change the real
+      # roster. Token is the exact frozen strategy signature, set in .env by
+      # the account owner after review. Never infer it from REALNY_SUCHY=0.
+      # Once a private Lowca journal exists, the wallet has one owner and Sito
+      # must not resume even if activation is subsequently removed/corrupted.
+      LOWCA_TOKEN="1198b69e826f2af4a6a43f6d3f2dcfe9fe5c18ef0578f4479e57099f38cb0ab4"
+      LOWCA_WLASCICIEL=0
+      [ ! -e "$KATALOG/logs/lowca-real-v1/state.json" ] || LOWCA_WLASCICIEL=1
+      if [ "$LOWCA_WLASCICIEL" = "1" ] || [ "${STADO_LOWCA_CONFIRM:-}" = "$LOWCA_TOKEN" ]; then
+        LOWCA_POPRZEDNIK=$(node -e '
+          const fs=require("fs");
+          try { const s=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));
+            if(s.gracz!=="sitoOstre"||s.suchy!==false||!s.pozycje||Array.isArray(s.pozycje))throw Error();
+            process.stdout.write(Object.keys(s.pozycje).length?"held":"flat");
+          }catch{process.stdout.write("unknown");}
+        ' "$KATALOG/state/stado-sitoOstre-state.json" 2>/dev/null) || LOWCA_POPRZEDNIK=unknown
+        if [ "$LOWCA_WLASCICIEL" = "1" ] || [ "$LOWCA_POPRZEDNIK" = "flat" ]; then
+          NOWY_SKLAD=""
+          for g in $STADO_EFEKT; do
+            case "$g" in sito5|sitoOstre|lowcaSOL) ;; *) NOWY_SKLAD="$NOWY_SKLAD $g" ;; esac
+          done
+          STADO_EFEKT="$NOWY_SKLAD lowcaSOL"
+        elif [ "$LOWCA_POPRZEDNIK" = "held" ]; then
+          WYGASZANE_EFEKT="$WYGASZANE_EFEKT sitoOstre"
+          log "stado/lowcaSOL: czeka, Sito dokancza otwarte pozycje"
+        else
+          # Missing/corrupt state is NOT permission to acquire the account.
+          NOWY_SKLAD=""
+          for g in $STADO_EFEKT; do
+            case "$g" in sito5|sitoOstre|lowcaSOL) ;; *) NOWY_SKLAD="$NOWY_SKLAD $g" ;; esac
+          done
+          STADO_EFEKT="$NOWY_SKLAD"
+          log "stado/lowcaSOL: brak wiarygodnego stanu Sita — wymagany reczny przeglad"
+        fi
+      fi
+
       for gracz in $STADO_EFEKT; do
         DUZE=$(echo "$gracz" | tr '[:lower:]' '[:upper:]')
         # Bot przejmujacy czyta zmienne konta POPRZEDNIKA, nie swoje wlasne.
@@ -352,6 +388,12 @@ for bot in $BOTY; do
             POPRZEDNIK=$(echo "$DUZE" | tr '[:upper:]' '[:lower:]')
           fi
         done
+        WYKONAWCA=realny.mjs
+        if [ "$gracz" = "lowcaSOL" ]; then
+          DUZE=SITO5
+          POPRZEDNIK=sitoOstre
+          WYKONAWCA=realny-lowca.mjs
+        fi
         # ── BEZPIECZNIK PRZEJECIA ────────────────────────────────────────
         #
         # Nie wolno wejsc na konto, na ktorym poprzednik ma jeszcze OTWARTA
@@ -359,7 +401,7 @@ for bot in $BOTY; do
         # wyjsc tamtego bota. Gdyby przestal chodzic z otwarta pozycja,
         # zostalaby ona bez ochrony az do likwidacji, a nowy bot nic o niej
         # nie wie, bo ma wlasny plik stanu.
-        if [ -n "$POPRZEDNIK" ]; then
+        if [ -n "$POPRZEDNIK" ] && [ "$gracz" != "lowcaSOL" ]; then
           OTWARTE=$(stado_otwarte "$POPRZEDNIK")
           if [ "${OTWARTE:-0}" != "0" ]; then
             log "stado/$gracz: POPRZEDNIK $POPRZEDNIK MA $OTWARTE OTWARTYCH POZYCJI — nie przejmuje konta"
@@ -418,7 +460,7 @@ for bot in $BOTY; do
           fi
         done
 
-        log "--- stado/$gracz (realny.mjs) ---"
+        log "--- stado/$gracz ($WYKONAWCA) ---"
         # Kazdy bot ma WLASNY prefiks stanu, wlasne konto i wlasny klucz agenta.
         # Tak samo jak liga/ligab: jeden plik, kilka konfiguracji.
         #
@@ -436,9 +478,10 @@ for bot in $BOTY; do
             REALNY_MAX_TREJDOW="$LIMIT" \
             REALNY_PO="$POPRZEDNIK" \
             REALNY_STOP_KAPITAL=0 \
+            REALNY_LOWCA_CONFIRM="${STADO_LOWCA_CONFIRM:-}" \
             ${MIEJSC:+REALNY_MIEJSC=$MIEJSC} \
             ${ALLOC:+REALNY_ALLOC=$ALLOC} \
-            node realny.mjs >>"$LOG" 2>&1; then
+            node "$WYKONAWCA" >>"$LOG" 2>&1; then
           log "stado/$gracz OK"
         else
           log "stado/$gracz zakonczyl sie bledem (kod $?)"
