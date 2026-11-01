@@ -1,12 +1,6 @@
-# ogon logu serwera, 2026-11-01 18:57 UTC
+# ogon logu serwera, 2026-11-01 19:00 UTC
 # publikowany po to, zeby dalo sie diagnozowac bota bez dostepu do maszyny
 
-[2026-11-01 18:30:26] stado/panikaLuzna: przejmuje konto po trend (poprzednik plaski)
-[2026-11-01 18:30:26] --- stado/panikaLuzna (realny.mjs) ---
-[2026-11-01 18:30:30] stado/panikaLuzna OK
-[2026-11-01 18:30:30] --- stado/lowcaSOL (realny-lowca.mjs) ---
-[2026-11-01 18:30:33] stado/lowcaSOL OK
-[2026-11-01 18:35:03] arena PAPER zakonczona bledem (kod 1)
    KMNO    LONG  score  0  brak trendu wzrostowego
   Kontra rowna ████████████████████  644/606   brak przewagi wartej zachodu  (p=0.194)
   Małpa długa ████████████████████ 2071/606   brak przewagi wartej zachodu  (p=0.584)
@@ -41,20 +35,29 @@
   Kontra rowna ████████████████████  645/606   brak przewagi wartej zachodu  (p=0.199)
   Małpa długa ████████████████████ 2072/606   brak przewagi wartej zachodu  (p=0.588)
 ! UWAGA: Binance nie oddal NICZEGO. Na serwerze w USA to normalne (blokada 451)
+[2026-11-01 19:00:04] arena PAPER zakonczona bledem (kod 1)
+   RENDER  LONG  score  0  brak trendu wzrostowego
+   KMNO    LONG  score  0  brak trendu wzrostowego
+   BTC     LONG  score  0  brak trendu wzrostowego
+  Kontra rowna ████████████████████  645/606   brak przewagi wartej zachodu  (p=0.199)
+  Małpa długa ████████████████████ 2073/606   brak przewagi wartej zachodu  (p=0.592)
 
 # --- surowy ogon logu (adresy zamaskowane) ---
+[2026-11-01 19:00:13] --- ligahl (liga.mjs) ---
+=== LIGA BOTÓW 2026-11-01T19:00:13.658Z ===
+> dźwignia 3x, max 4 pozycji, start $10000.00
 > wspólna migawka HL: /home/arturfaryj/hajsomat/logs/liga-hl-snapshot.json
 > zeskanowano 11 aktywów
-> sejsmograf: BTC 0.33% w dobę — spokój
+> sejsmograf: BTC 0.27% w dobę — spokój
 
 ── TABELA ──
   1. Sito ostre $10692.13     6.92%   97 trejdów (39W)
   2. Panika     $9337.55    -6.62%   7 trejdów (3W)
   3. Sito 5     $9041.80    -9.58%   302 trejdów (103W)
   4. Panika luźna  $8600.47   -14.00%   3 trejdów (0W)
-  5. Kontra rowna  $8304.32   -16.96%   645 trejdów (247W), 1 otwarte
-  6. Małpa długa  $1763.26   -82.37%   2072 trejdów (707W), 3 otwarte
-  7. Małpa      $1406.20   -85.94%   2074 trejdów (688W), 4 otwarte
+  5. Kontra rowna  $8298.68   -17.01%   645 trejdów (247W), 1 otwarte
+  6. Małpa długa  $1760.71   -82.39%   2073 trejdów (707W), 3 otwarte
+  7. Małpa      $1406.47   -85.94%   2074 trejdów (688W), 4 otwarte
 
 > 6 z 6 strategii bije małpę kapitałem
 
@@ -64,16 +67,16 @@
   Sito ostre ███·················   97/606   jeszcze nie wiadomo  (p=0.130)
   Sito 5     ██████████··········  302/606   jeszcze nie wiadomo  (p=0.277)
   Kontra rowna ████████████████████  645/606   brak przewagi wartej zachodu  (p=0.199)
-  Małpa długa ████████████████████ 2072/606   brak przewagi wartej zachodu  (p=0.588)
+  Małpa długa ████████████████████ 2073/606   brak przewagi wartej zachodu  (p=0.592)
 
 > próg istotności 0.0083 — podzielony przez 6 porównania,
   bo przy 6 strategiach naraz jedna wygrywa "istotnie" samym trafem znacznie częściej.
-[2026-11-01 18:55:21] ligahl OK
-[2026-11-01 18:55:21] --- forwardpanika (liga.mjs) ---
-=== LIGA BOTÓW 2026-11-01T18:55:21.754Z ===
+[2026-11-01 19:00:21] ligahl OK
+[2026-11-01 19:00:21] --- forwardpanika (liga.mjs) ---
+=== LIGA BOTÓW 2026-11-01T19:00:21.603Z ===
 > dźwignia 3x, max 2 pozycji, start $10000.00
 > zeskanowano 11 aktywów
-> sejsmograf: BTC 0.33% w dobę — spokój
+> sejsmograf: BTC 0.27% w dobę — spokój
 
 ── TABELA ──
   1. Panika 15m  $9726.40    -2.74%   7 trejdów (3W)
@@ -88,8 +91,5 @@
 
 > próg istotności 0.0250 — podzielony przez 2 porównania,
   bo przy 2 strategiach naraz jedna wygrywa "istotnie" samym trafem znacznie częściej.
-[2026-11-01 18:55:22] forwardpanika OK
-> kolektor: zbieram dane dla 15 aktywow...
-> kolektor: zapisano 16 wierszy (Jupiter 15, Binance 0, ksiega 11) — lacznie 124779 wierszy przez 97 dni
-! UWAGA: Binance nie oddal NICZEGO. Na serwerze w USA to normalne (blokada 451)
-!        i niegrozne: te metryki sa w pelni odtwarzalne z data.binance.vision.
+[2026-11-01 19:00:22] forwardpanika OK
+> kolektor: ostatni pomiar 5.0 min temu, czekam do 15
